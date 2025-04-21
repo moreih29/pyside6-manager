@@ -1,0 +1,6 @@
+{
+    "qt-qml.qmlls.additionalImportPaths": [
+        "pyside6_manager/qml",
+        ".venv/lib/python3.12/site-packages/PySide6/Qt/qml"
+    ],
+}
