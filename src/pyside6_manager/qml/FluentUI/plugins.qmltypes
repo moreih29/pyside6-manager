@@ -13,13 +13,13 @@ Module {
         prototype: "QObject"
         exports: ["FluentUI/FluAccentColor 1.0"]
         exportMetaObjectRevisions: [256]
-        Property { name: "darkest"; type: "QColor"; notify: "darkestChanged"; index: 0 }
-        Property { name: "darker"; type: "QColor"; notify: "darkerChanged"; index: 1 }
-        Property { name: "dark"; type: "QColor"; notify: "darkChanged"; index: 2 }
-        Property { name: "normal"; type: "QColor"; notify: "normalChanged"; index: 3 }
-        Property { name: "light"; type: "QColor"; notify: "lightChanged"; index: 4 }
-        Property { name: "lighter"; type: "QColor"; notify: "lighterChanged"; index: 5 }
-        Property { name: "lightest"; type: "QColor"; notify: "lightestChanged"; index: 6 }
+        Property { name: "darkest"; type: "QObject"; notify: "darkestChanged"; index: 0 }
+        Property { name: "darker"; type: "QObject"; notify: "darkerChanged"; index: 1 }
+        Property { name: "dark"; type: "QObject"; notify: "darkChanged"; index: 2 }
+        Property { name: "normal"; type: "QObject"; notify: "normalChanged"; index: 3 }
+        Property { name: "light"; type: "QObject"; notify: "lightChanged"; index: 4 }
+        Property { name: "lighter"; type: "QObject"; notify: "lighterChanged"; index: 5 }
+        Property { name: "lightest"; type: "QObject"; notify: "lightestChanged"; index: 6 }
         Signal { name: "darkestChanged" }
         Signal { name: "darkerChanged" }
         Signal { name: "darkChanged" }
@@ -81,7 +81,7 @@ Module {
         prototype: "QQuickPaintedItem"
         exports: ["FluentUI/FluCaptcha 1.0"]
         exportMetaObjectRevisions: [256]
-        Property { name: "font"; type: "QFont"; notify: "fontChanged"; index: 0 }
+        Property { name: "font"; type: "QObject"; notify: "fontChanged"; index: 0 }
         Property { name: "ignoreCase"; type: "bool"; notify: "ignoreCaseChanged"; index: 1 }
         Signal { name: "fontChanged" }
         Signal { name: "ignoreCaseChanged" }
@@ -101,31 +101,31 @@ Module {
         isCreatable: false
         isSingleton: true
         exportMetaObjectRevisions: [256]
-        Property { name: "Transparent"; type: "QColor"; notify: "TransparentChanged"; index: 0 }
-        Property { name: "Black"; type: "QColor"; notify: "BlackChanged"; index: 1 }
-        Property { name: "White"; type: "QColor"; notify: "WhiteChanged"; index: 2 }
-        Property { name: "Grey10"; type: "QColor"; notify: "Grey10Changed"; index: 3 }
-        Property { name: "Grey20"; type: "QColor"; notify: "Grey20Changed"; index: 4 }
-        Property { name: "Grey30"; type: "QColor"; notify: "Grey30Changed"; index: 5 }
-        Property { name: "Grey40"; type: "QColor"; notify: "Grey40Changed"; index: 6 }
-        Property { name: "Grey50"; type: "QColor"; notify: "Grey50Changed"; index: 7 }
-        Property { name: "Grey60"; type: "QColor"; notify: "Grey60Changed"; index: 8 }
-        Property { name: "Grey70"; type: "QColor"; notify: "Grey70Changed"; index: 9 }
-        Property { name: "Grey80"; type: "QColor"; notify: "Grey80Changed"; index: 10 }
-        Property { name: "Grey90"; type: "QColor"; notify: "Grey90Changed"; index: 11 }
-        Property { name: "Grey100"; type: "QColor"; notify: "Grey100Changed"; index: 12 }
-        Property { name: "Grey110"; type: "QColor"; notify: "Grey110Changed"; index: 13 }
-        Property { name: "Grey120"; type: "QColor"; notify: "Grey120Changed"; index: 14 }
-        Property { name: "Grey130"; type: "QColor"; notify: "Grey130Changed"; index: 15 }
-        Property { name: "Grey140"; type: "QColor"; notify: "Grey140Changed"; index: 16 }
-        Property { name: "Grey150"; type: "QColor"; notify: "Grey150Changed"; index: 17 }
-        Property { name: "Grey160"; type: "QColor"; notify: "Grey160Changed"; index: 18 }
-        Property { name: "Grey170"; type: "QColor"; notify: "Grey170Changed"; index: 19 }
-        Property { name: "Grey180"; type: "QColor"; notify: "Grey180Changed"; index: 20 }
-        Property { name: "Grey190"; type: "QColor"; notify: "Grey190Changed"; index: 21 }
-        Property { name: "Grey200"; type: "QColor"; notify: "Grey200Changed"; index: 22 }
-        Property { name: "Grey210"; type: "QColor"; notify: "Grey210Changed"; index: 23 }
-        Property { name: "Grey220"; type: "QColor"; notify: "Grey220Changed"; index: 24 }
+        Property { name: "Transparent"; type: "QObject"; notify: "TransparentChanged"; index: 0 }
+        Property { name: "Black"; type: "QObject"; notify: "BlackChanged"; index: 1 }
+        Property { name: "White"; type: "QObject"; notify: "WhiteChanged"; index: 2 }
+        Property { name: "Grey10"; type: "QObject"; notify: "Grey10Changed"; index: 3 }
+        Property { name: "Grey20"; type: "QObject"; notify: "Grey20Changed"; index: 4 }
+        Property { name: "Grey30"; type: "QObject"; notify: "Grey30Changed"; index: 5 }
+        Property { name: "Grey40"; type: "QObject"; notify: "Grey40Changed"; index: 6 }
+        Property { name: "Grey50"; type: "QObject"; notify: "Grey50Changed"; index: 7 }
+        Property { name: "Grey60"; type: "QObject"; notify: "Grey60Changed"; index: 8 }
+        Property { name: "Grey70"; type: "QObject"; notify: "Grey70Changed"; index: 9 }
+        Property { name: "Grey80"; type: "QObject"; notify: "Grey80Changed"; index: 10 }
+        Property { name: "Grey90"; type: "QObject"; notify: "Grey90Changed"; index: 11 }
+        Property { name: "Grey100"; type: "QObject"; notify: "Grey100Changed"; index: 12 }
+        Property { name: "Grey110"; type: "QObject"; notify: "Grey110Changed"; index: 13 }
+        Property { name: "Grey120"; type: "QObject"; notify: "Grey120Changed"; index: 14 }
+        Property { name: "Grey130"; type: "QObject"; notify: "Grey130Changed"; index: 15 }
+        Property { name: "Grey140"; type: "QObject"; notify: "Grey140Changed"; index: 16 }
+        Property { name: "Grey150"; type: "QObject"; notify: "Grey150Changed"; index: 17 }
+        Property { name: "Grey160"; type: "QObject"; notify: "Grey160Changed"; index: 18 }
+        Property { name: "Grey170"; type: "QObject"; notify: "Grey170Changed"; index: 19 }
+        Property { name: "Grey180"; type: "QObject"; notify: "Grey180Changed"; index: 20 }
+        Property { name: "Grey190"; type: "QObject"; notify: "Grey190Changed"; index: 21 }
+        Property { name: "Grey200"; type: "QObject"; notify: "Grey200Changed"; index: 22 }
+        Property { name: "Grey210"; type: "QObject"; notify: "Grey210Changed"; index: 23 }
+        Property { name: "Grey220"; type: "QObject"; notify: "Grey220Changed"; index: 24 }
         Property {
             name: "Yellow"
             type: "FluAccentColor"
@@ -201,7 +201,7 @@ Module {
             name: "createAccentColor"
             type: "FluAccentColor"
             isPointer: true
-            Parameter { name: "primaryColor"; type: "QColor" }
+            Parameter { name: "primaryColor"; type: "QObject" }
         }
     }
     Component {
@@ -326,8 +326,8 @@ Module {
         exports: ["FluentUI/FluQrCodeItem 1.0"]
         exportMetaObjectRevisions: [256]
         Property { name: "text"; type: "QString"; notify: "textChanged"; index: 0 }
-        Property { name: "color"; type: "QColor"; notify: "colorChanged"; index: 1 }
-        Property { name: "bgColor"; type: "QColor"; notify: "bgColorChanged"; index: 2 }
+        Property { name: "color"; type: "QObject"; notify: "colorChanged"; index: 1 }
+        Property { name: "bgColor"; type: "QObject"; notify: "bgColorChanged"; index: 2 }
         Property { name: "size"; type: "int"; notify: "sizeChanged"; index: 3 }
         Signal { name: "textChanged" }
         Signal { name: "colorChanged" }
@@ -341,7 +341,7 @@ Module {
         prototype: "QQuickPaintedItem"
         exports: ["FluentUI/FluRectangle 1.0"]
         exportMetaObjectRevisions: [256]
-        Property { name: "color"; type: "QColor"; notify: "colorChanged"; index: 0 }
+        Property { name: "color"; type: "QObject"; notify: "colorChanged"; index: 0 }
         Property { name: "radius"; type: "int"; isList: true; notify: "radiusChanged"; index: 1 }
         Signal { name: "colorChanged" }
         Signal { name: "radiusChanged" }
@@ -490,13 +490,13 @@ Module {
         isSingleton: true
         exportMetaObjectRevisions: [256]
         Property { name: "family"; type: "QString"; notify: "familyChanged"; index: 0 }
-        Property { name: "Caption"; type: "QFont"; notify: "CaptionChanged"; index: 1 }
-        Property { name: "Body"; type: "QFont"; notify: "BodyChanged"; index: 2 }
-        Property { name: "BodyStrong"; type: "QFont"; notify: "BodyStrongChanged"; index: 3 }
-        Property { name: "Subtitle"; type: "QFont"; notify: "SubtitleChanged"; index: 4 }
-        Property { name: "Title"; type: "QFont"; notify: "TitleChanged"; index: 5 }
-        Property { name: "TitleLarge"; type: "QFont"; notify: "TitleLargeChanged"; index: 6 }
-        Property { name: "Display"; type: "QFont"; notify: "DisplayChanged"; index: 7 }
+        Property { name: "Caption"; type: "QObject"; notify: "CaptionChanged"; index: 1 }
+        Property { name: "Body"; type: "QObject"; notify: "BodyChanged"; index: 2 }
+        Property { name: "BodyStrong"; type: "QObject"; notify: "BodyStrongChanged"; index: 3 }
+        Property { name: "Subtitle"; type: "QObject"; notify: "SubtitleChanged"; index: 4 }
+        Property { name: "Title"; type: "QObject"; notify: "TitleChanged"; index: 5 }
+        Property { name: "TitleLarge"; type: "QObject"; notify: "TitleLargeChanged"; index: 6 }
+        Property { name: "Display"; type: "QObject"; notify: "DisplayChanged"; index: 7 }
         Signal { name: "familyChanged" }
         Signal { name: "CaptionChanged" }
         Signal { name: "BodyChanged" }
@@ -530,45 +530,45 @@ Module {
             notify: "accentColorChanged"
             index: 1
         }
-        Property { name: "primaryColor"; type: "QColor"; notify: "primaryColorChanged"; index: 2 }
-        Property { name: "backgroundColor"; type: "QColor"; notify: "backgroundColorChanged"; index: 3 }
-        Property { name: "dividerColor"; type: "QColor"; notify: "dividerColorChanged"; index: 4 }
+        Property { name: "primaryColor"; type: "QObject"; notify: "primaryColorChanged"; index: 2 }
+        Property { name: "backgroundColor"; type: "QObject"; notify: "backgroundColorChanged"; index: 3 }
+        Property { name: "dividerColor"; type: "QObject"; notify: "dividerColorChanged"; index: 4 }
         Property {
             name: "windowBackgroundColor"
-            type: "QColor"
+            type: "QObject"
             notify: "windowBackgroundColorChanged"
             index: 5
         }
         Property {
             name: "windowActiveBackgroundColor"
-            type: "QColor"
+            type: "QObject"
             notify: "windowActiveBackgroundColorChanged"
             index: 6
         }
-        Property { name: "fontPrimaryColor"; type: "QColor"; notify: "fontPrimaryColorChanged"; index: 7 }
+        Property { name: "fontPrimaryColor"; type: "QObject"; notify: "fontPrimaryColorChanged"; index: 7 }
         Property {
             name: "fontSecondaryColor"
-            type: "QColor"
+            type: "QObject"
             notify: "fontSecondaryColorChanged"
             index: 8
         }
         Property {
             name: "fontTertiaryColor"
-            type: "QColor"
+            type: "QObject"
             notify: "fontTertiaryColorChanged"
             index: 9
         }
-        Property { name: "itemNormalColor"; type: "QColor"; notify: "itemNormalColorChanged"; index: 10 }
-        Property { name: "frameColor"; type: "QColor"; notify: "frameColorChanged"; index: 11 }
+        Property { name: "itemNormalColor"; type: "QObject"; notify: "itemNormalColorChanged"; index: 10 }
+        Property { name: "frameColor"; type: "QObject"; notify: "frameColorChanged"; index: 11 }
         Property {
             name: "frameActiveColor"
-            type: "QColor"
+            type: "QObject"
             notify: "frameActiveColorChanged"
             index: 12
         }
-        Property { name: "itemHoverColor"; type: "QColor"; notify: "itemHoverColorChanged"; index: 13 }
-        Property { name: "itemPressColor"; type: "QColor"; notify: "itemPressColorChanged"; index: 14 }
-        Property { name: "itemCheckColor"; type: "QColor"; notify: "itemCheckColorChanged"; index: 15 }
+        Property { name: "itemHoverColor"; type: "QObject"; notify: "itemHoverColorChanged"; index: 13 }
+        Property { name: "itemPressColor"; type: "QObject"; notify: "itemPressColorChanged"; index: 14 }
+        Property { name: "itemCheckColor"; type: "QObject"; notify: "itemCheckColorChanged"; index: 15 }
         Property {
             name: "desktopImagePath"
             type: "QString"
@@ -703,8 +703,8 @@ Module {
         }
         Method {
             name: "withOpacity"
-            type: "QColor"
-            Parameter { type: "QColor" }
+            type: "QObject"
+            Parameter { type: "QObject" }
             Parameter { name: "alpha"; type: "double" }
         }
         Method {
@@ -757,13 +757,13 @@ Module {
         Method { name: "getWallpaperFilePath"; type: "QString" }
         Method {
             name: "imageMainColor"
-            type: "QColor"
+            type: "QObject"
             Parameter { name: "image"; type: "QImage" }
             Parameter { name: "bright"; type: "double" }
         }
         Method {
             name: "imageMainColor"
-            type: "QColor"
+            type: "QObject"
             isCloned: true
             Parameter { name: "image"; type: "QImage" }
         }
@@ -868,7 +868,7 @@ Module {
         Property { name: "text"; type: "QString"; notify: "textChanged"; index: 0 }
         Property { name: "gap"; type: "QPoint"; notify: "gapChanged"; index: 1 }
         Property { name: "offset"; type: "QPoint"; notify: "offsetChanged"; index: 2 }
-        Property { name: "textColor"; type: "QColor"; notify: "textColorChanged"; index: 3 }
+        Property { name: "textColor"; type: "QObject"; notify: "textColorChanged"; index: 3 }
         Property { name: "rotate"; type: "int"; notify: "rotateChanged"; index: 4 }
         Property { name: "textSize"; type: "int"; notify: "textSizeChanged"; index: 5 }
         Signal { name: "textChanged" }

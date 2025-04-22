@@ -2,6 +2,8 @@ import keyboard
 
 from PySide6.QtCore import Signal, QObject, Property
 
+# pyright: reportRedeclaration=none
+
 
 # noinspection PyPep8Naming
 class FluHotkey(QObject):
@@ -23,9 +25,9 @@ class FluHotkey(QObject):
             # keyboard.remove_hotkey(self.hotkeyCallback)
             try:
                 keyboard.add_hotkey(self._sequence, self.hotkeyCallback)
-                self.isRegistered = True
+                self.isRegistered = True  # pyright: ignore[reportAttributeAccessIssue]
             except RuntimeError:
-                self.isRegistered = False
+                self.isRegistered = False  # pyright: ignore[reportAttributeAccessIssue]
 
         self.sequenceChanged.connect(lambda: handleSequenceChanged())
 
@@ -34,7 +36,7 @@ class FluHotkey(QObject):
         return self._isRegistered
 
     @isRegistered.setter
-    def isRegistered(self, value):
+    def isRegistered(self, value: bool):
         self._isRegistered = value
         self.isRegisteredChanged.emit()
 
@@ -43,7 +45,7 @@ class FluHotkey(QObject):
         return self._name
 
     @name.setter
-    def name(self, value):
+    def name(self, value: str):
         self._name = value
         self.nameChanged.emit()
 
@@ -52,6 +54,6 @@ class FluHotkey(QObject):
         return self._sequence
 
     @sequence.setter
-    def sequence(self, value):
+    def sequence(self, value: str):
         self._sequence = value
         self.sequenceChanged.emit()

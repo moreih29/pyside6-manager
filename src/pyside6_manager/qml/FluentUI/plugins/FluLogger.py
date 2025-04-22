@@ -1,9 +1,18 @@
+# pyright: reportMissingTypeArgument=none, reportUnknownArgumentType=none, reportUnknownVariableType=none
+
 import logging
 import os
 import sys
 import threading
 
-from PySide6.QtCore import QDir, qInstallMessageHandler, QtMsgType, QStandardPaths, QDateTime, QSysInfo
+from PySide6.QtCore import (
+    QDir,
+    qInstallMessageHandler,
+    QtMsgType,
+    QStandardPaths,
+    QDateTime,
+    QSysInfo,
+)
 
 _logging: logging.Logger
 _fileHandler: logging.FileHandler
@@ -13,13 +22,13 @@ _formatStdoutHandler: logging.StreamHandler
 
 
 class _CustomFormatter(logging.Formatter):
-    def format(self, record):
+    def format(self, record: logging.LogRecord):
         record.threadId = threading.get_ident()
         return super().format(record)
 
 
 # noinspection PyPep8Naming
-def _getLevelByMsgType(msgType):
+def _getLevelByMsgType(msgType: QtMsgType):
     if msgType == QtMsgType.QtFatalMsg:
         return logging.FATAL
     if msgType == QtMsgType.QtCriticalMsg:
@@ -50,7 +59,7 @@ def _closeFormat():
 
 
 # noinspection PyPep8Naming
-def _messageHandler(msgType, context, message):
+def _messageHandler(msgType: QtMsgType, context: ..., message: str):
     global _logging
     global _fileHandler
     global _formatFileHandler
@@ -60,12 +69,12 @@ def _messageHandler(msgType, context, message):
     fileAndLineLogStr = ""
     if context.file:
         strFileTmp = context.file
-        ptr = strFileTmp.rfind('/')
+        ptr = strFileTmp.rfind("/")
         if ptr != -1:
-            strFileTmp = strFileTmp[ptr + 1:]
-        ptrTmp = strFileTmp.rfind('\\')
+            strFileTmp = strFileTmp[ptr + 1 :]
+        ptrTmp = strFileTmp.rfind("\\")
         if ptrTmp != -1:
-            strFileTmp = strFileTmp[ptrTmp + 1:]
+            strFileTmp = strFileTmp[ptrTmp + 1 :]
         fileAndLineLogStr = f"[{strFileTmp}:{str(context.line)}]"
     level = _getLevelByMsgType(msgType)
     finalMessage = f"{QDateTime.currentDateTime().toString('yyyy/MM/dd hh:mm:ss.zzz')}[{logging.getLevelName(level)}]{fileAndLineLogStr}[{threading.get_ident()}]:{message}"
@@ -74,7 +83,7 @@ def _messageHandler(msgType, context, message):
 
 
 # noinspection PyPep8Naming
-def LogSetup(name, level=logging.DEBUG):
+def LogSetup(name: str, level: int = logging.DEBUG):
     global _logging
     global _fileHandler
     global _formatFileHandler
@@ -84,7 +93,12 @@ def LogSetup(name, level=logging.DEBUG):
     _logging = logging.getLogger(name)
     _logging.setLevel(level)
     logFileName = f"{name}_{QDateTime.currentDateTime().toString('yyyyMMdd')}.log"
-    logDirPath = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppLocalDataLocation) + "/log"
+    logDirPath = (
+        QStandardPaths.writableLocation(
+            QStandardPaths.StandardLocation.AppLocalDataLocation
+        )
+        + "/log"
+    )
     logDir = QDir(logDirPath)
     if not logDir.exists():
         logDir.mkpath(logDirPath)
@@ -93,23 +107,25 @@ def LogSetup(name, level=logging.DEBUG):
     _stdoutHandler = logging.StreamHandler(sys.stdout)
     _formatFileHandler = logging.FileHandler(logFilePath)
     _formatStdoutHandler = logging.StreamHandler(sys.stdout)
-    fmt = _CustomFormatter("%(asctime)s[%(levelname)s][%(filename)s:%(lineno)s][%(threadId)d] %(message)s")
+    fmt = _CustomFormatter(
+        "%(asctime)s[%(levelname)s][%(filename)s:%(lineno)s][%(threadId)d] %(message)s"
+    )
     _formatFileHandler.setFormatter(fmt)
     _formatStdoutHandler.setFormatter(fmt)
     _logging.addHandler(_formatStdoutHandler)
     _logging.addHandler(_formatFileHandler)
     qInstallMessageHandler(_messageHandler)
-    _logging.info(f"===================================================")
+    _logging.info("===================================================")
     _logging.info(f"[AppName] {name}")
     _logging.info(f"[AppPath] {sys.argv[0]}")
     _logging.info(f"[ProcessId] {os.getpid()}")
-    _logging.info(f"[DeviceInfo]")
+    _logging.info("[DeviceInfo]")
     _logging.info(f"  [DeviceId] {QSysInfo.machineUniqueId().toStdString()}")
     _logging.info(f"  [Manufacturer] {QSysInfo.productVersion()}")
     _logging.info(f"  [CPU_ABI] {QSysInfo.currentCpuArchitecture()}")
     _logging.info(f"[LOG_LEVEL] {logging.getLevelName(level)}")
     _logging.info(f"[LOG_PATH] {logFilePath}")
-    _logging.info(f"===================================================")
+    _logging.info("===================================================")
 
 
 # noinspection PyPep8Naming

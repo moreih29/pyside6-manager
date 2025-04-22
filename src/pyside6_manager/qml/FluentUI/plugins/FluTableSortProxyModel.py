@@ -1,4 +1,17 @@
-from PySide6.QtCore import Signal, Property, QSortFilterProxyModel, Slot, QMetaObject, Q_RETURN_ARG, Q_ARG, Qt, QObject
+# pyright: basic, reportRedeclaration=none
+
+
+from PySide6.QtCore import (
+    Signal,
+    Property,
+    QSortFilterProxyModel,
+    Slot,
+    QMetaObject,
+    Q_RETURN_ARG,
+    Q_ARG,
+    Qt,
+    QAbstractItemModel,
+)
 from PySide6.QtQml import QJSValue
 
 
@@ -7,18 +20,18 @@ class FluTableSortProxyModel(QSortFilterProxyModel):
     modelChanged = Signal()
 
     # noinspection PyTypeChecker
-    @Property(QObject, notify=modelChanged)
+    @Property(QAbstractItemModel, notify=modelChanged)
     def model(self):
         return self._model
 
     @model.setter
-    def model(self, value):
+    def model(self, value: QAbstractItemModel):
         self._model = value
         self.modelChanged.emit()
 
     def __init__(self):
         QSortFilterProxyModel.__init__(self)
-        self._model = None
+        self._model = QAbstractItemModel()
         self._filter = None
         self._comparator = None
         self.modelChanged.connect(lambda: self.setSourceModel(self._model))
@@ -26,16 +39,31 @@ class FluTableSortProxyModel(QSortFilterProxyModel):
     # noinspection PyTypeChecker
     @Slot(int, result=dict)
     def getRow(self, rowIndex: int):
-        return QMetaObject.invokeMethod(self._model, "getRow", Q_RETURN_ARG("QVariantMap"), Q_ARG(int, self.mapToSource(self.index(rowIndex, 0)).row()))
+        return QMetaObject.invokeMethod(
+            self._model,
+            "getRow",
+            Q_RETURN_ARG("QVariantMap"),
+            Q_ARG(int, self.mapToSource(self.index(rowIndex, 0)).row()),
+        )
 
     # noinspection PyTypeChecker
     @Slot(int, dict)
-    def setRow(self, rowIndex: int, val):
-        QMetaObject.invokeMethod(self._model, "setRow", Q_ARG(int, self.mapToSource(self.index(rowIndex, 0)).row()), Q_ARG("QVariantMap", val))
+    def setRow(self, rowIndex: int, val: dict):
+        QMetaObject.invokeMethod(
+            self._model,
+            "setRow",
+            Q_ARG(int, self.mapToSource(self.index(rowIndex, 0)).row()),
+            Q_ARG("QVariantMap", val),
+        )
 
     @Slot(int, int)
     def removeRow(self, rowIndex: int, rows: int):
-        QMetaObject.invokeMethod(self._model, "removeRow", Q_ARG(int, self.mapToSource(self.index(rowIndex, 0)).row()), Q_ARG(int, rows))
+        QMetaObject.invokeMethod(
+            self._model,
+            "removeRow",
+            Q_ARG(int, self.mapToSource(self.index(rowIndex, 0)).row()),
+            Q_ARG(int, rows),
+        )
 
     @Slot(QJSValue)
     def setComparator(self, comparator: QJSValue):
@@ -53,10 +81,10 @@ class FluTableSortProxyModel(QSortFilterProxyModel):
         self._filter = filter
         self.invalidateFilter()
 
-    def filterAcceptsColumn(self, source_column, source_parent):
+    def filterAcceptsColumn(self, source_column: ..., source_parent: ...):
         return True
 
-    def filterAcceptsRow(self, source_row, source_parent):
+    def filterAcceptsRow(self, source_row: ..., source_parent: ...):
         if self._filter is None or self._filter.isUndefined():
             return True
         data: list[int] = [source_row]

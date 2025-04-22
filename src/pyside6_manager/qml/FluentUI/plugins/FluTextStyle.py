@@ -1,3 +1,5 @@
+# pyright: reportRedeclaration=none
+
 from PySide6.QtCore import QObject, Signal, Property
 from PySide6.QtGui import QFont, QGuiApplication
 
@@ -25,7 +27,7 @@ class FluTextStyle(QObject):
         QObject.__init__(self, QGuiApplication.instance())
         self._family = QFont().defaultFamily()
         if FluTools().isWin():
-            self._family = "微软雅黑"
+            self._family = "Arial"
 
         caption = QFont()
         caption.setPixelSize(12)
@@ -65,7 +67,7 @@ class FluTextStyle(QObject):
         return self._family
 
     @family.setter
-    def family(self, value):
+    def family(self, value: str):
         self._family = value
         self.familyChanged.emit()
 
@@ -74,7 +76,7 @@ class FluTextStyle(QObject):
         return self._Caption
 
     @Caption.setter
-    def Caption(self, value):
+    def Caption(self, value: QFont):
         self._Caption = value
         self.CaptionChanged.emit()
 
@@ -83,7 +85,7 @@ class FluTextStyle(QObject):
         return self._Body
 
     @Body.setter
-    def Body(self, value):
+    def Body(self, value: QFont):
         self._Body = value
         self.BodyChanged.emit()
 
@@ -92,7 +94,7 @@ class FluTextStyle(QObject):
         return self._BodyStrong
 
     @BodyStrong.setter
-    def BodyStrong(self, value):
+    def BodyStrong(self, value: QFont):
         self._BodyStrong = value
         self.BodyStrongChanged.emit()
 
@@ -101,7 +103,7 @@ class FluTextStyle(QObject):
         return self._Subtitle
 
     @Subtitle.setter
-    def Subtitle(self, value):
+    def Subtitle(self, value: QFont):
         self._Subtitle = value
         self.SubtitleChanged.emit()
 
@@ -110,7 +112,7 @@ class FluTextStyle(QObject):
         return self._Title
 
     @Title.setter
-    def Title(self, value):
+    def Title(self, value: QFont):
         self._Title = value
         self.TitleChanged.emit()
 
@@ -119,7 +121,7 @@ class FluTextStyle(QObject):
         return self._TitleLarge
 
     @TitleLarge.setter
-    def TitleLarge(self, value):
+    def TitleLarge(self, value: QFont):
         self._TitleLarge = value
         self.TitleLargeChanged.emit()
 
@@ -128,6 +130,6 @@ class FluTextStyle(QObject):
         return self._Display
 
     @Display.setter
-    def Display(self, value):
+    def Display(self, value: QFont):
         self._Display = value
         self.DisplayChanged.emit()

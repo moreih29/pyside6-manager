@@ -2,7 +2,9 @@
 The FluFrameless class is used to create a frameless window
 """
 
-# pyright: reportRedeclaration=none, reportAttributeAccessIssue=none
+# pyright: reportRedeclaration=none, reportAttributeAccessIssue=none, reportUnknownArgumentType=none, reportOperatorIssue=none, reportUnknownVariableType=none, reportUnknownMemberType=none
+
+from typing import Any
 
 from PySide6.QtCore import (
     Signal,
@@ -26,6 +28,7 @@ from .FluTools import FluTools
 Tools = FluTools()
 
 if Tools.isWin():
+    import ctypes
     from ctypes import (
         POINTER,
         byref,
@@ -33,21 +36,22 @@ if Tools.isWin():
         c_int,
         c_void_p,
         c_long,
-        WinDLL,
-        cast,
+        WinDLL,  # pyright: ignore[reportUnknownVariableType]
         Structure,
         c_uint,
         c_uint16,
         c_short,
     )
-    from ctypes.wintypes import DWORD, HWND, MSG, RECT, UINT, POINT, RECTL
+    from ctypes.wintypes import HWND, RECT, UINT, POINT
+
+    DWORD_T = ctypes.c_ulong
 
     # noinspection PyPep8Naming
-    def HIWORD(dword):
+    def HIWORD(dword: DWORD_T | int):
         return c_uint16((dword >> 16) & 0xFFFF).value
 
     # noinspection PyPep8Naming
-    def LOWORD(dword):
+    def LOWORD(dword: DWORD_T | int):
         return c_uint16(dword & 0xFFFF).value
 
     class MARGINS(Structure):
@@ -146,7 +150,7 @@ if Tools.isWin():
         dwmapi.DwmIsCompositionEnabled(byref(bResult))
         return bool(bResult.value)
 
-    def setShadow(hwnd):
+    def setShadow(hwnd: HWND | int):
         margins = MARGINS(1, 0, 0, 0)
         dwmapi.DwmExtendFrameIntoClientArea(hwnd, byref(margins))
 
@@ -171,9 +175,9 @@ class FluFrameless(QQuickItem, QAbstractNativeEventFilter):
         self._hitTestList: list[QQuickItem] = []
         self._appbar: QQuickItem = None
         self._topmost: bool = False
-        self._maximizeButton = None
-        self._minimizedButton = None
-        self._closeButton = None
+        self._maximizeButton: QQuickItem | None = None
+        self._minimizedButton: QQuickItem | None = None
+        self._closeButton: QQuickItem | None = None
         self._disabled: bool = False
         self._fixSize: bool = False
         self._isWindows11OrGreater = Tools.isWindows11OrGreater()
@@ -192,7 +196,7 @@ class FluFrameless(QQuickItem, QAbstractNativeEventFilter):
         return self._topmost
 
     @topmost.setter
-    def topmost(self, value):
+    def topmost(self, value: bool):
         self._topmost = value
         self.topmostChanged.emit()
 
@@ -201,7 +205,7 @@ class FluFrameless(QQuickItem, QAbstractNativeEventFilter):
         return self._maximizeButton
 
     @maximizeButton.setter
-    def maximizeButton(self, value):
+    def maximizeButton(self, value: QQuickItem):
         self._maximizeButton = value
         self.maximizeButtonChanged.emit()
 
@@ -210,7 +214,7 @@ class FluFrameless(QQuickItem, QAbstractNativeEventFilter):
         return self._minimizedButton
 
     @minimizedButton.setter
-    def minimizedButton(self, value):
+    def minimizedButton(self, value: QQuickItem):
         self._minimizedButton = value
         self.minimizedButtonChanged.emit()
 
@@ -219,7 +223,7 @@ class FluFrameless(QQuickItem, QAbstractNativeEventFilter):
         return self._closeButton
 
     @closeButton.setter
-    def closeButton(self, value):
+    def closeButton(self, value: QQuickItem):
         self._closeButton = value
         self.closeButtonChanged.emit()
 
@@ -228,7 +232,7 @@ class FluFrameless(QQuickItem, QAbstractNativeEventFilter):
         return self._disabled
 
     @disabled.setter
-    def disabled(self, value):
+    def disabled(self, value: bool):
         self._disabled = value
         self.disabledChanged.emit()
 
@@ -237,7 +241,7 @@ class FluFrameless(QQuickItem, QAbstractNativeEventFilter):
         return self._fixSize
 
     @fixSize.setter
-    def fixSize(self, value):
+    def fixSize(self, value: bool):
         self._fixSize = value
         self.fixSizeChanged.emit()
 
@@ -291,20 +295,27 @@ class FluFrameless(QQuickItem, QAbstractNativeEventFilter):
             self.window().setMinimumSize(QSize(w, h))
             self.window().setMaximumSize(QSize(w, h))
         else:
-            self.window().setMinimumHeight(self.window().minimumHeight() + appBarHeight)
-            self.window().setMaximumHeight(self.window().maximumHeight() + appBarHeight)
+            self.window().setMinimumHeight(
+                int(self.window().minimumHeight() + appBarHeight)
+            )
+            self.window().setMaximumHeight(
+                int(self.window().maximumHeight() + appBarHeight)
+            )
         self.window().resize(w, h)
-        self.topmostChanged.connect(self, lambda: self._setWindowTopmost(self._topmost))
+        self.topmostChanged.connect(lambda: self._setWindowTopmost(self._topmost))
         self._setWindowTopmost(self._topmost)
 
-    def nativeEventFilter(self, eventType, message):
+    def nativeEventFilter(self, eventType: ..., message: int | None):
         if not Tools.isWin():
             return False
+        from ctypes.wintypes import MSG, POINT, RECTL, RECT
+        from ctypes import cast, POINTER, byref
+
         if eventType != qtNativeEventType or message is None:
             return False
         msg = MSG.from_address(message.__int__())
         hwnd = msg.hWnd
-        if hwnd is None and msg is None:
+        if hwnd is None:
             return False
         if hwnd != self._current:
             return False
@@ -313,7 +324,7 @@ class FluFrameless(QQuickItem, QAbstractNativeEventFilter):
         lParam = msg.lParam
         if uMsg == 0x0046:
             wp = cast(lParam, POINTER(PWINDOWPOS)).contents
-            if (wp is not None) and ((wp.flags & 0x0001) == 0):
+            if (wp is not None) and ((wp.flags & 0x0001) == 0):  # pyright: ignore[reportUnnecessaryComparison]
                 wp.flags |= 0x0100
             return False
         elif uMsg == 0x0083:
@@ -379,7 +390,9 @@ class FluFrameless(QQuickItem, QAbstractNativeEventFilter):
                     Qt.MouseButton.LeftButton,
                     Qt.KeyboardModifier.NoModifier,
                 )
-                QGuiApplication.instance().sendEvent(self._maximizeButton, event)
+                app = QGuiApplication.instance()
+                if app is not None and self._maximizeButton is not None:
+                    app.sendEvent(self._maximizeButton, event)
                 self._setMaximizePressed(True)
                 return True, 0
         elif self._isWindows11OrGreater and (uMsg == 0x00A2 or uMsg == 0x00A5):
@@ -392,7 +405,9 @@ class FluFrameless(QQuickItem, QAbstractNativeEventFilter):
                     Qt.MouseButton.LeftButton,
                     Qt.KeyboardModifier.NoModifier,
                 )
-                QGuiApplication.instance().sendEvent(self._maximizeButton, event)
+                app = QGuiApplication.instance()
+                if app is not None and self._maximizeButton is not None:
+                    app.sendEvent(self._maximizeButton, event)
                 self._setMaximizePressed(False)
         elif uMsg == 0x0085:
             return False, 0
@@ -423,8 +438,8 @@ class FluFrameless(QQuickItem, QAbstractNativeEventFilter):
                 )
         return False
 
-    def eventFilter(self, watched, event):
-        if self.window() is not None:
+    def eventFilter(self, watched: ..., event: ...):
+        if self.window() is not None:  # pyright: ignore[reportUnnecessaryComparison]
             if event.type() == QEvent.Type.MouseButtonPress:
                 if self._edges != 0:
                     mouse_event = QMouseEvent(event)
@@ -517,10 +532,10 @@ class FluFrameless(QQuickItem, QAbstractNativeEventFilter):
         return False
 
     def _isFullScreen(self):
-        return self.window().visibility == QQuickWindow.Visibility.FullScreen
+        return self.window().visibility() == QQuickWindow.Visibility.FullScreen
 
     def _isMaximized(self):
-        return self.window().visibility == QQuickWindow.Visibility.Maximized
+        return self.window().visibility() == QQuickWindow.Visibility.Maximized
 
     def _updateCursor(self, edges: int):
         if edges == 0:
@@ -580,11 +595,13 @@ class FluFrameless(QQuickItem, QAbstractNativeEventFilter):
             if result:
                 PostMessageW(hwnd, 0x0112, result, 0)
 
-    def _setMaximizePressed(self, val):
-        self._maximizeButton.setProperty("down", val)
+    def _setMaximizePressed(self, val: Any):
+        if self._maximizeButton is not None:
+            self._maximizeButton.setProperty("down", val)
 
-    def _setMaximizeHovered(self, val):
-        self._maximizeButton.setProperty("hover", val)
+    def _setMaximizeHovered(self, val: Any):
+        if self._maximizeButton is not None:
+            self._maximizeButton.setProperty("hover", val)
 
     def _hitAppBar(self):
         for item in self._hitTestList:
@@ -595,6 +612,8 @@ class FluFrameless(QQuickItem, QAbstractNativeEventFilter):
         return False
 
     def _hitMaximizeButton(self):
-        if self._containsCursorToItem(self._maximizeButton):
+        if self._maximizeButton is not None and self._containsCursorToItem(
+            self._maximizeButton
+        ):
             return True
         return False

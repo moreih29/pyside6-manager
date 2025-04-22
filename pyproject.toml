@@ -24,3 +24,10 @@ pyside6-stubs = { path = "../PySide6-stubs" }
 
 [tool.pyright]
 typeCheckingMode = "strict"
+exclude = [".venv/**", "**/*_rc.py"]
+
+[dependency-groups]
+dev = [
+    "pyright>=1.1.399",
+    "ruff>=0.11.6",
+]

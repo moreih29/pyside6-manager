@@ -1,4 +1,12 @@
-from PySide6.QtCore import Signal, Property, QAbstractTableModel, Slot, QModelIndex, QObject
+# pyright: basic, reportArgumentType=none, reportRedeclaration=none
+
+from PySide6.QtCore import (
+    Signal,
+    Property,
+    QAbstractTableModel,
+    Slot,
+    QModelIndex,
+)
 
 
 # noinspection PyPep8Naming,PyTypeChecker
@@ -24,7 +32,9 @@ class FluTableModel(QAbstractTableModel):
     @Slot(int, dict)
     def setRow(self, rowIndex: int, row: dict):
         self._rows[rowIndex] = row
-        self.dataChanged.emit(self.index(rowIndex, 0), self.index(rowIndex, self.columnCount() - 1))
+        self.dataChanged.emit(
+            self.index(rowIndex, 0), self.index(rowIndex, self.columnCount() - 1)
+        )
 
     @Slot(int, dict)
     def insertRow(self, rowIndex: int, row: dict):
@@ -34,11 +44,11 @@ class FluTableModel(QAbstractTableModel):
 
     @Slot(int)
     @Slot(int, int)
-    def removeRow(self, rowIndex: int, rows: int = None):
+    def removeRow(self, rowIndex: int, rows: int | None = None):
         if rows is None:
             rows = 1
         self.beginRemoveRows(QModelIndex(), rowIndex, rowIndex + rows - 1)
-        self._rows = self._rows[:rowIndex] + self._rows[rowIndex + rows:]
+        self._rows = self._rows[:rowIndex] + self._rows[rowIndex + rows :]
         self.endRemoveRows()
 
     @Slot("QVariant")
@@ -61,10 +71,7 @@ class FluTableModel(QAbstractTableModel):
         return None
 
     def roleNames(self):
-        return {
-            0x101: b"rowModel",
-            0x102: b"columnModel"
-        }
+        return {0x101: b"rowModel", 0x102: b"columnModel"}
 
     @Property(list, notify=rowsChanged)
     def rows(self):

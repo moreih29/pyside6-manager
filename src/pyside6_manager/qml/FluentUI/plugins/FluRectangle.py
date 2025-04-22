@@ -2,6 +2,8 @@
 The FluRectangle class is responsible for drawing the rectangular area of a rectangular
 """
 
+# pyright: reportRedeclaration=none
+
 from PySide6.QtGui import QPainter, QColor, QPainterPath
 from PySide6.QtCore import Signal, Property, QPointF, QSize, QRectF
 from PySide6.QtQuick import QQuickPaintedItem
@@ -16,7 +18,7 @@ class FluRectangle(QQuickPaintedItem):
         return self._color
 
     @color.setter
-    def color(self, value):
+    def color(self, value: QColor):
         self._color = value
         self.colorChanged.emit()
 
@@ -25,7 +27,7 @@ class FluRectangle(QQuickPaintedItem):
         return self._radius
 
     @radius.setter
-    def radius(self, value):
+    def radius(self, value: list[int]):
         self._radius = value
         self.radiusChanged.emit()
 

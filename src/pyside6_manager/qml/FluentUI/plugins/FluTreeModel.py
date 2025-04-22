@@ -1,7 +1,18 @@
-from PySide6.QtCore import Signal, Property, Slot, QObject, QAbstractTableModel, QModelIndex
+# pyright: basic, reportRedeclaration=none, reportAssignmentType=none, reportOptionalMemberAccess=none
+# pyright: reportAttributeAccessIssue=none, reportCallIssue=none, reportOperatorIssue=none
+
+from PySide6.QtCore import (
+    Signal,
+    Property,
+    Slot,
+    QObject,
+    QAbstractTableModel,
+    QModelIndex,
+)
 
 
 # noinspection PyProtectedMember,PyCallingNonCallable,PyPep8Naming,PyPropertyAccess
+
 
 class FluTreeNode(QObject):
     depthChanged = Signal()
@@ -16,7 +27,7 @@ class FluTreeNode(QObject):
         return self._data
 
     @data.setter
-    def data(self, value):
+    def data(self, value: dict):
         self._data = value
         self.dataChanged.emit()
 
@@ -59,7 +70,7 @@ class FluTreeNode(QObject):
         return self._depth
 
     @depth.setter
-    def depth(self, value):
+    def depth(self, value: int):
         self._depth = value
         self.depthChanged.emit()
 
@@ -68,7 +79,7 @@ class FluTreeNode(QObject):
         return self._isExpanded
 
     @isExpanded.setter
-    def isExpanded(self, value):
+    def isExpanded(self, value: bool):
         self._isExpanded = value
         self.isExpandedChanged.emit()
 
@@ -82,7 +93,7 @@ class FluTreeNode(QObject):
         return True
 
     @checked.setter
-    def checked(self, value):
+    def checked(self, value: bool):
         self._checked = value
         self.checkedChanged.emit()
 
@@ -91,7 +102,7 @@ class FluTreeNode(QObject):
         return self._parent
 
     @parent_.setter
-    def parent_(self, value):
+    def parent_(self, value: QObject):
         self._parent = value
         self.parentChanged.emit()
 
@@ -100,7 +111,7 @@ class FluTreeNode(QObject):
         return self._children
 
     @children_.setter
-    def children_(self, value):
+    def children_(self, value: list):
         self._children = value
         self.childrenChanged.emit()
 
@@ -127,7 +138,7 @@ class FluTreeModel(QAbstractTableModel):
         return self._selectionModel
 
     @selectionModel.setter
-    def selectionModel(self, value):
+    def selectionModel(self, value: list):
         self._selectionModel = value
         self.selectionModelChanged.emit()
 
@@ -136,7 +147,7 @@ class FluTreeModel(QAbstractTableModel):
         return self._dataSourceSize
 
     @dataSourceSize.setter
-    def dataSourceSize(self, value):
+    def dataSourceSize(self, value: int):
         self._dataSourceSize = value
         self.dataSourceSizeChanged.emit()
 
@@ -145,11 +156,11 @@ class FluTreeModel(QAbstractTableModel):
         return self._columnSource
 
     @columnSource.setter
-    def columnSource(self, value):
+    def columnSource(self, value: list):
         self._columnSource = value
         self.columnSourceChanged.emit()
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QObject | None = None):
         QAbstractTableModel.__init__(self, parent)
         self._dataSourceSize: int = 0
         self._columnSource = []
@@ -182,7 +193,10 @@ class FluTreeModel(QAbstractTableModel):
         return {}
 
     def roleNames(self):
-        return {0x0101: b"rowModel", 0x0102: b"columnModel", }
+        return {
+            0x0101: b"rowModel",
+            0x0102: b"columnModel",
+        }
 
     def index(self, row, column, parent=...):
         if not self.hasIndex(row, column):
@@ -198,7 +212,7 @@ class FluTreeModel(QAbstractTableModel):
             return
         self.beginRemoveRows(QModelIndex(), row, row + count - 1)
         firstPart = self._rows[:row]
-        secondPart = self._rows[row + count:]
+        secondPart = self._rows[row + count :]
         self._rows.clear()
         self._rows.extend(firstPart)
         self._rows.extend(secondPart)

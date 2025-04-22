@@ -7,6 +7,7 @@ from PySide6.QtQml import (
     qmlRegisterType,
     qmlRegisterUncreatableMetaObject,
     qmlRegisterSingletonType,
+    QQmlApplicationEngine,
 )
 
 from .Def import (
@@ -46,7 +47,7 @@ _uri = "FluentUI"
 
 
 # noinspection PyPep8Naming
-def registerTypes(engine):
+def registerTypes(engine: QQmlApplicationEngine):
     qDebug(f"Load the resource '{rc.__name__}'")
     _registerTypes(_uri, _major, _minor)
     _initializeEngine(engine)
@@ -611,7 +612,7 @@ def _registerTypes(uri: str, major: int, minor: int):
 
 
 # noinspection PyPep8Naming,PyUnusedLocal
-def _initializeEngine(engine):
+def _initializeEngine(engine: QQmlApplicationEngine):
     engine.rootContext().setContextProperty("FluTools", FluTools())
     engine.rootContext().setContextProperty("FluApp", FluApp())
     engine.rootContext().setContextProperty("FluTheme", FluTheme())

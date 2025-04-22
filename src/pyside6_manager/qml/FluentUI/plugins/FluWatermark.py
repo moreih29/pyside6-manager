@@ -1,5 +1,7 @@
+# pyright: reportRedeclaration=none, reportArgumentType=none
+
 from PySide6.QtCore import Signal, Property, QPoint, QRectF
-from PySide6.QtGui import QColor, QFont, QFontMetricsF
+from PySide6.QtGui import QColor, QFont, QFontMetricsF, QPainter
 from PySide6.QtQuick import QQuickPaintedItem
 
 from .FluTextStyle import FluTextStyle
@@ -18,7 +20,7 @@ class FluWatermark(QQuickPaintedItem):
         QQuickPaintedItem.__init__(self)
         self._text: str = ""
         self._gap: QPoint = QPoint(100, 100)
-        self._offset: QPoint = QPoint(self._gap.x() / 2, self._gap.y() / 2)
+        self._offset: QPoint = QPoint(self._gap.x() // 2, self._gap.y() // 2)
         self._textColor: QColor = QColor(222, 222, 222, 222)
         self._rotate: int = 22
         self._textSize: int = 16
@@ -34,7 +36,7 @@ class FluWatermark(QQuickPaintedItem):
         return self._text
 
     @text.setter
-    def text(self, value):
+    def text(self, value: str):
         self._text = value
         self.textChanged.emit()
 
@@ -43,7 +45,7 @@ class FluWatermark(QQuickPaintedItem):
         return self._gap
 
     @gap.setter
-    def gap(self, value):
+    def gap(self, value: QPoint):
         self._gap = value
         self.gapChanged.emit()
 
@@ -52,7 +54,7 @@ class FluWatermark(QQuickPaintedItem):
         return self._offset
 
     @offset.setter
-    def offset(self, value):
+    def offset(self, value: QPoint):
         self._offset = value
         self.offsetChanged.emit()
 
@@ -61,7 +63,7 @@ class FluWatermark(QQuickPaintedItem):
         return self._textColor
 
     @textColor.setter
-    def textColor(self, value):
+    def textColor(self, value: QColor):
         self._textColor = value
         self.textColorChanged.emit()
 
@@ -70,7 +72,7 @@ class FluWatermark(QQuickPaintedItem):
         return self._rotate
 
     @rotate.setter
-    def rotate(self, value):
+    def rotate(self, value: int):
         self._rotate = value
         self.rotateChanged.emit()
 
@@ -79,11 +81,11 @@ class FluWatermark(QQuickPaintedItem):
         return self._textSize
 
     @textSize.setter
-    def textSize(self, value):
+    def textSize(self, value: int):
         self._textSize = value
         self.textSizeChanged.emit()
 
-    def paint(self, painter):
+    def paint(self, painter: QPainter):
         font = QFont()
         font.setFamily(FluTextStyle().family)
         font.setPixelSize(self._textSize)

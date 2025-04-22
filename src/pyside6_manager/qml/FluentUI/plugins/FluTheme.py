@@ -2,6 +2,8 @@
 The FluTheme class, which is used to define the fluent theme
 """
 
+# pyright: basic, reportRedeclaration=none, reportAttributeAccessIssue=none
+
 from PySide6.QtCore import (
     QObject,
     Signal,
@@ -10,6 +12,7 @@ from PySide6.QtCore import (
     QFileSystemWatcher,
     QMutex,
     QThreadPool,
+    QTimerEvent,
 )
 from PySide6.QtGui import QColor, QGuiApplication, QPalette
 
@@ -59,7 +62,7 @@ class FluTheme(QObject):
         return self._blurBehindWindowEnabled
 
     @blurBehindWindowEnabled.setter
-    def blurBehindWindowEnabled(self, value):
+    def blurBehindWindowEnabled(self, value: bool):
         self._blurBehindWindowEnabled = value
         self.blurBehindWindowEnabledChanged.emit()
 
@@ -85,7 +88,7 @@ class FluTheme(QObject):
         self._blurBehindWindowEnabled: bool = False
         self._darkMode: int = 0
         self._animationEnabled: bool = False
-        self._accentColor = FluColors().Blue
+        self._accentColor: FluAccentColor = FluColors().Blue
         self._darkMode = FluThemeType.DarkMode.Light
         self._nativeText = False
         self._animationEnabled = True
@@ -93,16 +96,16 @@ class FluTheme(QObject):
         self._refreshColors()
         self._watcher = QFileSystemWatcher()
         self._mutex = QMutex()
-        self._desktopImagePath = ""
-        self.darkModeChanged.connect(self, lambda: {self.darkChanged.emit()})
-        self.darkChanged.connect(self, lambda: self._refreshColors())
-        self.accentColorChanged.connect(self, lambda: self._refreshColors())
+        self._desktopImagePath: str = ""
+        self.darkModeChanged.connect(lambda: {self.darkChanged.emit()})
+        self.darkChanged.connect(lambda: self._refreshColors())
+        self.accentColorChanged.connect(lambda: self._refreshColors())
         self.blurBehindWindowEnabledChanged.connect(
-            self, lambda: self.checkUpdateDesktopImage()
+            lambda: self.checkUpdateDesktopImage()
         )
         self.startTimer(1000)
 
-    def timerEvent(self, event):
+    def timerEvent(self, event: QTimerEvent):
         self.checkUpdateDesktopImage()
 
     def checkUpdateDesktopImage(self):
@@ -111,7 +114,7 @@ class FluTheme(QObject):
 
         def updateImage() -> None:
             self._mutex.lock()
-            path = Tools.getWallpaperFilePath()
+            path: str = Tools.getWallpaperFilePath()
             if self._desktopImagePath != path:
                 if self._desktopImagePath != "":
                     self._watcher.removePath(self._desktopImagePath)

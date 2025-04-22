@@ -16,7 +16,6 @@ def main() -> int:
     app = QGuiApplication(sys.argv)
     engine = QQmlApplicationEngine()
     FluentUI.registerTypes(engine)
-
     engine.load(ROOT / "main.qml")
 
     if not engine.rootObjects():

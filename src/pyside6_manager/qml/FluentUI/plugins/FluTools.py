@@ -1,3 +1,5 @@
+# pyright: basic, reportAttributeAccessIssue=none
+
 import base64
 import sys
 
@@ -263,7 +265,7 @@ class FluTools(QObject):
         return window.screen().availableGeometry()
 
     @Slot(result=str)
-    def getWallpaperFilePath(self):
+    def getWallpaperFilePath(self) -> str:
         if self.isWin():
             path = SystemParametersInfoW()
             if path is not None:
@@ -287,7 +289,7 @@ class FluTools(QObject):
                 startIndex = result.indexOf("file:///")
                 if startIndex != -1:
                     path = result.mid(startIndex + 7, result.length() - startIndex - 8)
-                    return path
+                    return str(path)
         elif self.isMacos():
             process = QProcess()
             args = [
@@ -299,5 +301,5 @@ class FluTools(QObject):
             path = process.readAllStandardOutput().trimmed()
             if path.isEmpty():
                 return "/System/Library/CoreServices/DefaultDesktop.heic"
-            return path
+            return str(path)
         return ""

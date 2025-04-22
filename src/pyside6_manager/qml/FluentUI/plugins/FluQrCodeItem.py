@@ -1,8 +1,12 @@
+# pyright: reportRedeclaration=none,reportIncompatibleMethodOverride=none
+
 import qrcode
+import qrcode.constants
+from qrcode.main import QRCode
 from PIL import ImageQt
 
 from PySide6.QtCore import Signal, Property, QRect
-from PySide6.QtGui import QColor
+from PySide6.QtGui import QColor, QPainter
 from PySide6.QtQuick import QQuickPaintedItem
 
 
@@ -18,7 +22,7 @@ class FluQrCodeItem(QQuickPaintedItem):
         return self._text
 
     @text.setter
-    def text(self, value):
+    def text(self, value: str):
         self._text = value
         self.textChanged.emit()
 
@@ -27,7 +31,7 @@ class FluQrCodeItem(QQuickPaintedItem):
         return self._color
 
     @color.setter
-    def color(self, value):
+    def color(self, value: QColor):
         self._color = value
         self.colorChanged.emit()
 
@@ -36,7 +40,7 @@ class FluQrCodeItem(QQuickPaintedItem):
         return self._bgColor
 
     @bgColor.setter
-    def bgColor(self, value):
+    def bgColor(self, value: QColor):
         self._bgColor = value
         self.bgColorChanged.emit()
 
@@ -45,7 +49,7 @@ class FluQrCodeItem(QQuickPaintedItem):
         return self._size
 
     @size.setter
-    def size(self, value):
+    def size(self, value: int):
         self._size = value
         self.sizeChanged.emit()
 
@@ -67,13 +71,13 @@ class FluQrCodeItem(QQuickPaintedItem):
         self.setHeight(self._size)
         self.update()
 
-    def paint(self, painter):
+    def paint(self, painter: QPainter):
         if self._text == "":
             return
         if len(self._text) > 1024:
             return
         painter.save()
-        qr = qrcode.QRCode(
+        qr = QRCode(
             version=1,
             error_correction=qrcode.constants.ERROR_CORRECT_H,
             box_size=10,
@@ -85,6 +89,6 @@ class FluQrCodeItem(QQuickPaintedItem):
             fill_color=self._color.name(QColor.NameFormat.HexRgb),
             back_color=self._bgColor.name(QColor.NameFormat.HexRgb),
         )
-        image = ImageQt.toqimage(qr_image)
+        image = ImageQt.toqimage(qr_image)  # pyright: ignore[reportUnknownMemberType]
         painter.drawImage(QRect(0, 0, int(self.width()), int(self.height())), image)
         painter.restore()
