@@ -13,112 +13,297 @@ FluentUI는 사용자와의 상호작용을 위한 다양한 다이얼로그와 
 - `negativeText`: 부정 버튼 텍스트 (기본값: "취소")
 - `positiveText`: 긍정 버튼 텍스트 (기본값: "확인")
 - `neutralText`: 중립 버튼 텍스트 (기본값: "적용")
+- `contentDelegate`: 커스텀 컨텐츠를 위한 delegate (Component 타입)
 - `darkMode`: 다크 모드 여부
 
-### 사용 예제
+### 신호 (Signals)
+- `negativeClicked`: 부정 버튼 클릭 시 발생
+- `positiveClicked`: 긍정 버튼 클릭 시 발생
+- `neutralClicked`: 중립 버튼 클릭 시 발생
+
+### 사용 예제 - 두 개 버튼 다이얼로그
 ```qml
+import QtQuick
 import FluentUI
 
 FluContentDialog {
     id: dialog
-    title: "다이얼로그 제목"
-    message: "다이얼로그 내용 메시지입니다."
+    title: qsTr("Friendly Reminder")
+    message: qsTr("Are you sure you want to opt out?")
     buttonFlags: FluContentDialogType.NegativeButton | FluContentDialogType.PositiveButton
-    negativeText: "취소"
-    positiveText: "확인"
+    negativeText: qsTr("Cancel")
+    positiveText: qsTr("OK")
     
     onNegativeClicked: {
-        console.log("취소 버튼 클릭됨")
+        console.log("Cancel 버튼 클릭됨")
     }
     
     onPositiveClicked: {
-        console.log("확인 버튼 클릭됨")
+        console.log("OK 버튼 클릭됨")
     }
 }
 
 // 다이얼로그 표시
-Button {
-    text: "다이얼로그 열기"
+FluButton {
+    text: qsTr("Show Double Button Dialog")
+    onClicked: dialog.open()
+}
+```
+
+### 사용 예제 - 세 개 버튼 다이얼로그
+```qml
+import QtQuick
+import FluentUI
+
+FluContentDialog {
+    id: dialog
+    title: qsTr("Friendly Reminder")
+    message: qsTr("Are you sure you want to opt out?")
+    buttonFlags: FluContentDialogType.NeutralButton | FluContentDialogType.NegativeButton | FluContentDialogType.PositiveButton
+    negativeText: qsTr("Cancel")
+    positiveText: qsTr("OK")
+    neutralText: qsTr("Minimize")
+    
+    onNegativeClicked: {
+        console.log("Cancel 버튼 클릭됨")
+    }
+    
+    onPositiveClicked: {
+        console.log("OK 버튼 클릭됨")
+    }
+    
+    onNeutralClicked: {
+        console.log("Minimize 버튼 클릭됨")
+    }
+}
+
+// 다이얼로그 표시
+FluButton {
+    text: qsTr("Show Triple Button Dialog")
+    onClicked: dialog.open()
+}
+```
+
+### 사용 예제 - 커스텀 콘텐츠 다이얼로그
+```qml
+import QtQuick
+import FluentUI
+
+FluContentDialog {
+    id: dialog
+    title: qsTr("Friendly Reminder")
+    message: qsTr("Data is loading, please wait...")
+    buttonFlags: FluContentDialogType.NegativeButton | FluContentDialogType.PositiveButton
+    negativeText: qsTr("Unload")
+    positiveText: qsTr("OK")
+    
+    contentDelegate: Component {
+        Item {
+            implicitWidth: parent.width
+            implicitHeight: 80
+            
+            FluProgressRing {
+                anchors.centerIn: parent
+            }
+        }
+    }
+    
+    onNegativeClicked: {
+        console.log("Unload 버튼 클릭됨")
+    }
+    
+    onPositiveClicked: {
+        console.log("OK 버튼 클릭됨")
+    }
+}
+
+// 다이얼로그 표시
+FluButton {
+    text: qsTr("Custom Content Dialog")
     onClicked: dialog.open()
 }
 ```
 
 ## 정보 표시줄 (FluInfoBar)
 
-간단한 정보, 경고, 오류 등을 표시하는 컴포넌트입니다.
+간단한 정보, 경고, 오류 등을 표시하는 컴포넌트입니다. FluentUI는 전역 함수로 여러 타입의 정보 표시줄을 손쉽게 표시할 수 있도록 도와줍니다.
 
-### 주요 속성
-- `title`: 제목
-- `message`: 메시지
-- `token`: 정보 표시 시간 (밀리초, 0: 무제한)
-- `severity`: 심각도 (FluInfoBarType.Info, Success, Warning, Error, Critical)
-- `iconVisible`: 아이콘 표시 여부
-- `closeButtonVisible`: 닫기 버튼 표시 여부
+### 전역 함수
+- `showInfo(message, duration, actionButtonText)`: 정보 메시지 표시
+- `showWarning(message, duration, actionButtonText)`: 경고 메시지 표시
+- `showError(message, duration, actionButtonText)`: 오류 메시지 표시
+- `showSuccess(message, duration, actionButtonText)`: 성공 메시지 표시
+- `showLoading()`: 로딩 메시지 표시
+- `clearAllInfo()`: 모든 정보 메시지 닫기
 
-### 사용 예제
+### 매개변수
+- `message`: 표시할 메시지
+- `duration`: 표시 시간(밀리초, 0: 수동으로 닫을 때까지 표시)
+- `actionButtonText`: 액션 버튼에 표시될 텍스트
+
+### 사용 예제 - 기본 정보 표시
 ```qml
+import QtQuick
 import FluentUI
 
-FluInfoBar {
-    id: infoBar
-    title: "정보"
-    message: "작업이 성공적으로 완료되었습니다."
-    token: 3000  // 3초 후 자동으로 사라짐
-    severity: FluInfoBarType.Success
-    closeButtonVisible: true
+Column {
+    spacing: 10
+    
+    FluButton {
+        text: qsTr("Info")
+        onClicked: {
+            showInfo(qsTr("This is an InfoBar in the Info Style"))
+        }
+    }
+    
+    FluButton {
+        text: qsTr("Warning")
+        onClicked: {
+            showWarning(qsTr("This is an InfoBar in the Warning Style"))
+        }
+    }
+    
+    FluButton {
+        text: qsTr("Error")
+        onClicked: {
+            showError(qsTr("This is an InfoBar in the Error Style"))
+        }
+    }
+    
+    FluButton {
+        text: qsTr("Success")
+        onClicked: {
+            showSuccess(qsTr("This is an InfoBar in the Success Style"))
+        }
+    }
 }
+```
 
-// 정보 표시줄 표시
-Button {
-    text: "정보 표시"
-    onClicked: infoBar.open()
+### 사용 예제 - 수동으로 닫는 정보 표시
+```qml
+import QtQuick
+import FluentUI
+
+Item {
+    property var info1
+    
+    Column {
+        spacing: 10
+        
+        FluButton {
+            text: qsTr("InfoBar that needs to be turned off manually")
+            onClicked: {
+                showInfo(qsTr("This is an InfoBar in the Info Style"), 0, qsTr("Manual shutdown is supported"))
+            }
+        }
+        
+        Row {
+            spacing: 5
+            
+            FluButton {
+                text: (info1 ? qsTr("close '%1'") : qsTr("show '%1")).arg("info1")
+                onClicked: {
+                    if (info1) {
+                        info1.close()
+                        info1 = null
+                        return
+                    }
+                    info1 = showInfo(qsTr("This is an '%1'").arg("info1"), 0)
+                }
+            }
+            
+            FluButton {
+                text: qsTr("clear all info")
+                onClicked: {
+                    clearAllInfo()
+                }
+            }
+        }
+    }
 }
 ```
 
 ## 시트 (FluSheet)
 
-화면 하단에서 올라오는 시트 형태의 다이얼로그입니다.
+화면 다양한 방향에서 슬라이드되는 시트 형태의 다이얼로그입니다.
 
 ### 주요 속성
+- `title`: 시트 제목
 - `contentWidth`: 내용 너비
 - `contentHeight`: 내용 높이
 - `coverWidth`: 커버 너비
 - `coverHeight`: 커버 높이
 - `coverRadius`: 커버 테두리 반경
 
+### 메서드
+- `open(type)`: 시트를 지정된 방향(FluSheetType.Top, Right, Bottom, Left)에서 열기
+
 ### 사용 예제
 ```qml
+import QtQuick
 import FluentUI
 
-FluSheet {
-    id: sheet
-    contentWidth: 400
-    contentHeight: 300
-    
-    // 시트 내용
-    Rectangle {
-        anchors.fill: parent
-        color: FluTheme.dark ? Qt.rgba(50/255,50/255,50/255,1) : Qt.rgba(240/255,240/255,240/255,1)
+Item {
+    FluSheet {
+        id: sheet
+        title: qsTr("Title")
         
         FluText {
-            anchors.centerIn: parent
-            text: "시트 내용입니다."
-        }
-        
-        FluFilledButton {
-            anchors.bottom: parent.bottom
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottomMargin: 20
-            text: "닫기"
-            onClicked: sheet.close()
+            text: qsTr("Some contents...\nSome contents...\nSome contents...")
+            anchors {
+                left: parent.left
+                leftMargin: 10
+            }
         }
     }
-}
-
-// 시트 표시
-Button {
-    text: "시트 열기"
-    onClicked: sheet.open()
+    
+    Column {
+        spacing: 10
+        
+        Row {
+            spacing: 10
+            
+            FluButton {
+                width: 80
+                height: 30
+                text: qsTr("top")
+                onClicked: {
+                    sheet.open(FluSheetType.Top)
+                }
+            }
+            
+            FluButton {
+                width: 80
+                height: 30
+                text: qsTr("right")
+                onClicked: {
+                    sheet.open(FluSheetType.Right)
+                }
+            }
+        }
+        
+        Row {
+            spacing: 10
+            
+            FluButton {
+                width: 80
+                height: 30
+                text: qsTr("bottom")
+                onClicked: {
+                    sheet.open(FluSheetType.Bottom)
+                }
+            }
+            
+            FluButton {
+                width: 80
+                height: 30
+                text: qsTr("left")
+                onClicked: {
+                    sheet.open(FluSheetType.Left)
+                }
+            }
+        }
+    }
 }
 ```
 
@@ -137,6 +322,7 @@ Button {
 
 ### 사용 예제
 ```qml
+import QtQuick
 import FluentUI
 
 FluPopup {
@@ -167,7 +353,7 @@ FluPopup {
 }
 
 // 팝업 표시
-Button {
+FluButton {
     text: "팝업 열기"
     onClicked: popup.open()
 }
@@ -187,6 +373,7 @@ Button {
 
 ### 사용 예제
 ```qml
+import QtQuick
 import FluentUI
 
 FluButton {
@@ -215,6 +402,7 @@ UI 요소에 대한 가이드 투어를 제공하는 컴포넌트입니다.
 
 ### 사용 예제
 ```qml
+import QtQuick
 import FluentUI
 
 // 투어 대상 요소들
@@ -258,7 +446,7 @@ FluTour {
 }
 
 // 투어 시작
-Button {
+FluButton {
     text: "투어 시작"
     onClicked: tour.start()
 }
@@ -274,6 +462,7 @@ Button {
 
 ### 사용 예제
 ```qml
+import QtQuick
 import FluentUI
 
 FluMenu {
@@ -322,6 +511,7 @@ FluButton {
 
 ### 사용 예제
 ```qml
+import QtQuick
 import FluentUI
 
 FluMenuBar {
@@ -394,6 +584,7 @@ FluMenuBar {
 
 ### 사용 예제
 ```qml
+import QtQuick
 import FluentUI
 
 FluWindowDialog {
@@ -440,6 +631,7 @@ FluButton {
 
 ### 사용 예제
 ```qml
+import QtQuick
 import FluentUI
 
 FluBadge {
@@ -456,7 +648,7 @@ FluBadge {
 }
 
 // 배지 카운트 변경
-Button {
+FluButton {
     text: "카운트 증가"
     onClicked: badge.count++
 }
@@ -477,6 +669,7 @@ Button {
 
 ### 사용 예제
 ```qml
+import QtQuick
 import FluentUI
 
 FluCarousel {

@@ -19,40 +19,59 @@ FluentUI는 개발을 보다 효율적으로 할 수 있도록 다양한 유틸�
 - `itemHoverColor`: 항목 호버 색상
 - `itemPressColor`: 항목 누름 색상
 - `animationEnabled`: 애니메이션 활성화 여부
+- `nativeText`: 네이티브 텍스트 렌더링 사용 여부
+- `blurBehindWindowEnabled`: 창 뒤 블러 효과 활성화 여부
+- `accentColor`: 강조 색상
 
 ### 사용 예제
 ```qml
 import FluentUI
 
-FluWindow {
-    id: window
-    width: 800
-    height: 600
-    title: "테마 예제"
-    
-    Column {
-        anchors.centerIn: parent
-        spacing: 20
-        
-        FluText {
-            text: "현재 테마: " + (FluTheme.dark ? "다크" : "라이트")
-            font.pixelSize: 16
+// 테마 변경 예제
+FluToggleSwitch {
+    text: "다크 모드"
+    checked: FluTheme.dark
+    onClicked: {
+        if(FluTheme.dark){
+            FluTheme.darkMode = FluThemeType.Light
+        }else{
+            FluTheme.darkMode = FluThemeType.Dark
         }
-        
-        FluToggleSwitch {
-            text: "다크 모드"
-            checked: FluTheme.dark
-            onClicked: {
-                FluTheme.darkMode = checked ? FluThemeType.DarkMode.Dark : FluThemeType.DarkMode.Light
-            }
-        }
-        
-        FluFilledButton {
-            text: "시스템 테마 사용"
-            onClicked: {
-                FluTheme.darkMode = FluThemeType.DarkMode.System
-            }
-        }
+    }
+}
+
+// 시스템 테마 사용
+FluFilledButton {
+    text: "시스템 테마 사용"
+    onClicked: {
+        FluTheme.darkMode = FluThemeType.System
+    }
+}
+
+// 애니메이션 활성화/비활성화
+FluToggleSwitch {
+    text: "애니메이션 활성화"
+    checked: FluTheme.animationEnabled
+    onClicked: {
+        FluTheme.animationEnabled = !FluTheme.animationEnabled
+    }
+}
+
+// 네이티브 텍스트 사용
+FluToggleSwitch {
+    text: "네이티브 텍스트"
+    checked: FluTheme.nativeText
+    onClicked: {
+        FluTheme.nativeText = !FluTheme.nativeText
+    }
+}
+
+// 블러 효과 활성화/비활성화
+FluToggleSwitch {
+    text: "블러 효과 활성화"
+    checked: FluTheme.blurBehindWindowEnabled
+    onClicked: {
+        FluTheme.blurBehindWindowEnabled = !FluTheme.blurBehindWindowEnabled
     }
 }
 ```
@@ -63,12 +82,14 @@ FluentUI의 색상 팔레트를 제공하는 클래스입니다.
 
 ### 주요 속성
 - 다양한 색상 값 제공: Yellow, Orange, Red, Magenta, Purple, Blue, Teal, Green 등
-- 각 색상은 기본, 라이트, 다크 변형 제공
+- 각 색상은 normal, light, dark, lighter, darker 변형 제공
+- 각 색상은 강조색으로 사용 가능
 
 ### 사용 예제
 ```qml
 import FluentUI
 
+// 색상 팔레트 표시
 Grid {
     columns: 3
     spacing: 10
@@ -78,7 +99,7 @@ Grid {
         Rectangle {
             width: 100
             height: 100
-            color: FluColors[modelData]
+            color: FluColors[modelData].normal
             
             FluText {
                 anchors.centerIn: parent
@@ -86,6 +107,18 @@ Grid {
                 color: "white"
             }
         }
+    }
+}
+
+// 테마 강조색 변경
+FluTheme.accentColor = FluColors.Orange
+
+// 커스텀 강조색 생성
+FluColorPicker{
+    id: colorPicker
+    current: FluTheme.accentColor.normal
+    onAccepted: {
+        FluTheme.accentColor = FluColors.createAccentColor(current)
     }
 }
 ```
@@ -130,7 +163,7 @@ Grid {
     FluIcon {
         iconSource: FluentIcons.Download
         iconSize: 24
-        iconColor: FluColors.Blue
+        iconColor: FluColors.Blue.normal
     }
 }
 ```
@@ -162,7 +195,7 @@ Column {
     
     FluText {
         text: "색상이 있는 텍스트"
-        color: FluColors.Blue
+        color: FluColors.Blue.normal
     }
 }
 ```
@@ -478,7 +511,7 @@ FluCopyableText {
     text: "복사 가능한 텍스트입니다. 클릭하여 복사하세요."
     tipText: "클립보드에 복사되었습니다!"
     showCopyIcon: true
-    color: FluColors.Blue
+    color: FluColors.Blue.normal
 }
 ```
 

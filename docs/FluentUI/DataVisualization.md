@@ -14,6 +14,7 @@ FluentUI는 데이터를 시각적으로 표현하기 위한 다양한 컴포넌
 
 ### 사용 예제
 ```qml
+import QtQuick
 import FluentUI
 
 FluChart {
@@ -21,32 +22,36 @@ FluChart {
     height: 300
     chartType: FluChartType.Line
     chartData: {
-        "labels": ["1월", "2월", "3월", "4월", "5월", "6월"],
-        "datasets": [
-            {
-                "label": "데이터셋 1",
-                "data": [12, 19, 3, 5, 2, 3],
-                "backgroundColor": FluColors.Blue.toString(),
-                "borderColor": FluColors.Blue.toString(),
-                "borderWidth": 2,
-                "fill": false
-            },
-            {
-                "label": "데이터셋 2",
-                "data": [7, 11, 5, 8, 3, 7],
-                "backgroundColor": FluColors.Red.toString(),
-                "borderColor": FluColors.Red.toString(),
-                "borderWidth": 2,
-                "fill": false
-            }
-        ]
+        return {
+            "labels": ["1월", "2월", "3월", "4월", "5월", "6월"],
+            "datasets": [
+                {
+                    "label": "데이터셋 1",
+                    "data": [12, 19, 3, 5, 2, 3],
+                    "backgroundColor": FluColors.Blue.toString(),
+                    "borderColor": FluColors.Blue.toString(),
+                    "borderWidth": 2,
+                    "fill": false
+                },
+                {
+                    "label": "데이터셋 2",
+                    "data": [7, 11, 5, 8, 3, 7],
+                    "backgroundColor": FluColors.Red.toString(),
+                    "borderColor": FluColors.Red.toString(),
+                    "borderWidth": 2,
+                    "fill": false
+                }
+            ]
+        }
     }
     chartOptions: {
-        "responsive": true,
-        "plugins": {
-            "title": {
-                "display": true,
-                "text": "라인 차트 예제"
+        return {
+            "responsive": true,
+            "plugins": {
+                "title": {
+                    "display": true,
+                    "text": "라인 차트 예제"
+                }
             }
         }
     }
@@ -65,6 +70,7 @@ FluChart {
 
 ### 사용 예제
 ```qml
+import QtQuick
 import FluentUI
 
 Column {
@@ -98,6 +104,7 @@ Column {
 
 ### 사용 예제
 ```qml
+import QtQuick
 import FluentUI
 
 Row {
@@ -127,39 +134,148 @@ Row {
 
 ### 주요 속성
 - `model`: 타임라인 항목 모델
-- `timelineSpacing`: 항목 간 간격
-- `anchors`: 타임라인 앵커 (FluTimelineType.Left, Center, Right)
-- `orientation`: 타임라인 방향 (FluTimelineType.Vertical, Horizontal)
+- `mode`: 타임라인 모드 (FluTimelineType.Left, Right, Alternate)
+- `lableDelegate`: 라벨에 대한 delegate (옵션)
+- `textDelegate`: 텍스트에 대한 delegate (옵션)
+- `dotDelegate`: 점에 대한 delegate (옵션)
 
 ### 사용 예제
 ```qml
+import QtQuick
+import FluentUI
+
+Column {
+    spacing: 20
+    
+    // 타임라인 모드 선택
+    Row {
+        spacing: 10
+        
+        FluText {
+            text: "mode:"
+            anchors.verticalCenter: parent.verticalCenter
+        }
+        
+        FluDropDownButton {
+            id: btnMode
+            text: "Alternate"
+            width: 100
+            
+            FluMenuItem {
+                text: "Left"
+                onClicked: {
+                    btnMode.text = text
+                    timeline.mode = FluTimelineType.Left
+                }
+            }
+            
+            FluMenuItem {
+                text: "Right"
+                onClicked: {
+                    btnMode.text = text
+                    timeline.mode = FluTimelineType.Right
+                }
+            }
+            
+            FluMenuItem {
+                text: "Alternate"
+                onClicked: {
+                    btnMode.text = text
+                    timeline.mode = FluTimelineType.Alternate
+                }
+            }
+        }
+    }
+    
+    // 타임라인 컴포넌트
+    FluTimeline {
+        id: timeline
+        width: parent.width
+        mode: FluTimelineType.Alternate
+        model: [
+            {
+                lable: "2023-03-28",
+                text: "이벤트 1 설명"
+            },
+            {
+                lable: "2023-02-28",
+                text: "이벤트 2 설명"
+            },
+            {
+                lable: "2023-01-01",
+                text: "이벤트 3 설명"
+            }
+        ]
+    }
+}
+```
+
+### 사용 예제 - 커스텀 Delegate 추가
+```qml
+import QtQuick
 import FluentUI
 
 FluTimeline {
-    width: 600
-    height: 400
-    timelineSpacing: 40
-    anchors: FluTimelineType.Left
-    orientation: FluTimelineType.Vertical
+    width: parent.width
+    mode: FluTimelineType.Alternate
+    
+    // 커스텀 점 컴포넌트
+    Component {
+        id: customDot
+        Rectangle {
+            width: 16
+            height: 16
+            radius: 8
+            border.width: 4
+            border.color: FluTheme.dark ? FluColors.Teal.lighter : FluColors.Teal.dark
+        }
+    }
+    
+    // 커스텀 라벨 컴포넌트
+    Component {
+        id: customLabel
+        FluText {
+            wrapMode: Text.WrapAnywhere
+            font.bold: true
+            horizontalAlignment: isRight ? Qt.AlignRight : Qt.AlignLeft
+            text: modelData.lable
+            color: FluTheme.dark ? FluColors.Teal.lighter : FluColors.Teal.dark
+            
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: {
+                    console.log(modelData.lable)
+                }
+            }
+        }
+    }
+    
+    // 커스텀 텍스트 컴포넌트
+    Component {
+        id: customText
+        FluText {
+            wrapMode: Text.WrapAnywhere
+            horizontalAlignment: isRight ? Qt.AlignRight : Qt.AlignLeft
+            text: modelData.text
+            linkColor: FluTheme.dark ? FluColors.Teal.lighter : FluColors.Teal.dark
+            onLinkActivated: (link) => {
+                Qt.openUrlExternally(link)
+            }
+        }
+    }
     
     model: [
         {
-            title: "이벤트 1",
-            description: "첫 번째 이벤트 설명입니다.",
-            timestamp: "2023-01-01 10:00",
-            iconSource: FluentIcons.Event
+            lable: "2023-03-28",
+            text: '이벤트 설명과 <a href="https://example.com">링크</a>',
+            lableDelegate: () => customLabel,
+            textDelegate: () => customText,
+            dot: () => customDot
         },
         {
-            title: "이벤트 2",
-            description: "두 번째 이벤트 설명입니다.",
-            timestamp: "2023-01-05 14:30",
-            iconSource: FluentIcons.Message
-        },
-        {
-            title: "이벤트 3",
-            description: "세 번째 이벤트 설명입니다.",
-            timestamp: "2023-01-10 09:15",
-            iconSource: FluentIcons.Flag
+            lable: "2023-02-28",
+            text: "이벤트 2 설명"
         }
     ]
 }
@@ -180,6 +296,7 @@ FluTimeline {
 
 ### 사용 예제
 ```qml
+import QtQuick
 import FluentUI
 
 FluTreeView {
@@ -215,6 +332,119 @@ FluTreeView {
 }
 ```
 
+## 테이블 뷰 (FluTableView)
+
+데이터를 표 형태로 표시하는 컴포넌트입니다.
+
+### 주요 속성
+- `rows`: 행 수
+- `columns`: 열 수
+- `columnSource`: 열 정보 소스
+- `rowHeight`: 행 높이
+- `columnWidth`: 열 너비
+- `editTriggers`: 편집 트리거 (FluTableViewEditTrigger.None, DoubleClicked, SelectedClicked)
+
+### 주요 메서드
+- `appendRow(obj)`: 행 추가
+- `removeRow(row)`: 행 삭제
+- `setRow(row, obj)`: 행 설정
+- `getRow(row)`: 행 가져오기
+- `customItem(component, options)`: 커스텀 아이템 생성
+- `closeEditor()`: 편집기 닫기
+- `sort(compareFn)`: 정렬 수행
+- `filter(filterFn)`: 필터 적용
+
+### 사용 예제
+```qml
+import QtQuick
+import QtQuick.Layouts
+import FluentUI
+
+Item {
+    width: 600
+    height: 500
+    
+    Component {
+        id: comCheckbox
+        Item {
+            FluCheckBox {
+                anchors.centerIn: parent
+                checked: true === options.checked
+                animationEnabled: false
+                clickListener: function() {
+                    var obj = tableView.getRow(row)
+                    obj.checkbox = tableView.customItem(comCheckbox, {checked: !options.checked})
+                    tableView.setRow(row, obj)
+                }
+            }
+        }
+    }
+    
+    Component {
+        id: comAction
+        Item {
+            RowLayout {
+                anchors.centerIn: parent
+                FluButton {
+                    text: qsTr("Delete")
+                    onClicked: {
+                        tableView.closeEditor()
+                        tableView.removeRow(row)
+                    }
+                }
+                FluFilledButton {
+                    text: qsTr("Edit")
+                    onClicked: {
+                        var obj = tableView.getRow(row)
+                        obj.name = "수정된 이름"
+                        tableView.setRow(row, obj)
+                    }
+                }
+            }
+        }
+    }
+    
+    FluTableView {
+        id: tableView
+        anchors.fill: parent
+        rowHeight: 50
+        columnSource: [
+            {
+                title: "체크박스",
+                dataIndex: "checkbox",
+                width: 100
+            },
+            {
+                title: "이름",
+                dataIndex: "name",
+                width: 150
+            },
+            {
+                title: "나이",
+                dataIndex: "age", 
+                width: 100
+            },
+            {
+                title: "작업",
+                dataIndex: "action",
+                width: 200
+            }
+        ]
+        
+        Component.onCompleted: {
+            for (var i = 0; i < 20; i++) {
+                tableView.appendRow({
+                    checkbox: tableView.customItem(comCheckbox, {checked: true}),
+                    name: "사용자 " + i,
+                    age: 20 + i,
+                    action: tableView.customItem(comAction)
+                })
+            }
+        }
+    }
+}
+```
+
 ## 별점 컨트롤 (FluRatingControl)
 
 사용자가 별점을 매길 수 있는 컴포넌트입니다.
@@ -230,6 +460,7 @@ FluTreeView {
 
 ### 사용 예제
 ```qml
+import QtQuick
 import FluentUI
 
 Column {
@@ -249,11 +480,14 @@ Column {
         value: 0
         maxValue: 5
         readOnly: false
-        fillColor: "gold"
+        onValueChanged: {
+            console.log("현재 별점: " + value)
+        }
     }
     
+    // 별점 표시
     FluText {
-        text: "현재 별점: " + ratingControl.value
+        text: "현재 별점: " + ratingControl.value.toFixed(1)
     }
 }
 ```

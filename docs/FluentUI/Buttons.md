@@ -18,11 +18,13 @@ FluentUI는 다양한 상황에 적합한 여러 버튼 스타일을 제공합�
 ### 사용 예제
 ```qml
 import FluentUI
+import QtQuick
 
-FluButton {
-    text: "기본 버튼"
+FluButton{
+    text: qsTr("Standard Button")
+    disabled: false
     onClicked: {
-        console.log("버튼이 클릭되었습니다")
+        console.log("Standard Button Clicked")
     }
 }
 ```
@@ -43,11 +45,13 @@ FluButton {
 ### 사용 예제
 ```qml
 import FluentUI
+import QtQuick
 
-FluFilledButton {
-    text: "강조 버튼"
+FluFilledButton{
+    text: qsTr("Filled Button")
+    disabled: false
     onClicked: {
-        console.log("강조 버튼이 클릭되었습니다")
+        console.log("Filled Button Clicked")
     }
 }
 ```
@@ -66,11 +70,13 @@ FluFilledButton {
 ### 사용 예제
 ```qml
 import FluentUI
+import QtQuick
 
-FluTextButton {
-    text: "텍스트 버튼"
+FluTextButton{
+    text: qsTr("Text Button")
+    disabled: false
     onClicked: {
-        console.log("텍스트 버튼이 클릭되었습니다")
+        console.log("Text Button Clicked")
     }
 }
 ```
@@ -112,9 +118,11 @@ FluIconButton {
 ### 사용 예제
 ```qml
 import FluentUI
+import QtQuick
 
-FluToggleButton {
-    text: "토글 버튼"
+FluToggleButton{
+    text: qsTr("Toggle Button")
+    disabled: false
     onClicked: {
         console.log("토글 상태: " + checked)
     }
@@ -161,22 +169,17 @@ FluDropDownButton {
 ### 사용 예제
 ```qml
 import FluentUI
+import QtQuick
 
-FluLoadingButton {
-    id: loadingButton
-    text: "로딩 버튼"
+FluLoadingButton{
+    text: qsTr("Loading Button")
+    loading: false
     onClicked: {
+        // 로딩 시작
         loading = true
-        // 일정 시간 후 로딩 상태 해제
-        timer.start()
-    }
-
-    Timer {
-        id: timer
-        interval: 2000
-        onTriggered: {
-            loadingButton.loading = false
-        }
+        
+        // 작업 완료 후 로딩 끝내기
+        // loading = false 
     }
 }
 ```
@@ -187,35 +190,40 @@ FluLoadingButton {
 
 ### 주요 속성
 - `text`: 버튼에 표시될 텍스트
-- `progress`: 진행률 (0-100)
-- `loading`: 로딩 상태 여부
+- `progress`: 진행률 (0.0 ~ 1.0)
 - `disabled`: 버튼 비활성화 여부 (기본값: false)
 
 ### 사용 예제
 ```qml
 import FluentUI
+import QtQuick
 
-FluProgressButton {
+FluProgressButton{
     id: progressButton
-    text: "진행 버튼"
+    text: qsTr("Progress Button")
+    progress: 0
     onClicked: {
-        loading = true
-        progress = 0
-        progressTimer.start()
+        progressButton.progress = 0
+        
+        // 진행률 증가 예시 (실제로는 작업에 따라 업데이트)
+        // Timer 등을 사용하여 progress 값을 0부터 1까지 조절
+        timer.restart()
     }
-
+    
     Timer {
-        id: progressTimer
-        interval: 100
+        id: timer
+        interval: 200
         repeat: true
         onTriggered: {
-            progressButton.progress += 5
-            if (progressButton.progress >= 100) {
-                progressButton.loading = false
-                progressButton.progress = 0
+            progressButton.progress = (progressButton.progress + 0.1).toFixed(1)
+            if(progressButton.progress >= 1.0) {
                 stop()
             }
         }
     }
 }
-``` 
+```
+
+## 키보드 지원
+
+모든 버튼 컴포넌트는 Tab 키로 포커스를 이동하고 Space 키로 클릭 이벤트를 실행할 수 있습니다. 

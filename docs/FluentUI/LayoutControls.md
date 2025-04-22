@@ -154,59 +154,135 @@ FluWindow {
 
 ### 주요 속성
 - `currentIndex`: 현재 선택된 탭 인덱스
-- `addButtonVisibility`: 탭 추가 버튼 표시 여부
-- `closeButtonVisibility`: 탭 닫기 버튼 표시 여부
-- `tabWidthBehavior`: 탭 너비 동작 방식
-- `contentItemData`: 탭 내용 데이터
+- `count`: 탭의 총 개수
+- `tabWidthBehavior`: 탭 너비 동작 방식 (FluTabViewType.Equal, SizeToContent, Compact)
+- `closeButtonVisibility`: 탭 닫기 버튼 표시 여부 (FluTabViewType.Never, Always, OnHover)
 
 ### 신호 (Signals)
-- `tabCloseRequested(int index)`: 탭 닫기 요청 시 발생
-- `newTabClicked()`: 새 탭 버튼 클릭 시 발생
+- `newPressed`: 새 탭 버튼 클릭 시 발생
+- `closePressed(int index)`: 탭 닫기 버튼 클릭 시 발생
+
+### 메서드
+- `appendTab(icon, title, component, arguments)`: 탭 추가
+- `insertTab(index, icon, title, component, arguments)`: 특정 위치에 탭 삽입
+- `removeTab(index)`: 특정 탭 제거
+- `moveTab(from, to)`: 탭 위치 이동
+- `takeTab(index)`: 탭 제거 후 정보 반환
 
 ### 사용 예제
 ```qml
+import QtQuick
 import FluentUI
 
-FluTabView {
-    width: 600
-    height: 400
-    addButtonVisibility: FluTabViewType.Visible
-    closeButtonVisibility: FluTabViewType.OnHover
+Item {
+    width: 800
+    height: 600
     
-    // 초기 탭 아이템 추가
-    Component.onCompleted: {
-        addTab("탭 1", "탭 1의 내용입니다.")
-        addTab("탭 2", "탭 2의 내용입니다.")
-    }
-    
-    // 탭 추가 함수
-    function addTab(title, content) {
-        var tab = {
-            title: title,
-            contentItem: contentComponent
-        }
-        contentItemData.push({text: content})
-        appendTab(tab)
-    }
-    
-    // 탭 컨텐츠 컴포넌트
     Component {
-        id: contentComponent
-        FluText {
-            text: modelData.text
-            anchors.centerIn: parent
+        id: pageComponent
+        Rectangle {
+            anchors.fill: parent
+            color: argument // 탭 생성 시 전달된 인자 사용
         }
     }
     
-    // 새 탭 요청 처리
-    onNewTabClicked: {
-        addTab("새 탭", "새 탭의 내용입니다.")
+    function newTab() {
+        // 랜덤 색상으로 새 탭 추가
+        const colors = [FluColors.Yellow, FluColors.Orange, FluColors.Red, 
+                      FluColors.Magenta, FluColors.Purple, FluColors.Blue, 
+                      FluColors.Teal, FluColors.Green];
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        tabView.appendTab("qrc:/example/res/image/favicon.ico", 
+                       qsTr("Document ") + tabView.count, 
+                       pageComponent, 
+                       randomColor);
     }
     
-    // 탭 닫기 요청 처리
-    onTabCloseRequested: function(index) {
-        removeTab(index)
-        contentItemData.splice(index, 1)
+    Column {
+        anchors.fill: parent
+        spacing: 10
+        
+        Row {
+            spacing: 10
+            
+            FluDropDownButton {
+                id: btnTabWidthBehavior
+                text: "Equal"
+                width: 140
+                
+                FluMenuItem {
+                    text: "Equal"
+                    onClicked: {
+                        btnTabWidthBehavior.text = text
+                        tabView.tabWidthBehavior = FluTabViewType.Equal
+                    }
+                }
+                
+                FluMenuItem {
+                    text: "SizeToContent"
+                    onClicked: {
+                        btnTabWidthBehavior.text = text
+                        tabView.tabWidthBehavior = FluTabViewType.SizeToContent
+                    }
+                }
+                
+                FluMenuItem {
+                    text: "Compact"
+                    onClicked: {
+                        btnTabWidthBehavior.text = text
+                        tabView.tabWidthBehavior = FluTabViewType.Compact
+                    }
+                }
+            }
+            
+            FluDropDownButton {
+                id: btnCloseButtonVisibility
+                text: "Always"
+                width: 120
+                
+                FluMenuItem {
+                    text: "Never"
+                    onClicked: {
+                        btnCloseButtonVisibility.text = text
+                        tabView.closeButtonVisibility = FluTabViewType.Never
+                    }
+                }
+                
+                FluMenuItem {
+                    text: "Always"
+                    onClicked: {
+                        btnCloseButtonVisibility.text = text
+                        tabView.closeButtonVisibility = FluTabViewType.Always
+                    }
+                }
+                
+                FluMenuItem {
+                    text: "OnHover"
+                    onClicked: {
+                        btnCloseButtonVisibility.text = text
+                        tabView.closeButtonVisibility = FluTabViewType.OnHover
+                    }
+                }
+            }
+        }
+        
+        FluTabView {
+            id: tabView
+            width: parent.width
+            height: parent.height - 50
+            
+            // 새 탭 버튼 클릭 시 호출
+            onNewPressed: {
+                newTab()
+            }
+            
+            Component.onCompleted: {
+                // 초기 탭 생성
+                newTab()
+                newTab()
+                newTab()
+            }
+        }
     }
 }
 ```
