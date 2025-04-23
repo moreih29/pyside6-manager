@@ -31,14 +31,16 @@ class FluTableSortProxyModel(QSortFilterProxyModel):
 
     def __init__(self):
         QSortFilterProxyModel.__init__(self)
-        self._model = QAbstractItemModel()
+        self._model = None
         self._filter = None
         self._comparator = None
-        self.modelChanged.connect(lambda: self.setSourceModel(self._model))
+        self.modelChanged.connect(lambda: self.setSourceModel(self._model))  # pyright: ignore[reportArgumentType]
 
     # noinspection PyTypeChecker
     @Slot(int, result=dict)
     def getRow(self, rowIndex: int):
+        if self._model is None:
+            return {}
         return QMetaObject.invokeMethod(
             self._model,
             "getRow",
@@ -49,6 +51,8 @@ class FluTableSortProxyModel(QSortFilterProxyModel):
     # noinspection PyTypeChecker
     @Slot(int, dict)
     def setRow(self, rowIndex: int, val: dict):
+        if self._model is None:
+            return
         QMetaObject.invokeMethod(
             self._model,
             "setRow",
@@ -58,6 +62,8 @@ class FluTableSortProxyModel(QSortFilterProxyModel):
 
     @Slot(int, int)
     def removeRow(self, rowIndex: int, rows: int):
+        if self._model is None:
+            return
         QMetaObject.invokeMethod(
             self._model,
             "removeRow",
@@ -67,6 +73,8 @@ class FluTableSortProxyModel(QSortFilterProxyModel):
 
     @Slot(QJSValue)
     def setComparator(self, comparator: QJSValue):
+        if self._model is None:
+            return
         column = 0
         if comparator.isUndefined():
             column = -1

@@ -1,6 +1,5 @@
 import QtQuick
 import Qt5Compat.GraphicalEffects
-import FluentUI
 
 Item {
     id: control
@@ -26,11 +25,11 @@ Item {
     }
     Rectangle {
         anchors.fill: parent
-        color: Qt.rgba(1, 1, 1, luminosity)
+        color: Qt.rgba(1, 1, 1, control.luminosity)
     }
     Rectangle {
         anchors.fill: parent
-        color: Qt.rgba(tintColor.r, tintColor.g, tintColor.b, tintOpacity)
+        color: Qt.rgba(control.tintColor.r, control.tintColor.g, control.tintColor.b, control.tintOpacity)
     }
     Image {
         anchors.fill: parent

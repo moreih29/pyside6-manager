@@ -1,5 +1,5 @@
+pragma ComponentBehavior: Bound
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Window
 import QtQuick.Layouts
 import FluentUI
@@ -107,9 +107,9 @@ Rectangle{
     Row{
         anchors{
             verticalCenter: parent.verticalCenter
-            left: isMac ? undefined : parent.left
-            leftMargin: isMac ? undefined : 10
-            horizontalCenter: isMac ? parent.horizontalCenter : undefined
+            left: control.isMac ? undefined : parent.left
+            leftMargin: control.isMac ? undefined : 10
+            horizontalCenter: control.isMac ? parent.horizontalCenter : undefined
         }
         spacing: 10
         Image{
@@ -120,7 +120,7 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
         }
         FluText {
-            text: title
+            text: control.title
             visible: control.titleVisible
             color:control.textColor
             anchors.verticalCenter: parent.verticalCenter
@@ -135,8 +135,8 @@ Rectangle{
                 normalImage: "../Image/btn_close_normal.png"
                 hoveredImage: "../Image/btn_close_hovered.png"
                 pushedImage: "../Image/btn_close_pushed.png"
-                visible: showClose
-                onClicked: closeClickListener()
+                visible: control.showClose
+                onClicked: control.closeClickListener()
             }
             FluImageButton{
                 Layout.preferredHeight: 12
@@ -144,8 +144,8 @@ Rectangle{
                 normalImage: "../Image/btn_min_normal.png"
                 hoveredImage: "../Image/btn_min_hovered.png"
                 pushedImage: "../Image/btn_min_pushed.png"
-                onClicked: minClickListener()
-                visible: showMinimize
+                onClicked: control.minClickListener()
+                visible: control.showMinimize
             }
             FluImageButton{
                 Layout.preferredHeight: 12
@@ -153,8 +153,8 @@ Rectangle{
                 normalImage: "../Image/btn_max_normal.png"
                 hoveredImage: "../Image/btn_max_hovered.png"
                 pushedImage: "../Image/btn_max_pushed.png"
-                onClicked: maxClickListener()
-                visible: d.resizable && showMaximize
+                onClicked: control.maxClickListener()
+                visible: d.resizable && control.showMaximize
             }
         }
     }
@@ -174,11 +174,11 @@ Rectangle{
             iconSource: FluTheme.dark ? FluentIcons.Brightness : FluentIcons.QuietHours
             Layout.alignment: Qt.AlignVCenter
             iconSize: 15
-            visible: showDark
+            visible: control.showDark
             text: FluTheme.dark ? control.lightText : control.darkText
             radius: 0
             iconColor:control.textColor
-            onClicked:()=> darkClickListener(btn_dark)
+            onClicked:()=> control.darkClickListener(btn_dark)
         }
         FluIconButton{
             id:btn_stay_top
@@ -194,12 +194,12 @@ Rectangle{
                 if(!(d.win instanceof FluWindow)){
                     return false
                 }
-                return showStayTop
+                return control.showStayTop
             }
             text:d.stayTop ? control.stayTopCancelText : control.stayTopText
             radius: 0
             iconColor: d.stayTop ? FluTheme.primaryColor : control.textColor
-            onClicked: stayTopClickListener()
+            onClicked: control.stayTopClickListener()
         }
         FluIconButton{
             id:btn_minimize
@@ -211,17 +211,17 @@ Rectangle{
             iconSource : FluentIcons.ChromeMinimize
             Layout.alignment: Qt.AlignVCenter
             iconSize: 11
-            text:minimizeText
+            text:control.minimizeText
             radius: 0
-            visible: !isMac && showMinimize
+            visible: !control.isMac && control.showMinimize
             iconColor: control.textColor
             color: {
                 if(pressed){
-                    return minimizePressColor
+                    return control.minimizePressColor
                 }
-                return hovered ? minimizeHoverColor : minimizeNormalColor
+                return hovered ? control.minimizeHoverColor : control.minimizeNormalColor
             }
-            onClicked: minClickListener()
+            onClicked: control.minClickListener()
         }
         FluIconButton{
             id:btn_maximize
@@ -234,17 +234,17 @@ Rectangle{
             iconSource : d.isRestore  ? FluentIcons.ChromeRestore : FluentIcons.ChromeMaximize
             color: {
                 if(down){
-                    return maximizePressColor
+                    return control.maximizePressColor
                 }
-                return btn_maximize.hover ? maximizeHoverColor : maximizeNormalColor
+                return btn_maximize.hover ? control.maximizeHoverColor : control.maximizeNormalColor
             }
             Layout.alignment: Qt.AlignVCenter
-            visible: d.resizable && !isMac && showMaximize
+            visible: d.resizable && !control.isMac && control.showMaximize
             radius: 0
             iconColor: control.textColor
-            text:d.isRestore?restoreText:maximizeText
+            text:d.isRestore?control.restoreText:control.maximizeText
             iconSize: 11
-            onClicked: maxClickListener()
+            onClicked: control.maxClickListener()
         }
         FluIconButton{
             id:btn_close
@@ -255,18 +255,18 @@ Rectangle{
             horizontalPadding: 0
             iconSource : FluentIcons.ChromeClose
             Layout.alignment: Qt.AlignVCenter
-            text:closeText
-            visible: !isMac && showClose
+            text:control.closeText
+            visible: !control.isMac && control.showClose
             radius: 0
             iconSize: 10
             iconColor: hovered ? Qt.rgba(1,1,1,1) : control.textColor
             color:{
                 if(pressed){
-                    return closePressColor
+                    return control.closePressColor
                 }
-                return hovered ? closeHoverColor : closeNormalColor
+                return hovered ? control.closeHoverColor : control.closeNormalColor
             }
-            onClicked: closeClickListener()
+            onClicked: control.closeClickListener()
         }
     }
     FluLoader{
@@ -276,6 +276,6 @@ Rectangle{
             left: parent.left
             leftMargin: 10
         }
-        sourceComponent: isMac ? com_macos_buttons : undefined
+        sourceComponent: control.isMac ? com_macos_buttons : undefined
     }
 }
