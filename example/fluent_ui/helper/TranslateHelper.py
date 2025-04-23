@@ -3,7 +3,8 @@ from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlEngine
 
 from pyside6_manager.qml.FluentUI.plugins.Singleton import Singleton
-from example.helper.SettingsHelper import SettingsHelper
+
+from example.fluent_ui.helper.SettingsHelper import SettingsHelper
 
 
 @Singleton

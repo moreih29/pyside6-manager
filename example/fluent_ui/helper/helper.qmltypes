@@ -1,0 +1,60 @@
+import QtQuick.tooling 1.2
+
+Module {
+	Component {
+		file: "InitializrHelper.py"
+		name: "InitializrHelper"
+		accessSemantics: "reference"
+		prototype: "QObject"
+		exports: ["helper/InitializrHelper 1.0"]
+		exportMetaObjectRevisions: [256]
+		isSingleton: true
+		isCreatable: false
+		Signal { name: "error" 
+			Parameter { name: "arg0"; type: "QString" }
+		}
+		Signal { name: "success" 
+			Parameter { name: "arg0"; type: "QString" }
+		}
+		Method { name: "generate"; type: "void" 
+			Parameter { name: "name"; type: "QString" }
+			Parameter { name: "path"; type: "QString" }
+		}
+	}
+	Component {
+		file: "SettingsHelper.py"
+		name: "SettingsHelper"
+		accessSemantics: "reference"
+		prototype: "QObject"
+		exports: ["helper/SettingsHelper 1.0"]
+		exportMetaObjectRevisions: [256]
+		isSingleton: true
+		isCreatable: false
+		Method { name: "getDarkMode"; type: "int" }
+		Method { name: "saveDarkMode"; type: "void" 
+			Parameter { name: "darkMode"; type: "int" }
+		}
+		Method { name: "getUseSystemAppBar"; type: "bool" }
+		Method { name: "saveUseSystemAppBar"; type: "void" 
+			Parameter { name: "useSystemAppBar"; type: "bool" }
+		}
+		Method { name: "getLanguage"; type: "QString" }
+		Method { name: "saveLanguage"; type: "void" 
+			Parameter { name: "language"; type: "QString" }
+		}
+	}
+	Component {
+		file: "TranslateHelper.py"
+		name: "TranslateHelper"
+		accessSemantics: "reference"
+		prototype: "QObject"
+		exports: ["helper/TranslateHelper 1.0"]
+		exportMetaObjectRevisions: [256]
+		isSingleton: true
+		isCreatable: false
+		Property { name: "current"; type: "QString"; notify: "currentChanged"; index: 0 }
+		Property { name: "languages"; type: "QVariantList"; notify: "languagesChanged"; index: 1 }
+		Signal { name: "currentChanged" }
+		Signal { name: "languagesChanged" }
+	}
+}

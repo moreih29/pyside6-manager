@@ -3,8 +3,8 @@ from PySide6.QtGui import QGuiApplication
 from qasync import asyncSlot
 
 from pyside6_manager.qml.FluentUI.plugins.Singleton import Singleton
-import example.helper.Async as Async
-from example.component.Callback import Callback
+import example.fluent_ui.helper.Async as Async
+from example.fluent_ui.component.Callback import Callback
 
 
 # noinspection PyPep8Naming

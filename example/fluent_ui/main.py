@@ -2,7 +2,7 @@ import os
 import sys
 from pathlib import Path
 
-sys.path.append(str(Path(__file__).parent.parent))
+sys.path.append(str(Path(__file__).parent.parent.parent))
 
 import asyncio
 from qasync import QEventLoop
@@ -14,17 +14,17 @@ from PySide6.QtQuick import QQuickWindow, QSGRendererInterface
 
 from pyside6_manager.qml.FluentUI import registerTypes
 
-from example.AppInfo import AppInfo
-from example.component.CircularReveal import CircularReveal
-from example.component.FileWatcher import FileWatcher
-from example.component.FpsItem import FpsItem
-from example.component.OpenGLItem import OpenGLItem
-from example.helper.InitializrHelper import InitializrHelper
-from example.helper.SettingsHelper import SettingsHelper
-from example.helper.TranslateHelper import TranslateHelper
-from example.component.Callback import Callback
-from example.helper import Async
-from example.imports import resource_rc as rc  # noqa: F401
+from example.fluent_ui.AppInfo import AppInfo
+from example.fluent_ui.component.CircularReveal import CircularReveal
+from example.fluent_ui.component.FileWatcher import FileWatcher
+from example.fluent_ui.component.FpsItem import FpsItem
+from example.fluent_ui.component.OpenGLItem import OpenGLItem
+from example.fluent_ui.helper.InitializrHelper import InitializrHelper
+from example.fluent_ui.helper.SettingsHelper import SettingsHelper
+from example.fluent_ui.helper.TranslateHelper import TranslateHelper
+from example.fluent_ui.component.Callback import Callback
+from example.fluent_ui.helper import Async
+from example.fluent_ui.imports import resource_rc as rc  # noqa: F401
 
 _uri = "example"
 _major = 1

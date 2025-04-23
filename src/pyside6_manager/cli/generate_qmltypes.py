@@ -627,19 +627,3 @@ def generate_qmltypes(
 
     print(f"Generated qmltypes file: {output_file}")
     return True
-
-
-def main():
-    """메인 함수: 명령줄 인수로 실행할 수 있도록 합니다."""
-    if len(sys.argv) > 1:
-        first_arg = sys.argv[1]
-        file_paths = first_arg.split(",") if "," in first_arg else sys.argv[:-1]
-        output_file = sys.argv[-1] if len(sys.argv) > 2 else "generated.qmltypes"
-        generate_qmltypes(file_paths, output_file)
-    else:
-        print("Usage: python __init__.py <py_file_pattern> [output_file]")
-        print("Example: python __init__.py 'example/**/*.py' helper.qmltypes")
-
-
-if __name__ == "__main__":
-    main()

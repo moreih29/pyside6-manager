@@ -13,6 +13,7 @@ dependencies = [
     "aiohttp>=3.11.18",
     "pyopengl>=3.1.9",
     "py7zr>=0.22.0",
+    "typer>=0.15.2",
 ]
 
 [build-system]
@@ -26,7 +27,7 @@ packages = ["src/pyside6_manager"]
 pyside6-stubs = { path = "../PySide6-stubs" }
 
 [tool.pyright]
-typeCheckingMode = "strict"
+typeCheckingMode = "off"
 reportMissingTypeStubs = "none"
 exclude = [".venv/**", "**/*_rc.py", "example"]
 

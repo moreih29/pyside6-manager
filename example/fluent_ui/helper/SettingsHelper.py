@@ -30,7 +30,7 @@ class SettingsHelper(QObject):
         return data
 
     @Slot(result=int)
-    def getDarkMode(self):
+    def getDarkMode(self) -> int:
         return int(self._get("darkMode", 0))
 
     @Slot(int)
@@ -38,7 +38,7 @@ class SettingsHelper(QObject):
         self._save("darkMode", darkMode)
 
     @Slot(result=bool)
-    def getUseSystemAppBar(self):
+    def getUseSystemAppBar(self) -> bool:
         return bool(self._get("useSystemAppBar", "false") == "true")
 
     @Slot(bool)
@@ -46,7 +46,7 @@ class SettingsHelper(QObject):
         self._save("useSystemAppBar", useSystemAppBar)
 
     @Slot(result=str)
-    def getLanguage(self):
+    def getLanguage(self) -> str:
         return str(self._get("language", "en_US"))
 
     @Slot(str)

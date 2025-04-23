@@ -1,0 +1,41 @@
+import QtQuick.tooling 1.2
+
+Module {
+    Component {
+        file: "component/Callback.py"
+        name: "Callback"
+        accessSemantics: "reference"
+        prototype: "QObject"
+        exports: ["example/Callback 1.0"]
+        exportMetaObjectRevisions: [256]
+        Signal { name: "start" }
+        Signal { name: "finish" }
+        Signal { name: "error" }
+        Signal { name: "success" }
+    }
+    Component {
+        file: "helper/SettingsHelper.py"
+        name: "SettingsHelper"
+        accessSemantics: "reference"
+        prototype: "QObject"
+        exports: ["example/SettingsHelper 1.0"]
+        isCreatable: false
+        isSingleton: true
+        exportMetaObjectRevisions: [256]
+        Method { name: "getDarkMode"; type: "int" }
+        Method { name: "getUseSystemAppBar"; type: "bool" }
+        Method { name: "getLanguage"; type: "str" }
+        Method { 
+            name: "saveDarkMode"
+            Parameter { name: "darkMode"; type: "int" }
+        }
+        Method { 
+            name: "saveUseSystemAppBar"
+            Parameter { name: "useSystemAppBar"; type: "bool" }
+        }
+        Method { 
+            name: "saveLanguage"
+            Parameter { name: "language"; type: "str" }
+        }
+    }
+}
