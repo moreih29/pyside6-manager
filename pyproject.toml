@@ -7,7 +7,6 @@ requires-python = ">=3.12"
 dependencies = [
     "PySide6~=6.8.3",
     "pillow~=10.4.0",
-    "keyboard>=0.13.5",
     "qrcode~=7.4.2",
     "pyside6-stubs",
     "qasync>=0.27.1",
@@ -27,9 +26,9 @@ packages = ["src/pyside6_manager"]
 pyside6-stubs = { path = "../PySide6-stubs" }
 
 [tool.pyright]
-typeCheckingMode = "off"
+typeCheckingMode = "strict"
 reportMissingTypeStubs = "none"
-exclude = [".venv/**", "**/*_rc.py", "example/**", "example"]
+exclude = [".venv/**", "**/*_rc.py", "example"]
 
 
 [dependency-groups]
