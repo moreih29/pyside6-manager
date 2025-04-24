@@ -9,5 +9,5 @@ __all__ = ["init", "registerTypes"]
 
 
 def init(engine: QQmlApplicationEngine) -> None:
-    current_module_path = Path(__file__).parent.resolve()
+    current_module_path = Path(__file__).parent.parent.resolve()
     engine.addImportPath(current_module_path)
