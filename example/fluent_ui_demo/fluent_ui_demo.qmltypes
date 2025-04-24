@@ -12,6 +12,9 @@ Module {
 		exportMetaObjectRevisions: [256]
 		Property { name: "version"; type: "QString"; notify: "versionChanged"; index: 0 }
 		Signal { name: "versionChanged" }
+		Method { name: "checkUpdate" 
+			Parameter { name: "callback"; type: "QObject" }
+		}
 	}
 	Component {
 		file: "Callback.py"

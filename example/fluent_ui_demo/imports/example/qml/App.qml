@@ -3,6 +3,7 @@ import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import FluentUI 1.0
+import fluent_ui_demo 1.0
 
 FluLauncher {
     id: app
@@ -54,63 +55,21 @@ FluLauncher {
         id: object_hotkey
         FluHotkey{
             name: qsTr("Quit")
-            sequence: "Ctrl+Alt+Q"
+            sequence: "Ctrl+W"
             onActivated: {
                 FluRouter.exit()
             }
         }
         FluHotkey{
             name: qsTr("Test1")
-            sequence: "Alt+A"
+            sequence: "Ctrl+1"
             onActivated: {
                 FluRouter.navigate("/hotkey",{sequence:sequence})
             }
         }
         FluHotkey{
             name: qsTr("Test2")
-            sequence: "Alt+B"
-            onActivated: {
-                FluRouter.navigate("/hotkey",{sequence:sequence})
-            }
-        }
-        FluHotkey{
-            name: qsTr("Test3")
-            sequence: "Alt+C"
-            onActivated: {
-                FluRouter.navigate("/hotkey",{sequence:sequence})
-            }
-        }
-        FluHotkey{
-            name: qsTr("Test4")
-            sequence: "Alt+D"
-            onActivated: {
-                FluRouter.navigate("/hotkey",{sequence:sequence})
-            }
-        }
-        FluHotkey{
-            name: qsTr("Test5")
-            sequence: "Alt+E"
-            onActivated: {
-                FluRouter.navigate("/hotkey",{sequence:sequence})
-            }
-        }
-        FluHotkey{
-            name: qsTr("Test6")
-            sequence: "Alt+F"
-            onActivated: {
-                FluRouter.navigate("/hotkey",{sequence:sequence})
-            }
-        }
-        FluHotkey{
-            name: qsTr("Test7")
-            sequence: "Alt+G"
-            onActivated: {
-                FluRouter.navigate("/hotkey",{sequence:sequence})
-            }
-        }
-        FluHotkey{
-            name: qsTr("Test8")
-            sequence: "Alt+H"
+            sequence: "Ctrl+2"
             onActivated: {
                 FluRouter.navigate("/hotkey",{sequence:sequence})
             }

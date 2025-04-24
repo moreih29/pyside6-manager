@@ -23,7 +23,7 @@ FluWindow {
         width: window.width
         height: 30
         showDark: true
-        darkClickListener:(button)=>handleDarkChanged(button)
+        darkClickListener:(button)=>window.handleDarkChanged(button)
         closeClickListener: ()=>{dialog_close.open()}
         z:7
     }
@@ -35,12 +35,8 @@ FluWindow {
     FluEvent{
         name: "checkUpdate"
         onTriggered: {
-            checkUpdate(false)
+            window.checkUpdate(false)
         }
-    }
-
-    onLazyLoad: {
-        tour.open()
     }
 
     Component.onCompleted: {
@@ -58,7 +54,7 @@ FluWindow {
         tooltip: "FluentUI"
         menu: Menu {
             MenuItem {
-                text: "退出"
+                text: qsTr("Exit")
                 onTriggered: {
                     FluRouter.exit()
                 }
@@ -201,7 +197,7 @@ FluWindow {
                 title:"FluentUI"
                 onLogoClicked:{
                     clickCount += 1
-                    showSuccess("%1:%2".arg(qsTr("Click Time")).arg(clickCount))
+                    window.showSuccess("%1:%2".arg(qsTr("Click Time")).arg(clickCount))
                     if(clickCount === 5){
                         loader.reload()
                         flipable.flipped = true
@@ -347,34 +343,18 @@ FluWindow {
     Callback{
         id: callback
         property bool silent: true
-        onStart: {
-            console.debug("start check update...")
-        }
-        onFinish: {
-            console.debug("check update finish")
-            FluEventBus.post("checkUpdateFinish");
-        }
         onSuccess:
             (result)=>{
-                var data = JSON.parse(result)
-                console.debug("current version "+AppInfo.version)
-                console.debug("new version "+data.tag_name)
-                if(data.tag_name !== AppInfo.version){
-                    dialog_update.newVerson =  data.tag_name
-                    dialog_update.body = data.body
-                    dialog_update.open()
-                }else{
-                    if(!silent){
-                        showInfo(qsTr("The current version is already the latest"))
-                    }
-                }
+                let data = JSON.parse(result)
+                let message = "current version" + AppInfo.version + " | " +  "new version" + data.tag_name
+                console.debug(message)
             }
         onError:
-            (status,errorString)=>{
+            (status, errorString)=>{
                 if(!silent){
-                    showError(qsTr("The network is abnormal"))
+                    window.showError(qsTr("The network is abnormal"))
                 }
-                console.debug(status+";"+errorString)
+                console.debug(status + ";" + errorString)
             }
     }
 
