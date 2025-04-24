@@ -1,14 +1,69 @@
 import os
 import re
-import sys
 import glob
-from typing import Any
+
+import typer
+from pydantic import BaseModel
+
+router = typer.Typer()
 
 
-def parse_property(prop_name: str, source_code: str) -> dict[str, Any]:
-    """클래스에서 Property 데코레이터가 적용된 속성 정보를 추출합니다."""
-    result = {"name": prop_name, "type": "QVariant"}
+QOBJECT_DERIVED_CLASSES = [
+    "QObject",
+    "QQuickItem",
+    "QQuickPaintedItem",
+    "QQuickFramebufferObject",
+    "QOpenGLFunctionsQGraphicsItem",
+    "QAbstractItemModel",
+    "QAbstractListModel",
+    "QAbstractTableModel",
+    "QSortFilterProxyModel",
+]
 
+
+class SignalInfo(BaseModel):
+    name: str
+    parameters: list[dict[str, str]]
+
+
+class PropertyInfo(BaseModel):
+    name: str
+    type: str
+    notify: str | None = None
+    index: int = 0
+
+
+class SlotInfo(BaseModel):
+    name: str
+    type: str
+    parameters: list[dict[str, str]]
+
+
+class ClassInfo(BaseModel):
+    file: str
+    name: str
+    accessSemantics: str
+    prototype: str
+    exports: list[str]
+    isCreatable: bool = True
+    isSingleton: bool = False
+    exportMetaObjectRevisions: list[int]
+    property: list[PropertyInfo] = []
+    signal: list[SignalInfo] = []
+    method: list[SlotInfo] = []
+
+
+def parse_property(prop_name: str, source_code: str) -> PropertyInfo:
+    """
+    클래스에서 Property 데코레이터가 적용된 속성 정보를 추출합니다.
+
+    Args:
+        prop_name (str): 속성 이름
+        source_code (str): 소스 코드
+
+    Returns:
+        PropertyInfo: 속성 정보
+    """
     # Property의 타입 정보 추출
     prop_type = "QVariant"
     notify_signal = None
@@ -26,17 +81,26 @@ def parse_property(prop_name: str, source_code: str) -> dict[str, Any]:
             prop_type = _convert_python_type_to_qml(prop_type)
             break
 
-    result["type"] = prop_type
-    if notify_signal:
-        result["notify"] = notify_signal
+    result = PropertyInfo(
+        name=prop_name,
+        type=prop_type,
+        notify=notify_signal,
+    )
 
     return result
 
 
-def parse_signal(signal_name: str, source_code: str) -> dict[str, Any]:
-    """클래스에서 Signal 객체의 정보를 추출합니다."""
-    result: dict[str, Any] = {"name": signal_name}
+def parse_signal(signal_name: str, source_code: str) -> SignalInfo:
+    """
+    클래스에서 Signal 객체의 정보를 추출합니다.
 
+    Args:
+        signal_name (str): 시그널 이름
+        source_code (str): 소스 코드
+
+    Returns:
+        SignalInfo: 시그널 정보
+    """
     # 시그널 파라미터 추출 (소스 코드 파싱)
     signal_pattern = rf"{signal_name}\s*=\s*Signal\(([^)]*)\)"
     matches = re.search(signal_pattern, source_code)
@@ -51,16 +115,22 @@ def parse_signal(signal_name: str, source_code: str) -> dict[str, Any]:
                     {"name": f"arg{i}", "type": _convert_python_type_to_qml(param_type)}
                 )
 
-    if parameters:
-        result["parameters"] = parameters
+    result = SignalInfo(name=signal_name, parameters=parameters)
 
     return result
 
 
-def parse_slot(method_name: str, source_code: str) -> dict[str, Any]:
-    """클래스에서 Slot 데코레이터가 적용된 메소드 정보를 추출합니다."""
-    result: dict[str, Any] = {"name": method_name}
+def parse_slot(method_name: str, source_code: str) -> SlotInfo:
+    """
+    클래스에서 Slot 데코레이터가 적용된 메소드 정보를 추출합니다.
 
+    Args:
+        method_name (str): 메소드 이름
+        source_code (str): 소스 코드
+
+    Returns:
+        SlotInfo: 메소드 정보
+    """
     # Slot 데코레이터 정보 추출 (소스 코드 파싱)
     slot_pattern = rf"@Slot\(([^)]*)\)[^@]*def\s+{method_name}\s*\("
     slot_return_pattern = (
@@ -158,55 +228,33 @@ def parse_slot(method_name: str, source_code: str) -> dict[str, Any]:
 
                 parameters.append({"name": param_name, "type": param_type})
 
-    result["type"] = return_type
-    if parameters:
-        result["parameters"] = parameters
-
+    result = SlotInfo(name=method_name, type=return_type, parameters=parameters)
     return result
 
 
 def parse_qobject_class_from_source(
-    file_path: str, cls_name: str
-) -> dict[str, Any] | None:
-    """소스 코드 파일에서 직접 QObject 파생 클래스 정보를 추출합니다."""
+    path: str, cls_name: str, module_name: str
+) -> ClassInfo | None:
+    """
+    소스 코드 파일에서 직접 QObject 파생 클래스 정보를 추출합니다.
+
+    Args:
+        path (str): 소스 코드 파일 경로
+        cls_name (str): 클래스 이름
+        module_name (str): 모듈 이름
+
+    Returns:
+        ClassInfo | None: 클래스 정보
+    """
     try:
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(path, "r", encoding="utf-8") as f:
             source_code = f.read()
 
         # QObject 또는 그 파생 클래스 목록
-        qobject_derived_classes = [
-            "QObject",
-            "QQuickPaintedItem",
-            "QQuickItem",
-            "QQuickFramebufferObject",
-            "QWidget",
-            "QMainWindow",
-            "QDialog",
-            "QApplication",
-            "QGuiApplication",
-            "QAction",
-            "QLayout",
-            "QGraphicsItem",
-            "QAbstractItemModel",
-            "QAbstractListModel",
-            "QSettings",
-        ]
-
-        # 파일에서 import된 PySide6 모듈 분석
-        imports = re.findall(r"from\s+PySide6\.\w+\s+import\s+([^#\n]+)", source_code)
-        imported_classes = []
-        for import_stmt in imports:
-            imported_classes.extend([cls.strip() for cls in import_stmt.split(",")])
-
-        # 파일에 import된 QObject 파생 클래스 찾기
-        qobject_classes_in_file = [
-            cls for cls in imported_classes if cls in qobject_derived_classes
-        ]
+        qobject_derived_classes = QOBJECT_DERIVED_CLASSES
 
         # 상속 패턴에 사용할 클래스 목록 작성
-        inheritance_patterns = "|".join(
-            qobject_classes_in_file + qobject_derived_classes
-        )
+        inheritance_patterns = _get_inheritance_patterns(source_code)
 
         # 클래스 정의 찾기 (QObject 또는 파생 클래스를 상속)
         class_pattern = rf"class\s+{cls_name}\s*\(([^)]*)\):.*?(?=class\s+|$)"
@@ -231,23 +279,19 @@ def parse_qobject_class_from_source(
 
         class_code = class_match.group(0)
 
-        # 모듈 경로 분석 (exports 용)
-        module_path = _get_module_path(file_path)
-
-        # 클래스 정보 생성
-        class_info: dict[str, Any] = {
-            "file": os.path.basename(file_path),
-            "name": cls_name,
-            "accessSemantics": "reference",
-            "prototype": "QObject",  # 기본값으로 QObject 사용
-            "exports": [f'"{module_path}/{cls_name} 1.0"'],
-            "exportMetaObjectRevisions": [256],
-        }
+        class_info = ClassInfo(
+            file=os.path.basename(path),
+            name=cls_name,
+            accessSemantics="reference",
+            prototype="QObject",
+            exports=[f'"{module_name}/{cls_name} 1.0"'],
+            exportMetaObjectRevisions=[256],
+        )
 
         # 실제 상속 클래스에 따라 prototype 업데이트
         for qcls in qobject_derived_classes:
             if qcls in bases:
-                class_info["prototype"] = qcls
+                class_info.prototype = qcls
                 break
 
         # 싱글톤 여부 확인 - 파일의 시작부터 클래스 정의 시작점까지만 검사
@@ -255,13 +299,13 @@ def parse_qobject_class_from_source(
         is_singleton = "@Singleton" in prefix_code.split("\n")[-5:]
 
         # isCreatable과 isSingleton 설정 (싱글톤이면 isCreatable은 false)
-        class_info["isSingleton"] = is_singleton
-        class_info["isCreatable"] = not is_singleton
+        class_info.isSingleton = is_singleton
+        class_info.isCreatable = not is_singleton
 
         # Property, Signal, Slot 찾기
-        properties: list[dict[str, Any]] = []
-        signals: list[dict[str, Any]] = []
-        methods: list[dict[str, Any]] = []
+        properties: list[PropertyInfo] = []
+        signals: list[SignalInfo] = []
+        methods: list[SlotInfo] = []
 
         # Signal 찾기
         signal_pattern = r"(\w+)\s*=\s*Signal\("
@@ -286,15 +330,11 @@ def parse_qobject_class_from_source(
 
         # 프로퍼티에 인덱스 추가
         for i, prop in enumerate(properties):
-            prop["index"] = i
+            prop.index = i
 
-        # 정보 추가
-        if properties:
-            class_info["Property"] = properties
-        if signals:
-            class_info["Signal"] = signals
-        if methods:
-            class_info["Method"] = methods
+        class_info.property = properties
+        class_info.signal = signals
+        class_info.method = methods
 
         return class_info
 
@@ -306,17 +346,16 @@ def parse_qobject_class_from_source(
         return None
 
 
-def _get_module_path(file_path: str) -> str:
-    """파일 경로에서 QML에서 사용할 적절한 모듈 경로를 추출합니다."""
-    # 파일이 위치한 디렉토리 이름 사용
-    dir_name = os.path.basename(os.path.dirname(os.path.abspath(file_path)))
-    return dir_name
+def _convert_python_type_to_qml(python_type: str | type) -> str:
+    """Python 타입을 QML 타입으로 변환합니다.
 
+    Args:
+        python_type (str | type): Python 타입
 
-def _convert_python_type_to_qml(python_type: Any) -> str:
-    """Python 타입을 QML 타입으로 변환합니다."""
+    Returns:
+        str: QML 타입
+    """
     type_str = str(python_type)
-
     # 기본 타입 변환
     basic_types = {
         "str": "QString",
@@ -353,49 +392,63 @@ def _convert_python_type_to_qml(python_type: Any) -> str:
     return "QVariant"
 
 
-def find_qobject_classes_from_file(file_path: str) -> list[str]:
-    """파일에서 QObject 파생 클래스를 상속받는 클래스 이름 목록을 찾습니다."""
+def _get_inheritance_patterns(source_code: str) -> str:
+    """
+    컨텐츠에서 상속 패턴을 추출합니다.
+
+    Args:
+        source_code (str): 소스 코드
+
+    Returns:
+        str: 상속 패턴
+    """
+
+    # QObject 또는 그 파생 클래스 목록
+    qobject_derived_classes = QOBJECT_DERIVED_CLASSES
+
+    # 파일에서 import된 PySide6 모듈 분석
+    imports: list[str] = re.findall(
+        r"from\s+PySide6\.\w+\s+import\s+([^#\n]+)", source_code
+    )
+    imported_classes: list[str] = []
+    for import_stmt in imports:
+        imported_classes.extend([cls.strip() for cls in import_stmt.split(",")])
+
+    # 파일에 import된 QObject 파생 클래스 찾기
+    qobject_classes_in_file: list[str] = [
+        cls for cls in imported_classes if cls in qobject_derived_classes
+    ]
+
+    # 상속 패턴에 사용할 클래스 목록 작성
+    inheritance_patterns = "|".join(qobject_classes_in_file + qobject_derived_classes)
+
+    return inheritance_patterns
+
+
+def find_qobject_classes_from_file(path: str) -> list[str]:
+    """
+    파일에서 QObject 파생 클래스를 상속받는 클래스 이름 목록을 찾습니다.
+
+    Args:
+        path (str): .py 파일 경로
+
+    Returns:
+        list[str]: QObject 파생 클래스 이름 목록
+    """
     try:
-        with open(file_path, "r", encoding="utf-8") as f:
-            content = f.read()
+        with open(path, "r", encoding="utf-8") as f:
+            source_code = f.read()
 
         # QObject 또는 그 파생 클래스 목록
-        qobject_derived_classes = [
-            "QObject",
-            "QQuickPaintedItem",
-            "QQuickItem",
-            "QQuickFramebufferObject",
-            "QWidget",
-            "QMainWindow",
-            "QDialog",
-            "QApplication",
-            "QGuiApplication",
-            "QAction",
-            "QLayout",
-            "QGraphicsItem",
-            "QAbstractItemModel",
-            "QAbstractListModel",
-            "QSettings",
-        ]
-
-        # 파일에서 import된 PySide6 모듈 분석
-        imports = re.findall(r"from\s+PySide6\.\w+\s+import\s+([^#\n]+)", content)
-        imported_classes = []
-        for import_stmt in imports:
-            imported_classes.extend([cls.strip() for cls in import_stmt.split(",")])
-
-        # 파일에 import된 QObject 파생 클래스 찾기
-        qobject_classes_in_file = [
-            cls for cls in imported_classes if cls in qobject_derived_classes
-        ]
+        qobject_derived_classes = QOBJECT_DERIVED_CLASSES
 
         # 상속 패턴에 사용할 클래스 목록 작성
-        inheritance_patterns = "|".join(
-            qobject_classes_in_file + qobject_derived_classes
-        )
+        inheritance_patterns = _get_inheritance_patterns(source_code)
 
         # 모든 클래스 정의 찾기
-        class_defs = re.findall(r"class\s+(\w+)\s*\(([^)]+)\):", content)
+        class_defs: list[tuple[str, str]] = re.findall(
+            r"class\s+(\w+)\s*\(([^)]+)\):", source_code
+        )
 
         # QObject 또는 그 파생 클래스를 상속받는 클래스 필터링
         filtered_classes: list[str] = []
@@ -405,7 +458,7 @@ def find_qobject_classes_from_file(file_path: str) -> list[str]:
                 continue
 
             # 상속받는 클래스 목록
-            base_classes = [base.strip() for base in bases.split(",")]
+            base_classes: list[str] = [base.strip() for base in bases.split(",")]
 
             # QObject 또는 파생 클래스 상속 확인
             for base in base_classes:
@@ -417,38 +470,38 @@ def find_qobject_classes_from_file(file_path: str) -> list[str]:
             if cls_name not in filtered_classes and inheritance_patterns:
                 if re.search(
                     rf"class\s+{cls_name}\s*\([^)]*({inheritance_patterns})[^)]*\):",
-                    content,
+                    source_code,
                 ):
                     filtered_classes.append(cls_name)
 
         return filtered_classes
 
     except Exception as e:
-        print(f"Error finding QObject classes in {file_path}: {str(e)}")
+        print(f"Error finding QObject classes in {path}: {str(e)}")
         import traceback
 
         traceback.print_exc()
         return []
 
 
-def find_all_python_files(patterns: str | list[str]) -> list[str]:
+def find_all_python_files(paths: list[str]) -> list[str]:
     """
     주어진 패턴에 매칭되는 모든 Python 파일 목록을 반환합니다.
     파일이 발견되지 않을 경우 기본 디렉토리를 추가로 검색합니다.
+
+    Args:
+        paths (list[str]): 파일 경로 패턴 또는 경로 목록
+
+    Returns:
+        list[str]: .py 파일 경로 목록
     """
     all_files: list[str] = []
-
-    # 패턴으로 파일 검색
-    if isinstance(patterns, str):
-        pattern_list = [patterns]
-    else:
-        pattern_list = patterns
 
     # * 문자가 포함된 패턴을 정확한 파일 경로로 분리
     exact_files: list[str] = []
     pattern_searches: list[str] = []
 
-    for pattern in pattern_list:
+    for pattern in paths:
         if "*" in pattern:
             pattern_searches.append(pattern)
         else:
@@ -484,30 +537,72 @@ def find_all_python_files(patterns: str | list[str]) -> list[str]:
     return sorted(set(all_files))
 
 
+def generate_qmldir(output_file: str, module_name: str) -> bool:
+    """
+    qmldir 파일을 생성합니다.
+
+    Args:
+        output_file (str): qmldir 파일 경로
+        module_name (str): 모듈 이름
+
+    Returns:
+        bool: 성공 여부
+    """
+    content = f"module {module_name}\n"
+    content += f"typeinfo {module_name}.qmltypes\n"
+
+    with open(output_file, "w") as f:
+        f.write(content)
+
+    print(f"Generated qmldir file: {output_file}")
+    return True
+
+
+@router.command(name="genqml")
 def generate_qmltypes(
-    file_paths: str | list[str], output_file: str = "generated.qmltypes"
+    paths: list[str] = typer.Argument(help="Python 파일 경로 또는 경로 목록"),
+    output_file: str = typer.Option(
+        "generated.qmltypes",
+        "--output",
+        "-o",
+        help="생성할 qmltypes 파일 경로",
+    ),
+    module_name: str = typer.Option(
+        "module",
+        "--module",
+        "-m",
+        help="qmldir 파일에 사용할 모듈 이름",
+    ),
+    qmldir: bool = typer.Option(
+        False,
+        "--qmldir",
+        "-q",
+        help="qmldir 파일을 함께 생성합니다.",
+    ),
 ) -> bool:
     """
     주어진 Python 파일들에서 QObject 파생 클래스를 파싱하여 .qmltypes 파일을 생성합니다.
 
     Args:
-        file_paths: 파싱할 Python 파일 경로 또는 경로 목록 (glob 패턴 지원)
+        paths: 파싱할 Python 파일 경로 또는 경로 목록 (glob 패턴 지원)
         output_file: 생성할 qmltypes 파일 경로
+        module_name: qmldir 파일에 사용할 모듈 이름
+        qmldir: qmldir 파일을 함께 생성합니다.
 
     Returns:
         성공 여부
     """
     # 파일 경로 목록 생성 - 개선된 검색 로직 사용
-    py_files = find_all_python_files(file_paths)
+    py_files = find_all_python_files(paths)
 
     if not py_files:
-        print(f"Error: No Python files found with pattern(s): {file_paths}")
+        print(f"Error: No Python files found with pattern(s): {paths}")
         return False
 
     print(f"Found {len(py_files)} Python files to process")
 
     # 모든 QObject 클래스 정보 수집
-    all_class_infos: list[dict[str, Any]] = []
+    all_class_infos: list[ClassInfo] = []
     processed_files = 0
     qobject_files = 0
 
@@ -524,7 +619,9 @@ def generate_qmltypes(
 
                 # 각 클래스 정보 추출
                 for cls_name in class_names:
-                    class_info = parse_qobject_class_from_source(py_file, cls_name)
+                    class_info = parse_qobject_class_from_source(
+                        py_file, cls_name, module_name
+                    )
                     if class_info:
                         all_class_infos.append(class_info)
 
@@ -556,12 +653,12 @@ def generate_qmltypes(
     qmltypes_content += "Module {\n"
 
     for class_info in all_class_infos:
-        print(f"Adding class to qmltypes: {class_info['name']}")
+        print(f"Adding class to qmltypes: {class_info.name}")
         qmltypes_content += "\tComponent {\n"
 
         # 컴포넌트 기본 정보
-        for key, value in class_info.items():
-            if key in ["Property", "Signal", "Method"]:
+        for key, value in class_info.model_dump().items():
+            if key in ["property", "signal", "method"]:
                 continue
 
             if isinstance(value, list):
@@ -576,11 +673,11 @@ def generate_qmltypes(
                 qmltypes_content += f'\t\t{key}: "{value}"\n'
 
         # 속성 정보
-        if "Property" in class_info:
-            for prop in class_info["Property"]:
+        if class_info.property:
+            for prop in class_info.property:
                 qmltypes_content += "\t\tProperty { "
                 prop_parts: list[str] = []
-                for k, v in prop.items():
+                for k, v in prop.model_dump().items():
                     if isinstance(v, int):
                         prop_parts.append(f"{k}: {v}")
                     else:
@@ -589,30 +686,28 @@ def generate_qmltypes(
                 qmltypes_content += " }\n"
 
         # 시그널 정보
-        if "Signal" in class_info:
-            for signal in class_info["Signal"]:
-                qmltypes_content += f'\t\tSignal {{ name: "{signal["name"]}" '
-                if "parameters" in signal:
+        if class_info.signal:
+            for signal in class_info.signal:
+                qmltypes_content += f'\t\tSignal {{ name: "{signal.name}" '
+                if signal.parameters:
                     qmltypes_content += "\n"
-                    for param in signal["parameters"]:
+                    for param in signal.parameters:
                         qmltypes_content += f'\t\t\tParameter {{ name: "{param["name"]}"; type: "{param["type"]}" }}\n'
                     qmltypes_content += "\t\t"
                 qmltypes_content += "}\n"
 
         # 메소드 정보
-        if "Method" in class_info:
-            for method in class_info["Method"]:
+        if class_info.method:
+            for method in class_info.method:
                 qmltypes_content += "\t\tMethod { "
-                if "type" in method:
-                    qmltypes_content += (
-                        f'name: "{method["name"]}"; type: "{method["type"]}" '
-                    )
+                if method.type != "void":
+                    qmltypes_content += f'name: "{method.name}"; type: "{method.type}" '
                 else:
-                    qmltypes_content += f'name: "{method["name"]}" '
+                    qmltypes_content += f'name: "{method.name}" '
 
-                if "parameters" in method and method["parameters"]:
+                if method.parameters:
                     qmltypes_content += "\n"
-                    for param in method["parameters"]:
+                    for param in method.parameters:
                         qmltypes_content += f'\t\t\tParameter {{ name: "{param["name"]}"; type: "{param["type"]}" }}\n'
                     qmltypes_content += "\t\t"
                 qmltypes_content += "}\n"
@@ -626,4 +721,11 @@ def generate_qmltypes(
         f.write(qmltypes_content)
 
     print(f"Generated qmltypes file: {output_file}")
+
+    if qmldir:
+        generate_qmldir(
+            os.path.join(os.path.dirname(output_file), "qmldir"),
+            module_name,
+        )
+
     return True

@@ -14,7 +14,12 @@ dependencies = [
     "pyopengl>=3.1.9",
     "py7zr>=0.22.0",
     "typer>=0.15.2",
+    "pydantic>=2.11.3",
 ]
+
+[project.scripts]
+pyside6-manager = "pyside6_manager.cli:app"
+psm = "pyside6_manager.cli:app"
 
 [build-system]
 requires = ["hatchling"]
@@ -27,7 +32,7 @@ packages = ["src/pyside6_manager"]
 pyside6-stubs = { path = "../PySide6-stubs" }
 
 [tool.pyright]
-typeCheckingMode = "off"
+typeCheckingMode = "strict"
 reportMissingTypeStubs = "none"
 exclude = [".venv/**", "**/*_rc.py", "example"]
 

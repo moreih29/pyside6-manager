@@ -1,20 +1,23 @@
 import typer
 
-from pyside6_manager.cli.generate_qmltypes import (
-    generate_qmltypes as generate_qmltypes_command,
-)
+from .generate_qmltypes import router
+from .. import __version__, __name__
 
 app = typer.Typer()
+app.add_typer(router)
 
 
-@app.command()
-def generate_qmltypes(
-    file_path: str = typer.Option(..., "--file", "-f"),
-    output_file: str = typer.Option(..., "--output", "-o"),
+def version_callback(value: bool):
+    if value:
+        typer.echo(f"{__name__} {__version__}")
+        raise typer.Exit()
+
+
+@app.callback()
+def main(
+    version: bool = typer.Option(False, "--version", "-v", callback=version_callback),
 ):
-    print(file_path)
-    generate_qmltypes_command(file_path, output_file)
-
-
-if __name__ == "__main__":
-    app()
+    """
+    PySide6 Manager CLI tool
+    """
+    pass
