@@ -465,3 +465,7 @@ class FluColors(QObject):
         accentColor.darkest = FluTools().withOpacity(accentColor.darker, 0.7)
         accentColor.lightest = FluTools().withOpacity(accentColor.lighter, 0.7)
         return accentColor
+
+    @Slot(QColor, result=str)
+    def getRGBString(self, color: QColor) -> str:
+        return f"rgb({color.red()}, {color.green()}, {color.blue()})"

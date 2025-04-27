@@ -1,11 +1,12 @@
 {
     "qt-qml.qmlls.additionalImportPaths": [
         "src/pyside6_manager/qml",
-        "example",
+        "example/FluentUI",
         ".venv/lib/python3.12/site-packages/PySide6/Qt/qml",
         ".venv/Lib/site-packages/PySide6/qml",
     ],
     "python.analysis.ignore": [
-        "example"
+        "example",
+        ".venv"
     ],
 }

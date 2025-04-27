@@ -203,6 +203,12 @@ Module {
             isPointer: true
             Parameter { name: "primaryColor"; type: "QObject" }
         }
+        Method {
+            name: "getRGBString"
+            type: "QString"
+            isPointer: false
+            Parameter { name: "color"; type: "QColor" }
+        }
     }
     Component {
         file: "Def.h"

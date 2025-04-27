@@ -2,10 +2,11 @@ from pathlib import Path
 
 from PySide6.QtQml import QQmlApplicationEngine
 
+from .runner import QFluentGuiApplication
 from .plugins.FluentUI import registerTypes
 
 
-__all__ = ["init", "registerTypes"]
+__all__ = ["init", "registerTypes", "QFluentGuiApplication"]
 
 
 def init(engine: QQmlApplicationEngine) -> None:

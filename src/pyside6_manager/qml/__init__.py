@@ -193,13 +193,15 @@ def parse_qobject_class_from_source(
         ]
 
         # 파일에서 import된 PySide6 모듈 분석
-        imports = re.findall(r"from\s+PySide6\.\w+\s+import\s+([^#\n]+)", source_code)
-        imported_classes = []
+        imports: list[str] = re.findall(
+            r"from\s+PySide6\.\w+\s+import\s+([^#\n]+)", source_code
+        )
+        imported_classes: list[str] = []
         for import_stmt in imports:
             imported_classes.extend([cls.strip() for cls in import_stmt.split(",")])
 
         # 파일에 import된 QObject 파생 클래스 찾기
-        qobject_classes_in_file = [
+        qobject_classes_in_file: list[str] = [
             cls for cls in imported_classes if cls in qobject_derived_classes
         ]
 
@@ -380,12 +382,12 @@ def find_qobject_classes_from_file(file_path: str) -> list[str]:
 
         # 파일에서 import된 PySide6 모듈 분석
         imports = re.findall(r"from\s+PySide6\.\w+\s+import\s+([^#\n]+)", content)
-        imported_classes = []
+        imported_classes: list[str] = []
         for import_stmt in imports:
             imported_classes.extend([cls.strip() for cls in import_stmt.split(",")])
 
         # 파일에 import된 QObject 파생 클래스 찾기
-        qobject_classes_in_file = [
+        qobject_classes_in_file: list[str] = [
             cls for cls in imported_classes if cls in qobject_derived_classes
         ]
 
