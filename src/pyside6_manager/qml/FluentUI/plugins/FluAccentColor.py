@@ -18,6 +18,16 @@ class FluAccentColor(QObject):
     lighterChanged = Signal()
     lightestChanged = Signal()
 
+    def __init__(self, parent: QObject | None = None):
+        QObject.__init__(self, parent)
+        self._darkest: QColor | None = None
+        self._darker: QColor | None = None
+        self._dark: QColor | None = None
+        self._normal: QColor | None = None
+        self._light: QColor | None = None
+        self._lighter: QColor | None = None
+        self._lightest: QColor | None = None
+
     @Property(QColor, notify=darkestChanged)
     def darkest(self) -> QColor | None:
         return self._darkest
@@ -80,13 +90,3 @@ class FluAccentColor(QObject):
     def lightest(self, value: QColor | None):
         self._lightest = value
         self.lightestChanged.emit()
-
-    def __init__(self, parent: QObject | None = None):
-        QObject.__init__(self, parent)
-        self._darkest: QColor | None = None
-        self._darker: QColor | None = None
-        self._dark: QColor | None = None
-        self._normal: QColor | None = None
-        self._light: QColor | None = None
-        self._lighter: QColor | None = None
-        self._lightest: QColor | None = None

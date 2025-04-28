@@ -13,6 +13,13 @@ class FluRectangle(QQuickPaintedItem):
     colorChanged = Signal()
     radiusChanged = Signal()
 
+    def __init__(self):
+        QQuickPaintedItem.__init__(self)
+        self._color = QColor(255, 255, 255, 255)
+        self._radius = [0, 0, 0, 0]
+        self.colorChanged.connect(lambda: self.update())
+        self.radiusChanged.connect(lambda: self.update())
+
     @Property(QColor, notify=colorChanged)
     def color(self):
         return self._color
@@ -30,13 +37,6 @@ class FluRectangle(QQuickPaintedItem):
     def radius(self, value: list[int]):
         self._radius = value
         self.radiusChanged.emit()
-
-    def __init__(self):
-        QQuickPaintedItem.__init__(self)
-        self._color = QColor(255, 255, 255, 255)
-        self._radius = [0, 0, 0, 0]
-        self.colorChanged.connect(lambda: self.update())
-        self.radiusChanged.connect(lambda: self.update())
 
     def paint(self, painter: QPainter):
         painter.save()

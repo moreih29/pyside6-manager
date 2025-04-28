@@ -3,7 +3,7 @@ import QtQuick.Controls
 import FluentUI
 
 Text {
-    property int iconSource
+    property int iconSource: 0
     property int iconSize: 20
     property color iconColor: FluTheme.dark ? "#FFFFFF" : "#000000"
     id:control

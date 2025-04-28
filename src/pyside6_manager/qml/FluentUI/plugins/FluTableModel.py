@@ -1,4 +1,5 @@
 # pyright: basic, reportArgumentType=none, reportRedeclaration=none
+from typing import Any
 
 from PySide6.QtCore import (
     Signal,
@@ -16,8 +17,8 @@ class FluTableModel(QAbstractTableModel):
 
     def __init__(self):
         QAbstractTableModel.__init__(self)
-        self._columnSource: list[dict] = []
-        self._rows: list[dict] = []
+        self._columnSource: list[dict[str, Any]] = []
+        self._rows: list[dict[str, Any]] = []
 
     @Slot()
     def clear(self):
@@ -26,18 +27,18 @@ class FluTableModel(QAbstractTableModel):
         self.endResetModel()
 
     @Slot(int, result=dict)
-    def getRow(self, rowIndex: int) -> dict:
+    def getRow(self, rowIndex: int) -> dict[str, Any]:
         return self._rows[rowIndex]
 
     @Slot(int, dict)
-    def setRow(self, rowIndex: int, row: dict):
+    def setRow(self, rowIndex: int, row: dict[str, Any]):
         self._rows[rowIndex] = row
         self.dataChanged.emit(
             self.index(rowIndex, 0), self.index(rowIndex, self.columnCount() - 1)
         )
 
     @Slot(int, dict)
-    def insertRow(self, rowIndex: int, row: dict):
+    def insertRow(self, rowIndex: int, row: dict[str, Any]):
         self.beginInsertRows(QModelIndex(), rowIndex, rowIndex)
         self._rows.insert(rowIndex, row)
         self.endInsertRows()
@@ -52,7 +53,7 @@ class FluTableModel(QAbstractTableModel):
         self.endRemoveRows()
 
     @Slot("QVariant")
-    def appendRow(self, row: dict):
+    def appendRow(self, row: dict[str, Any]):
         self.insertRow(self.rowCount(), row)
 
     def rowCount(self, parent=...):
@@ -61,7 +62,7 @@ class FluTableModel(QAbstractTableModel):
     def columnCount(self, parent=...):
         return len(self._columnSource)
 
-    def data(self, index, role=...):
+    def data(self, index: QModelIndex, role: int = ...) -> dict[str, Any] | None:
         if not index.isValid():
             return None
         if role == 0x101:
@@ -70,23 +71,23 @@ class FluTableModel(QAbstractTableModel):
             return self._columnSource[index.column()]
         return None
 
-    def roleNames(self):
+    def roleNames(self) -> dict[int, bytes]:
         return {0x101: b"rowModel", 0x102: b"columnModel"}
 
     @Property(list, notify=rowsChanged)
-    def rows(self):
+    def rows(self) -> list[dict[str, Any]]:
         return self._rows
 
     @rows.setter
-    def rows(self, value):
+    def rows(self, value: list[dict[str, Any]]):
         self._rows = value
         self.rowsChanged.emit()
 
     @Property(list, notify=columnSourceChanged)
-    def columnSource(self):
+    def columnSource(self) -> list[dict[str, Any]]:
         return self._columnSource
 
     @columnSource.setter
-    def columnSource(self, value):
+    def columnSource(self, value: list[dict[str, Any]]):
         self._columnSource = value
         self.columnSourceChanged.emit()

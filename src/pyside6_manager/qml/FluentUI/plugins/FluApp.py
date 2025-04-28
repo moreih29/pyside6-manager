@@ -19,15 +19,6 @@ class FluApp(QObject):
     localeChanged = Signal()
     launcherChanged = Signal()
 
-    @Property(QObject, notify=launcherChanged)
-    def launcher(self) -> QObject | None:
-        return self._launcher
-
-    @launcher.setter
-    def launcher(self, value: QObject | None):
-        self._launcher = value
-        self.launcherChanged.emit()
-
     def __init__(self):
         QObject.__init__(self)
         self._engine = None
@@ -36,6 +27,15 @@ class FluApp(QObject):
         self._windowIcon = None
         self._locale = None
         self._launcher = None
+
+    @Property(QObject, notify=launcherChanged)
+    def launcher(self) -> QObject | None:
+        return self._launcher
+
+    @launcher.setter
+    def launcher(self, value: QObject | None):
+        self._launcher = value
+        self.launcherChanged.emit()
 
     @Property(bool, notify=useSystemAppBarChanged)
     def useSystemAppBar(self) -> bool:

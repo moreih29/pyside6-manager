@@ -57,15 +57,6 @@ class FluTheme(QObject):
     desktopImagePathChanged = Signal()
     blurBehindWindowEnabledChanged = Signal()
 
-    @Property(bool, notify=blurBehindWindowEnabledChanged)
-    def blurBehindWindowEnabled(self):
-        return self._blurBehindWindowEnabled
-
-    @blurBehindWindowEnabled.setter
-    def blurBehindWindowEnabled(self, value: bool):
-        self._blurBehindWindowEnabled = value
-        self.blurBehindWindowEnabledChanged.emit()
-
     def __init__(self):
         QObject.__init__(self, QGuiApplication.instance())
         self._systemDark = False
@@ -104,6 +95,15 @@ class FluTheme(QObject):
             lambda: self.checkUpdateDesktopImage()
         )
         self.startTimer(1000)
+
+    @Property(bool, notify=blurBehindWindowEnabledChanged)
+    def blurBehindWindowEnabled(self):
+        return self._blurBehindWindowEnabled
+
+    @blurBehindWindowEnabled.setter
+    def blurBehindWindowEnabled(self, value: bool):
+        self._blurBehindWindowEnabled = value
+        self.blurBehindWindowEnabledChanged.emit()
 
     def timerEvent(self, event: QTimerEvent):
         self.checkUpdateDesktopImage()

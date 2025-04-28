@@ -2,6 +2,7 @@
 
 import qrcode
 import qrcode.constants
+from qrcode.image.pil import PilImage
 from qrcode.main import QRCode
 from PIL import ImageQt
 
@@ -16,6 +17,19 @@ class FluQrCodeItem(QQuickPaintedItem):
     colorChanged = Signal()
     bgColorChanged = Signal()
     sizeChanged = Signal()
+
+    def __init__(self):
+        QQuickPaintedItem.__init__(self)
+        self._text: str = ""
+        self._color: QColor = QColor(0, 0, 0, 255)
+        self._bgColor: QColor = QColor(255, 255, 255, 255)
+        self._size: int = 100
+        self.setWidth(self._size)
+        self.setHeight(self._size)
+        self.textChanged.connect(lambda: self.update())
+        self.colorChanged.connect(lambda: self.update())
+        self.bgColorChanged.connect(lambda: self.update())
+        self.sizeChanged.connect(lambda: self.updateSize())
 
     @Property(str, notify=textChanged)
     def text(self):
@@ -53,19 +67,6 @@ class FluQrCodeItem(QQuickPaintedItem):
         self._size = value
         self.sizeChanged.emit()
 
-    def __init__(self):
-        QQuickPaintedItem.__init__(self)
-        self._text: str = ""
-        self._color: QColor = QColor(0, 0, 0, 255)
-        self._bgColor: QColor = QColor(255, 255, 255, 255)
-        self._size: int = 100
-        self.setWidth(self._size)
-        self.setHeight(self._size)
-        self.textChanged.connect(lambda: self.update())
-        self.colorChanged.connect(lambda: self.update())
-        self.bgColorChanged.connect(lambda: self.update())
-        self.sizeChanged.connect(lambda: self.updateSize())
-
     def updateSize(self):
         self.setWidth(self._size)
         self.setHeight(self._size)
@@ -86,9 +87,10 @@ class FluQrCodeItem(QQuickPaintedItem):
         qr.add_data(self._text)
         qr.make(fit=True)
         qr_image = qr.make_image(
+            PilImage,
             fill_color=self._color.name(QColor.NameFormat.HexRgb),
             back_color=self._bgColor.name(QColor.NameFormat.HexRgb),
         )
-        image = ImageQt.toqimage(qr_image)  # pyright: ignore[reportUnknownMemberType]
+        image = ImageQt.toqimage(qr_image.get_image())  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
         painter.drawImage(QRect(0, 0, int(self.width()), int(self.height())), image)
         painter.restore()

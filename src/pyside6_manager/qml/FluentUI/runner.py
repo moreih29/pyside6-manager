@@ -118,7 +118,7 @@ class QFluentGuiApplication(QGuiApplication):
 
         target_path = Path(target_path)
         search_path = target_path
-        Logger().debug(f"Searching for resource files (*_rc.py) in: {search_path}")
+        Logger().debug(f"Searching for resource files (*.qrc) in: {search_path}")
 
         for file_path in search_path.rglob("*.qrc"):
             Logger().debug(f"Converting {file_path} to rc.py")

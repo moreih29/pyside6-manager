@@ -1,5 +1,6 @@
 # pyright: basic, reportRedeclaration=none, reportAssignmentType=none, reportOptionalMemberAccess=none
 # pyright: reportAttributeAccessIssue=none, reportCallIssue=none, reportOperatorIssue=none
+from typing import Any
 
 from PySide6.QtCore import (
     Signal,
@@ -22,30 +23,40 @@ class FluTreeNode(QObject):
     parentChanged = Signal()
     dataChanged = Signal()
 
+    def __init__(self, parent=None):
+        QObject.__init__(self, parent)
+        self._parent: FluTreeNode | None = None
+        self._data: dict[str, Any] = {}
+        self._title = ""
+        self._depth = 0
+        self._isExpanded = True
+        self._checked = False
+        self._children: list[FluTreeNode] = []
+
     @Property(dict, notify=dataChanged)
-    def data(self):
+    def data(self) -> dict[str, Any]:
         return self._data
 
     @data.setter
-    def data(self, value: dict):
+    def data(self, value: dict[str, Any]):
         self._data = value
         self.dataChanged.emit()
 
     @Slot(result=bool)
-    def hasChildren(self):
+    def hasChildren(self) -> bool:
         return len(self._children) != 0
 
     @Slot(int, result=bool)
-    def hasNextNodeByIndex(self, index: int):
+    def hasNextNodeByIndex(self, index: int) -> bool:
         p: FluTreeNode = self
-        for i in range(self._depth - index - 1):
+        for _ in range(self._depth - index - 1):
             p = p._parent
         if p._parent._children.index(p) == len(p._parent._children) - 1:
             return False
         return True
 
     @Slot(result=bool)
-    def hideLineFooter(self):
+    def hideLineFooter(self) -> bool:
         if self._parent is not None:
             if self not in self._parent._children:
                 return False
@@ -54,10 +65,10 @@ class FluTreeNode(QObject):
                 return True
             if self._parent._children[childIndex + 1].hasChildren():
                 return True
-            return False
+        return False
 
     @Slot(result=bool)
-    def isShown(self):
+    def isShown(self) -> bool:
         p = self._parent
         while p is not None:
             if not p.isExpanded:
@@ -66,7 +77,7 @@ class FluTreeNode(QObject):
         return True
 
     @Property(int, notify=depthChanged)
-    def depth(self):
+    def depth(self) -> int:
         return self._depth
 
     @depth.setter
@@ -75,7 +86,7 @@ class FluTreeNode(QObject):
         self.depthChanged.emit()
 
     @Property(bool, notify=isExpandedChanged)
-    def isExpanded(self):
+    def isExpanded(self) -> bool:
         return self._isExpanded
 
     @isExpanded.setter
@@ -84,7 +95,7 @@ class FluTreeNode(QObject):
         self.isExpandedChanged.emit()
 
     @Property(bool, notify=checkedChanged)
-    def checked(self):
+    def checked(self) -> bool:
         if not self.hasChildren():
             return self._checked
         for item in self._children:
@@ -98,7 +109,7 @@ class FluTreeNode(QObject):
         self.checkedChanged.emit()
 
     @Property(QObject, notify=parentChanged)
-    def parent_(self):
+    def parent_(self) -> QObject | None:
         return self._parent
 
     @parent_.setter
@@ -107,24 +118,13 @@ class FluTreeNode(QObject):
         self.parentChanged.emit()
 
     @Property(list, notify=childrenChanged)
-    def children_(self):
+    def children_(self) -> list["FluTreeNode"]:
         return self._children
 
     @children_.setter
-    def children_(self, value: list):
+    def children_(self, value: list["FluTreeNode"]):
         self._children = value
         self.childrenChanged.emit()
-
-    def __init__(self, parent=None):
-        QObject.__init__(self, parent)
-        self._parent = None
-        self._data = None
-        self._title = ""
-        self._depth = 0
-        self._data = None
-        self._isExpanded = True
-        self._checked = False
-        self._children: list[FluTreeNode] = []
 
 
 # noinspection PyCallingNonCallable,PyProtectedMember,PyPropertyAccess,PyPep8Naming
@@ -133,17 +133,27 @@ class FluTreeModel(QAbstractTableModel):
     selectionModelChanged = Signal()
     columnSourceChanged = Signal()
 
+    def __init__(self, parent: QObject | None = None):
+        QAbstractTableModel.__init__(self, parent)
+        self._dataSourceSize: int = 0
+        self._columnSource: list[dict[str, Any]] = []
+        self._selectionModel: list[FluTreeNode] = []
+        self._rows: list[FluTreeNode] = []
+        self._dataSource: list[FluTreeNode] = []
+        self._root: FluTreeNode | None = None
+        self.destroyed.connect(lambda: self.release())
+
     @Property(list, notify=selectionModelChanged)
-    def selectionModel(self):
+    def selectionModel(self) -> list[FluTreeNode]:
         return self._selectionModel
 
     @selectionModel.setter
-    def selectionModel(self, value: list):
+    def selectionModel(self, value: list[FluTreeNode]):
         self._selectionModel = value
         self.selectionModelChanged.emit()
 
     @Property(int, notify=dataSourceSizeChanged)
-    def dataSourceSize(self):
+    def dataSourceSize(self) -> int:
         return self._dataSourceSize
 
     @dataSourceSize.setter
@@ -152,23 +162,13 @@ class FluTreeModel(QAbstractTableModel):
         self.dataSourceSizeChanged.emit()
 
     @Property(list, notify=columnSourceChanged)
-    def columnSource(self):
+    def columnSource(self) -> list[dict[str, Any]]:
         return self._columnSource
 
     @columnSource.setter
-    def columnSource(self, value: list):
+    def columnSource(self, value: list[dict[str, Any]]):
         self._columnSource = value
         self.columnSourceChanged.emit()
-
-    def __init__(self, parent: QObject | None = None):
-        QAbstractTableModel.__init__(self, parent)
-        self._dataSourceSize: int = 0
-        self._columnSource = []
-        self._selectionModel: list[FluTreeNode] = []
-        self._rows: list[FluTreeNode] = []
-        self._dataSource: list[FluTreeNode] = []
-        self._root = None
-        self.destroyed.connect(lambda: self.release())
 
     def release(self):
         self._selectionModel.clear()
@@ -179,31 +179,31 @@ class FluTreeModel(QAbstractTableModel):
         del self._rows
         del self._dataSource
 
-    def rowCount(self, parent=...):
+    def rowCount(self, parent=...) -> int:
         return len(self._rows)
 
-    def columnCount(self, parent=...):
+    def columnCount(self, parent=...) -> int:
         return len(self._columnSource)
 
-    def data(self, index, role=...):
+    def data(self, index: QModelIndex, role: int) -> FluTreeNode | dict[str, Any]:
         if role == 0x0101:
             return self._rows[index.row()]
         elif role == 0x0102:
             return self._columnSource[index.column()]
         return {}
 
-    def roleNames(self):
+    def roleNames(self) -> dict[int, bytes]:
         return {
             0x0101: b"rowModel",
             0x0102: b"columnModel",
         }
 
-    def index(self, row, column, parent=...):
+    def index(self, row: int, column: int, parent=...) -> QModelIndex:
         if not self.hasIndex(row, column):
             return QModelIndex()
         return self.createIndex(row, column)
 
-    def parent(self, parent=...):
+    def parent(self, parent=...) -> QModelIndex:
         return QModelIndex()
 
     @Slot(int, int)
@@ -256,7 +256,7 @@ class FluTreeModel(QAbstractTableModel):
         data = []
         for item in self._dataSource:
             if not item.hasChildren():
-                if item.checked():
+                if item.checked:
                     data.append(item)
         self.selectionModel = data
 
@@ -337,7 +337,7 @@ class FluTreeModel(QAbstractTableModel):
         self.insertRows(row + 1, insertData)
 
     @Slot(int)
-    def getRow(self, row: int):
+    def getRow(self, row: int) -> FluTreeNode:
         return self._rows[row]
 
     @Slot(list)
@@ -347,7 +347,7 @@ class FluTreeModel(QAbstractTableModel):
         self.endResetModel()
 
     @Slot(int)
-    def getNode(self, row: int):
+    def getNode(self, row: int) -> FluTreeNode:
         return self._rows[row]
 
     @Slot(int)
@@ -355,7 +355,7 @@ class FluTreeModel(QAbstractTableModel):
         self.dataChanged.emit(self.index(row, 0), self.index(row, 0))
 
     @Slot(int)
-    def hitHasChildrenExpanded(self, row: int):
+    def hitHasChildrenExpanded(self, row: int) -> bool:
         itemData = self._rows[row]
         if itemData.hasChildren() and itemData.isExpanded:
             return True

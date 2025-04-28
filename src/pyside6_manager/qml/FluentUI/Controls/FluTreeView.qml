@@ -750,6 +750,6 @@ Rectangle {
         d.editDelegate = undefined
     }
     function selectionModel(){
-        return tree_model.selectionModel()
+        return tree_model.selectionModel
     }
 }

@@ -21,6 +21,18 @@ class FluCaptcha(QQuickPaintedItem):
     fontChanged = Signal()
     ignoreCaseChanged = Signal()
 
+    def __init__(self):
+        QQuickPaintedItem.__init__(self)
+        self._ignoreCase: bool = True
+        self._code = ""
+        fontStype = QFont()
+        fontStype.setPixelSize(28)
+        fontStype.setBold(True)
+        self._font = fontStype
+        self.setWidth(180)
+        self.setHeight(80)
+        self.refresh()
+
     @Property(bool, notify=ignoreCaseChanged)
     def ignoreCase(self) -> bool:
         return self._ignoreCase
@@ -38,18 +50,6 @@ class FluCaptcha(QQuickPaintedItem):
     def font(self, value: QFont):
         self._font = value
         self.fontChanged.emit()
-
-    def __init__(self):
-        QQuickPaintedItem.__init__(self)
-        self._ignoreCase: bool = True
-        self._code = ""
-        fontStype = QFont()
-        fontStype.setPixelSize(28)
-        fontStype.setBold(True)
-        self._font = fontStype
-        self.setWidth(180)
-        self.setHeight(80)
-        self.refresh()
 
     @Slot()
     def refresh(self):

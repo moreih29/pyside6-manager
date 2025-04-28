@@ -1,5 +1,5 @@
-# pyright: basic, reportRedeclaration=none
-
+# pyright: basic, reportRedeclaration=none, reportReturnType=none
+from typing import Any
 
 from PySide6.QtCore import (
     Signal,
@@ -11,6 +11,7 @@ from PySide6.QtCore import (
     Q_ARG,
     Qt,
     QAbstractItemModel,
+    QModelIndex,
 )
 from PySide6.QtQml import QJSValue
 
@@ -18,6 +19,13 @@ from PySide6.QtQml import QJSValue
 # noinspection PyCallingNonCallable,PyPep8Naming,PyShadowingBuiltins
 class FluTableSortProxyModel(QSortFilterProxyModel):
     modelChanged = Signal()
+
+    def __init__(self):
+        QSortFilterProxyModel.__init__(self)
+        self._model = None
+        self._filter = None
+        self._comparator = None
+        self.modelChanged.connect(lambda: self.setSourceModel(self._model))  # pyright: ignore[reportArgumentType]
 
     # noinspection PyTypeChecker
     @Property(QAbstractItemModel, notify=modelChanged)
@@ -29,16 +37,9 @@ class FluTableSortProxyModel(QSortFilterProxyModel):
         self._model = value
         self.modelChanged.emit()
 
-    def __init__(self):
-        QSortFilterProxyModel.__init__(self)
-        self._model = None
-        self._filter = None
-        self._comparator = None
-        self.modelChanged.connect(lambda: self.setSourceModel(self._model))  # pyright: ignore[reportArgumentType]
-
     # noinspection PyTypeChecker
     @Slot(int, result=dict)
-    def getRow(self, rowIndex: int):
+    def getRow(self, rowIndex: int) -> dict[str, Any]:
         if self._model is None:
             return {}
         return QMetaObject.invokeMethod(
@@ -50,7 +51,7 @@ class FluTableSortProxyModel(QSortFilterProxyModel):
 
     # noinspection PyTypeChecker
     @Slot(int, dict)
-    def setRow(self, rowIndex: int, val: dict):
+    def setRow(self, rowIndex: int, val: dict[str, Any]):
         if self._model is None:
             return
         QMetaObject.invokeMethod(
@@ -92,13 +93,13 @@ class FluTableSortProxyModel(QSortFilterProxyModel):
     def filterAcceptsColumn(self, source_column: ..., source_parent: ...):
         return True
 
-    def filterAcceptsRow(self, source_row: ..., source_parent: ...):
+    def filterAcceptsRow(self, source_row: int, source_parent: ...):
         if self._filter is None or self._filter.isUndefined():
             return True
         data: list[int] = [source_row]
         return self._filter.call(data).toBool()
 
-    def lessThan(self, source_left, source_right):
+    def lessThan(self, source_left: QModelIndex, source_right: QModelIndex) -> bool:
         if self._comparator is None or self._comparator.isUndefined():
             return True
         data: list[int] = [source_left.row(), source_right.row()]
