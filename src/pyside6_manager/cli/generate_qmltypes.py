@@ -1,11 +1,10 @@
 import os
 import re
 import glob
+from typing import Iterable
 
-import typer
+import click
 from pydantic import BaseModel
-
-router = typer.Typer()
 
 
 QOBJECT_DERIVED_CLASSES = [
@@ -484,7 +483,7 @@ def find_qobject_classes_from_file(path: str) -> list[str]:
         return []
 
 
-def find_all_python_files(paths: list[str]) -> list[str]:
+def find_all_python_files(paths: Iterable[str]) -> list[str]:
     """
     주어진 패턴에 매칭되는 모든 Python 파일 목록을 반환합니다.
     파일이 발견되지 않을 경우 기본 디렉토리를 추가로 검색합니다.
@@ -558,40 +557,46 @@ def generate_qmldir(output_file: str, module_name: str) -> bool:
     return True
 
 
-@router.command(name="genqml")
+@click.command()
+@click.argument(
+    "paths",
+    type=click.Path(exists=True),
+    nargs=-1,
+)
+@click.option(
+    "-o",
+    "--output-file",
+    type=click.Path(file_okay=True, dir_okay=False),
+    help="생성할 qmltypes 파일 경로",
+)
+@click.option(
+    "-m",
+    "--module-name",
+    type=str,
+    default="result",
+    show_default=True,
+    help="qmldir 파일에 사용할 모듈 이름",
+)
+@click.option(
+    "-q",
+    "--qmldir",
+    type=bool,
+    default=False,
+    show_default=True,
+    help="qmldir 파일을 함께 생성합니다.",
+)
 def generate_qmltypes(
-    paths: list[str] = typer.Argument(help="Python 파일 경로 또는 경로 목록"),
-    output_file: str = typer.Option(
-        "generated.qmltypes",
-        "--output",
-        "-o",
-        help="생성할 qmltypes 파일 경로",
-    ),
-    module_name: str = typer.Option(
-        "module",
-        "--module",
-        "-m",
-        help="qmldir 파일에 사용할 모듈 이름",
-    ),
-    qmldir: bool = typer.Option(
-        False,
-        "--qmldir",
-        "-q",
-        help="qmldir 파일을 함께 생성합니다.",
-    ),
+    paths: tuple[str], output_file: str, module_name: str, qmldir: bool
 ) -> bool:
     """
     주어진 Python 파일들에서 QObject 파생 클래스를 파싱하여 .qmltypes 파일을 생성합니다.
 
-    Args:
-        paths: 파싱할 Python 파일 경로 또는 경로 목록 (glob 패턴 지원)
-        output_file: 생성할 qmltypes 파일 경로
-        module_name: qmldir 파일에 사용할 모듈 이름
-        qmldir: qmldir 파일을 함께 생성합니다.
+    이 커맨드는 지정된 PATHS에서 QObject를 상속하는 파이썬 클래스를 찾아 QML 엔진이 인식할 수 있는
+    .qmltypes 메타데이터 파일을 만듭니다. 선택적으로 qmldir 파일도 함께 생성할 수 있습니다.
 
-    Returns:
-        성공 여부
+    PATHS 인자에는 하나 이상의 파일 경로 또는 glob 패턴을 전달할 수 있습니다.
     """
+
     # 파일 경로 목록 생성 - 개선된 검색 로직 사용
     py_files = find_all_python_files(paths)
 

@@ -1,23 +1,13 @@
-import typer
+import click
 
-from .generate_qmltypes import router
+from .generate_qmltypes import generate_qmltypes
 from .. import __version__, __name__
 
-app = typer.Typer()
-app.add_typer(router)
 
-
-def version_callback(value: bool):
-    if value:
-        typer.echo(f"{__name__} {__version__}")
-        raise typer.Exit()
-
-
-@app.callback()
-def main(
-    version: bool = typer.Option(False, "--version", "-v", callback=version_callback),
-):
-    """
-    PySide6 Manager CLI tool
-    """
+@click.group()
+@click.version_option(version=__version__, package_name=__name__, prog_name=__name__)
+def cli():
     pass
+
+
+cli.add_command(generate_qmltypes, name="genqml")
