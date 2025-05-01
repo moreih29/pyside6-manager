@@ -18,7 +18,7 @@ QML에서 포커스(Focus)는 현재 키보드 입력을 받아들일 아이템�
 
 ### 주요 메소드
 
-*   **`forceActiveFocus(reason)`**: 특정 아이템에 활성 포커스를 강제로 설정합니다. 해당 아이템의 `focus` 프로퍼티가 `true`여야 합니다.
+*   **`forceActiveFocus(reason)`**: 특정 아이템에 활성 포커스를 강제로 설정합니다. 해당 아이템의 `focus` 프로퍼티가 `true`여야 합니다. `reason` 파라미터(`Qt::FocusReason` 열거형 값)를 전달하여 포커스 변경 이유를 명시할 수 있습니다.
 *   **`nextItemInFocusChain()`, `previousItemInFocusChain()`**: Tab 또는 Shift+Tab 시 다음에 포커스를 받을 아이템을 반환합니다.
 
 ### FocusScope 컴포넌트
@@ -33,84 +33,93 @@ QML에서 포커스(Focus)는 현재 키보드 입력을 받아들일 아이템�
 
 ```qml
 import QtQuick
+import QtQuick.Controls // 표준 컨트롤 사용
+import QtQuick.Layouts // 표준 레이아웃 사용
 
 Window {
     width: 400
-    height: 150
+    height: 200 // 예제 높이 조정
     visible: true
     title: "Focus Example"
 
-    // 기본 포커스 체인 (Window가 관리)
-    Row {
-        id: topRow
+    ColumnLayout { // 전체 레이아웃 관리
+        anchors.fill: parent
+        anchors.margins: 10
         spacing: 10
-        anchors.top: parent.top
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.topMargin: 10
 
-        Button { id: btn1; text: "Button 1"; focus: true; activeFocusOnTab: true }
-        Button { id: btn2; text: "Button 2"; focus: true; activeFocusOnTab: true }
-    }
-
-    // FocusScope를 사용한 독립적인 포커스 체인
-    FocusScope {
-        id: focusScope
-        width: parent.width; height: 50
-        anchors.top: topRow.bottom
-        anchors.topMargin: 20
-
-        property alias scopeText: scopeStatus.text
-
-        focus: true // FocusScope 자체도 포커스를 받을 수 있음
-        activeFocusOnTab: true // Tab으로 이 Scope에 진입 가능
-
-        Keys.onPressed: {
-            // Scope가 포커스를 가졌을 때 키 이벤트 처리 (내부 아이템이 포커스 없으면)
-            console.log("FocusScope received key", event.key)
-            scopeStatus.text = "FocusScope has focus (key: " + event.key + ")"
-        }
-
-        Row {
-            anchors.centerIn: parent
+        // 기본 포커스 체인 (Window가 관리)
+        RowLayout {
+            id: topRowLayout
+            // Layout.fillWidth: true // 너비 자동 조정
             spacing: 10
 
-            TextField {
-                id: input1
-                placeholderText: "Input 1"
-                focus: true // 기본적으로 true
-                activeFocusOnTab: true // 기본적으로 true
-                Keys.onPressed: focusScope.scopeText = "Input 1 has focus"
-            }
-            TextField {
-                id: input2
-                placeholderText: "Input 2"
-                focus: true
-                activeFocusOnTab: true
-                Keys.onPressed: focusScope.scopeText = "Input 2 has focus"
-            }
-            Button { // 이 버튼은 Tab으로 포커스 받지 않음
-                id: btnInScope
-                text: "Scope Btn"
-                focus: true
-                activeFocusOnTab: false // Tab 순서에서 제외
-                MouseArea { anchors.fill: parent; onClicked: parent.forceActiveFocus() }
-                Keys.onPressed: focusScope.scopeText = "Scope Btn has focus"
-            }
+            Button { id: btn1; text: "Button 1"; focusPolicy: Qt.StrongFocus } // focus: true, activeFocusOnTab: true 와 유사
+            Button { id: btn2; text: "Button 2"; focusPolicy: Qt.StrongFocus }
         }
 
-        // FocusScope 내에서 마지막 활성 포커스 아이템을 추적할 수 있음
-        // Component.onCompleted: { input1.forceActiveFocus() } // 시작 시 input1에 포커스
-    }
+        // FocusScope를 사용한 독립적인 포커스 체인
+        FocusScope {
+            id: focusScope
+            Layout.fillWidth: true
+            Layout.preferredHeight: 80 // 높이 지정
 
-    Text { // 상태 표시용
-        id: scopeStatus
-        anchors.top: focusScope.bottom
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.topMargin: 10
-        text: "Tab between elements. Click 'Scope Btn' to focus it."
+            property alias scopeText: scopeStatus.text
+
+            focus: true // FocusScope 자체도 포커스를 받을 수 있음
+            activeFocusOnTab: true // Tab으로 이 Scope에 진입 가능
+
+            // FocusScope 자체에 포커스 시 배경 표시 (시각화)
+            Rectangle { anchors.fill: parent; color: "lightyellow"; border.color: parent.activeFocus ? "red" : "transparent"; border.width: 2; z: -1 }
+
+            Keys.onPressed: (event) => {
+                // Scope가 포커스를 가졌을 때 키 이벤트 처리 (내부 아이템이 포커스 없으면)
+                if (!event.accepted) { // 내부 아이템에서 처리 안 된 경우만
+                    console.log("FocusScope received key", event.key)
+                    scopeStatus.text = "FocusScope has focus (key: " + event.key + ")"
+                    event.accepted = true; // 여기서 처리 완료
+                }
+            }
+
+            RowLayout {
+                anchors.centerIn: parent
+                spacing: 10
+
+                TextField {
+                    id: input1
+                    placeholderText: "Input 1"
+                    // TextField는 기본적으로 focusPolicy = Qt.StrongFocus
+                    Keys.onPressed: focusScope.scopeText = "Input 1 has focus"
+                }
+                TextField {
+                    id: input2
+                    placeholderText: "Input 2"
+                    Keys.onPressed: focusScope.scopeText = "Input 2 has focus"
+                }
+                Button { // 이 버튼은 Tab으로 포커스 받지 않음
+                    id: btnInScope
+                    text: "Scope Btn"
+                    focusPolicy: Qt.ClickFocus // 클릭으로만 포커스 받음 (Tab 제외)
+                    // MouseArea 대신 Button 자체의 onClicked 사용
+                    onClicked: forceActiveFocus() // 클릭 시 강제 포커스
+                    Keys.onPressed: focusScope.scopeText = "Scope Btn has focus"
+                }
+            }
+
+            // FocusScope 내에서 마지막 활성 포커스 아이템을 추적할 수 있음
+            // Component.onCompleted: { input1.forceActiveFocus() } // 시작 시 input1에 포커스
+        }
+
+        Text { // 상태 표시용
+            id: scopeStatus
+            // Layout.fillWidth: true // 너비 채우기
+            wrapMode: Text.WordWrap
+            text: "Tab between elements. Click 'Scope Btn' to focus it."
+        }
     }
 }
+```
 
+```qml
 // --- Button.qml (간단한 버튼 구현) ---
 import QtQuick
 
@@ -174,11 +183,14 @@ Rectangle {
         }
     }
 }
-
 ```
-
 ## 참고 사항
 
 *   키보드 포커스 관리는 사용자 경험에 큰 영향을 미칩니다. 논리적인 Tab 순서를 제공하고, 현재 포커스 위치를 시각적으로 명확히 표시하는 것이 중요합니다.
 *   `KeyNavigation` Attached Property를 사용하여 화살표 키를 이용한 포커스 이동을 구현할 수도 있습니다.
-*   모바일 환경 등 터치 기반 인터페이스에서는 키보드 포커스의 중요성이 상대적으로 낮을 수 있지만, 접근성(Accessibility) 측면에서는 여전히 중요합니다. 
+*   모바일 환경 등 터치 기반 인터페이스에서는 키보드 포커스의 중요성이 상대적으로 낮을 수 있지만, 접근성(Accessibility) 측면에서는 여전히 중요합니다.
+
+## 공식 문서 링크
+
+*   [Qt Quick FocusScope QML Type](https://doc.qt.io/qt-6/qml-qtquick-focusscope.html)
+*   [Item QML Type (focus properties)](https://doc.qt.io/qt-6/qml-qtquick-item.html#focus-prop) 

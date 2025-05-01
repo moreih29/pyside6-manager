@@ -128,3 +128,7 @@ Window {
 *   `result` 프로퍼티와 `closed()` 시그널을 통해 대화상자가 어떻게 닫혔는지 (예: OK 클릭, Cancel 클릭, Esc 키 등) 확인할 수 있습니다.
 *   `modal: true`로 설정하면 대화상자가 열려 있는 동안 부모 창과의 상호작용이 차단됩니다.
 *   간단한 메시지만 표시하는 경우 `MessageDialog` (`QtQuick.Dialogs`)가 더 편리할 수 있습니다. 
+
+## 공식 문서 링크
+
+* [Dialog QML Type ](https://doc.qt.io/qt-6/qml-qtquick-controls-dialog.html) 

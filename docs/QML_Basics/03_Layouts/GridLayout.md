@@ -12,12 +12,14 @@
 
 | 이름             | 타입    | 기본값           | 설명                                                                                                  |
 | :--------------- | :------ | :--------------- | :---------------------------------------------------------------------------------------------------- |
-| `rows`           | `int`   | 0                | 그리드의 행 수. 0이면 아이템 수에 따라 자동으로 결정됨.                                                 |
-| `columns`        | `int`   | 0                | 그리드의 열 수. 0이면 아이템 수에 따라 자동으로 결정됨.                                                 |
-| `rowSpacing`     | `real`  | 5                | 행들 사이의 간격 (픽셀 단위).                                                                        |
-| `columnSpacing`  | `real`  | 5                | 열들 사이의 간격 (픽셀 단위).                                                                        |
-| `flow`           | `enum`  | `GridLayout.LeftToRight` | 아이템 배치 순서 (`LeftToRight`, `TopToBottom`). `RightToLeft`, `BottomToTop` 등도 가능 (layoutDirection과 조합). |
-| `layoutDirection`| `enum`  | `Qt.LeftToRight` | 레이아웃 방향 (`Qt.LeftToRight` 또는 `Qt.RightToLeft`). `flow`와 함께 아이템 배치 순서에 영향을 줌.          |
+| `rows`           | `int`   | 0                | 그리드의 행 수 제한. 0이면 제한 없음. `flow`가 `TopToBottom`일 때 사용됩니다.                                |
+| `columns`        | `int`   | 0                | 그리드의 열 수 제한. 0이면 제한 없음. `flow`가 `LeftToRight`일 때 사용됩니다.                                |
+| `rowSpacing`     | `real`  | 5                | 행들 사이의 간격 (픽셀 단위). 기본값은 5입니다.                                                               |
+| `columnSpacing`  | `real`  | 5                | 열들 사이의 간격 (픽셀 단위). 기본값은 5입니다.                                                               |
+| `flow`           | `enum`  | `GridLayout.LeftToRight` | 아이템 배치 순서 (`LeftToRight`, `TopToBottom`). 기본값은 `LeftToRight`입니다.                                |
+| `layoutDirection`| `enum`  | `Qt.LeftToRight` | (Layouts 1.1+) 레이아웃 방향 (`Qt.LeftToRight` 또는 `Qt.RightToLeft`). 기본값은 `Qt.LeftToRight`입니다. |
+| `uniformCellWidths` | `bool` | `false` | (Layouts 6.6+) `true`이면 모든 셀의 너비를 동일하게 강제합니다. 기본값은 `false`입니다. |
+| `uniformCellHeights`| `bool` | `false` | (Layouts 6.6+) `true`이면 모든 셀의 높이를 동일하게 강제합니다. 기본값은 `false`입니다. |
 
 ## Layout Attached Properties (자식 아이템에서 사용)
 
@@ -38,6 +40,13 @@
 | `Layout.minimumWidth`  | `real`    | 0       | 아이템의 최소 너비.                                                      |
 | `Layout.preferredHeight`| `real`   | -1      | 아이템이 선호하는 높이. `-1`이면 암시적 높이(`implicitHeight`) 사용.     |
 | `Layout.preferredWidth` | `real`   | -1      | 아이템이 선호하는 너비. `-1`이면 암시적 너비(`implicitWidth`) 사용.       |
+| `Layout.margins`      | `real`    | 0       | 아이템 주위의 모든 여백. 개별 여백(`leftMargin` 등)을 설정하면 이 값은 무시됩니다. |
+| `Layout.leftMargin`   | `real`    | 0       | 아이템 왼쪽 여백. |
+| `Layout.rightMargin`  | `real`    | 0       | 아이템 오른쪽 여백. |
+| `Layout.topMargin`    | `real`    | 0       | 아이템 위쪽 여백. |
+| `Layout.bottomMargin` | `real`    | 0       | 아이템 아래쪽 여백. |
+| `Layout.horizontalStretchFactor` | `int` | 0    | 레이아웃 내에서 아이템이 수평으로 늘어나는 비율. 0이면 늘어나지 않음. |
+| `Layout.verticalStretchFactor`   | `int` | 0    | 레이아웃 내에서 아이템이 수직으로 늘어나는 비율. 0이면 늘어나지 않음. |
 
 ## 예제
 
@@ -100,4 +109,8 @@ Window {
 
 *   `rows` 또는 `columns` 중 하나만 지정하면 나머지는 아이템 수에 맞춰 자동으로 계산됩니다.
 *   `Layout.row`와 `Layout.column`을 명시적으로 지정하지 않으면 `flow`와 `layoutDirection`에 따라 순서대로 빈 셀에 배치됩니다.
-*   `rowSpan`이나 `columnSpan`을 사용할 때 셀이 겹치지 않도록 주의해야 합니다. 
+*   `rowSpan`이나 `columnSpan`을 사용할 때 셀이 겹치지 않도록 주의해야 합니다.
+
+## 공식 문서 링크
+
+*   [Qt Quick GridLayout QML Type](https://doc.qt.io/qt-6/qml-qtquick-layouts-gridlayout.html) 

@@ -59,43 +59,52 @@ Rectangle {
 ```qml
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
+import QtQuick.Window 2.15
 
-RowLayout {
-    spacing: 10
+Window {
+    width: 400 // Rectangle 4개 + spacing 고려 (80*3+120 + 3*10)
+    height: 120 // Rectangle 높이 + 여백 고려
+    visible: true
+    title: "Rectangle Examples"
 
-    // 기본 파란색 사각형
-    Rectangle {
-        width: 80; height: 80
-        color: "blue"
-    }
-    
-    // 둥근 모서리와 두꺼운 검은 테두리
-    Rectangle {
-        width: 80; height: 80
-        color: "lightgreen"
-        radius: 10
-        border.width: 3
-        border.color: "black"
-    }
-    
-    // 투명 배경, 빨간 테두리만 있는 사각형
-    Rectangle {
-        width: 80; height: 80
-        color: "transparent"
-        border.color: "red"
-        border.width: 2
-    }
-    
-    // 수평 그라데이션 (Gradient 객체 사용)
-    Rectangle {
-        width: 120; height: 80
-        gradient: Gradient {
-            orientation: Gradient.Horizontal // 수평 방향 설정
-            GradientStop { position: 0.0; color: "yellow" }
-            GradientStop { position: 0.5; color: "orange" }
-            GradientStop { position: 1.0; color: "red" }
+    RowLayout {
+        anchors.centerIn: parent // 중앙 정렬
+        spacing: 10
+
+        // 기본 파란색 사각형
+        Rectangle {
+            width: 80; height: 80
+            color: "blue"
         }
-        radius: 5
+
+        // 둥근 모서리와 두꺼운 검은 테두리
+        Rectangle {
+            width: 80; height: 80
+            color: "lightgreen"
+            radius: 10
+            border.width: 3
+            border.color: "black"
+        }
+
+        // 투명 배경, 빨간 테두리만 있는 사각형
+        Rectangle {
+            width: 80; height: 80
+            color: "transparent"
+            border.color: "red"
+            border.width: 2
+        }
+
+        // 수평 그라데이션 (Gradient 객체 사용)
+        Rectangle {
+            width: 120; height: 80
+            gradient: Gradient {
+                orientation: Gradient.Horizontal // 수평 방향 설정
+                GradientStop { position: 0.0; color: "yellow" }
+                GradientStop { position: 0.5; color: "orange" }
+                GradientStop { position: 1.0; color: "red" }
+            }
+            radius: 5
+        }
     }
 }
 ```
@@ -105,4 +114,8 @@ RowLayout {
 *   **기본 블록**: `Rectangle`은 QML UI 디자인에서 가장 기본적이고 자주 사용되는 시각적 요소 중 하나입니다.
 *   **컨테이너 역할**: 다른 아이템들을 담는 배경이나 컨테이너로 흔히 사용됩니다.
 *   **`radius`와 테두리**: `radius` 값이 설정되면 테두리도 둥글게 처리됩니다.
-*   **성능**: 간단한 사각형은 매우 효율적으로 렌더링됩니다. 하지만 매우 많은 `Rectangle`을 사용하거나 복잡한 `gradient`를 적용하면 성능에 영향을 줄 수 있습니다. 
+*   **성능**: 간단한 사각형은 매우 효율적으로 렌더링됩니다. 하지만 매우 많은 `Rectangle`을 사용하거나 복잡한 `gradient`를 적용하면 성능에 영향을 줄 수 있습니다.
+
+## 공식 문서 링크
+
+*   [Qt Quick Rectangle QML Type](https://doc.qt.io/qt-6/qml-qtquick-rectangle.html) 

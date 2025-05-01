@@ -26,12 +26,10 @@
 | `snapMode`       | `SnapMode`   | `NoSnap`        | 값이 `stepSize`에 맞춰지거나(`SnapAlways`, `SnapOnRelease`), 맞춰지지 않는(`NoSnap`) 방식을 결정합니다. (`Slider`와 유사)            |
 | `wrap`           | `bool`       | `false`         | `true`로 설정하면 `to` 값에서 `from` 값으로 (또는 그 반대로) 값이 순환합니다.                                                     |
 | `live`           | `bool`       | `true`          | `true`이면 사용자가 핸들을 드래그하는 동안 `value`가 실시간으로 업데이트됩니다. `false`이면 드래그를 놓았을 때만 업데이트됩니다.      |
-| `tickmarks`      |              |                 | 다이얼 주위에 눈금을 표시하기 위한 관련 프로퍼티 (`tickmarks.enabled`, `tickmarks.stepSize`, `tickmarks.color` 등). 스타일 의존적. |
-| `enabled`        | `bool`       | `true`          | 컨트롤의 활성화 상태.                                                                                                         |
 | `focusPolicy`    | `FocusPolicy`| `Qt.StrongFocus`| 컨트롤이 키보드 포커스를 받는 방식.                                                                                             |
 | `hoverEnabled`   | `bool`       | `true`          | 마우스 호버 효과 활성화 여부.                                                                                                 |
 | `hovered`        | `bool`       | (읽기 전용)     | 현재 마우스 커서가 컨트롤 위에 있는지 여부.                                                                                     |
-| Tooltip          |              |                 | 컨트롤 위에 마우스를 올렸을 때 표시되는 툴팁 관련 프로퍼티.                                                                       |
+| `tooltip`        |              |                 | 컨트롤 위에 마우스를 올렸을 때 표시되는 툴팁 관련 프로퍼티.                                                                       |
 
 ## 주요 시그널
 
@@ -65,7 +63,6 @@ Window {
         anchors.fill: parent
         anchors.margins: 10
         spacing: 10
-        alignment: Qt.AlignHCenter
 
         Label {
             id: valueLabel
@@ -90,19 +87,19 @@ Window {
 
             // 간단한 핸들 스타일링 예시 (기본 스타일 위에 추가)
             handle: Rectangle {
-                x: volumeDial.background.width / 2 - width / 2
-                y: volumeDial.background.height * 0.1 // 핸들 위치 조정
+                x: volumeDial.width / 2 - width / 2
+                y: volumeDial.height * 0.1 // 핸들 위치 조정 (상대적)
                 width: 10
                 height: 10
                 radius: 5
                 color: "red"
                 border.color: "darkred"
                 antialiasing: true
-                // 핸들을 다이얼 값에 따라 회전
+                // 핸들을 다이얼 값에 따라 회전 (visualPosition 사용)
                 transform: Rotation {
                     origin.x: width / 2
-                    origin.y: volumeDial.background.height / 2 - y
-                    angle: volumeDial.visualPosition * (volumeDial.to - volumeDial.from)
+                    origin.y: volumeDial.height / 2 - y
+                    angle: -135 + volumeDial.visualPosition * 270
                 }
             }
         }
@@ -114,9 +111,6 @@ Window {
             wrap: true // 값 순환 활성화
             stepSize: 1
             value: 180
-            // 눈금 활성화 (스타일에 따라 다르게 보일 수 있음)
-            tickmarks.enabled: true
-            tickmarks.stepSize: 30 // 30도마다 눈금 표시
         }
     }
 }
@@ -129,4 +123,8 @@ Window {
 *   `snapMode`를 사용하여 값이 `stepSize`에 맞춰지도록 할 수 있습니다.
 *   `wrap` 프로퍼티를 `true`로 설정하면 값이 최대값에서 최소값으로, 또는 그 반대로 순환됩니다.
 *   `handle`과 `background` 아이템을 커스터마이징하여 다이얼의 외형을 변경할 수 있습니다. 스타일 시스템에 따라 기본 모양이 제공됩니다.
-*   `tickmarks` 관련 프로퍼티를 사용하여 다이얼 주위에 눈금을 표시할 수 있습니다. (스타일 지원 필요) 
+*   `tickmarks` 관련 프로퍼티를 사용하여 다이얼 주위에 눈금을 표시할 수 있습니다. (스타일 지원 필요)
+
+## 공식 문서 링크
+
+*   [Dial QML Type ](https://doc.qt.io/qt-6/qml-qtquick-controls-dial.html) 

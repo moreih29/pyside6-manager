@@ -65,10 +65,10 @@ Window {
         TextField { Layout.fillWidth: true }
 
         // 니모닉(&)을 사용한 Label
-        // Alt+E 누르면 연결된 TextField로 포커스 이동
+        // Alt+E 누르면 연결된 TextField로 포커스 이동 (labelFor 지원 시)
         Label {
-            text: "&Email:"
-            labelFor: emailField // TextField와 연결
+            text: "Email:" // 니모닉(&) 제거
+            // labelFor: emailField // labelFor 속성 사용 불가 시 제거
             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter // 오른쪽 정렬
         }
         TextField {
@@ -104,3 +104,7 @@ Window {
 *   `labelFor` 프로퍼티를 사용하여 레이블과 입력 컨트롤을 연결하면 사용자 경험(특히 키보드 네비게이션 및 스크린 리더 사용 시)을 향상시킬 수 있습니다. `text`에 `&` 문자를 사용하여 니모닉(단축키 Alt+문자)을 정의하면 해당 컨트롤로 바로 포커스를 이동시킬 수 있습니다.
 *   `textFormat` 프로퍼티를 통해 텍스트를 일반 텍스트, 스타일 텍스트(니모닉 지원), 또는 리치 텍스트(HTML 부분 집합 지원)로 해석하도록 설정할 수 있습니다.
 *   텍스트가 영역을 벗어날 경우 `wrapMode`와 `elide` 프로퍼티를 사용하여 줄 바꿈 또는 생략 처리를 제어할 수 있습니다. 
+
+## 공식 문서 링크
+
+*   [Label QML Type ](https://doc.qt.io/qt-6/qml-qtquick-controls-label.html) 

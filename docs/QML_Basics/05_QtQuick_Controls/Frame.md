@@ -92,3 +92,7 @@ Window {
 *   `GroupBox`는 `Frame`과 유사하지만 `title` 프로퍼티를 통해 그룹 상자 제목을 표시할 수 있는 기능을 추가로 제공합니다.
 *   `background` 프로퍼티를 통해 프레임의 배경(테두리 포함)을 커스터마이징할 수 있습니다. `Rectangle` 등을 사용하여 원하는 모양을 만들 수 있습니다.
 *   `enabled` 프로퍼티를 `false`로 설정하면 프레임과 그 안에 포함된 모든 컨트롤들이 시각적으로 비활성화 상태로 표시될 수 있습니다 (스타일에 따라 다름). 
+
+## 공식 문서 링크
+
+*   [Frame QML Type ](https://doc.qt.io/qt-6/qml-qtquick-controls-frame.html) 

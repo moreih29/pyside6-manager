@@ -37,17 +37,19 @@
 
 `Popup`의 모든 메소드 (`open`, `close`)를 상속받습니다.
 
-| 이름           | 파라미터 | 반환타입 | 설명                                                              |
-| :------------- | :------- | :------- | :---------------------------------------------------------------- |
-| `popup(pos?)`  | `QPointF`| -        | 메뉴를 지정된 위치(`pos`, 전역 좌표)에 엽니다. 위치를 생략하면 현재 마우스 위치에 엽니다. |
-| `addMenu(menu)`| `Menu`   | -        | 이 메뉴에 서브 메뉴(`menu`)를 추가합니다.                               |
-| `addItem(item)`| `MenuItem`| -       | 이 메뉴에 `MenuItem`을 추가합니다.                                |
-| `addSeparator()`| -       | `MenuSeparator` | 이 메뉴에 구분선(`MenuSeparator`)을 추가하고 반환합니다.             |
-| `insertMenu(...)`|         | -        | 지정된 위치에 서브 메뉴를 삽입합니다.                               |
-| `insertItem(...)`|         | -        | 지정된 위치에 `MenuItem`을 삽입합니다.                             |
-| `insertSeparator(...)`|     | `MenuSeparator` | 지정된 위치에 구분선을 삽입하고 반환합니다.                          |
-| `remove(...)`   |         | -        | 메뉴 항목을 제거합니다.                                           |
-| `clear()`      | -        | -        | 메뉴의 모든 항목을 제거합니다.                                    |
+| 이름                     | 파라미터                           | 반환타입         | 설명                                                                                                                                 |
+| :----------------------- | :--------------------------------- | :--------------- | :----------------------------------------------------------------------------------------------------------------------------------- |
+| `popup(pos?)`            | `point pos` (optional)             | -                | 메뉴를 지정된 전역 좌표 `pos`에 엽니다. `pos`를 생략하면 현재 마우스 위치에 엽니다.                                                              |
+| `addMenu(menu)`          | `Menu menu`                        | -                | 이 메뉴의 끝에 서브 메뉴 `menu`를 추가합니다.                                                                                            |
+| `addItem(item)`          | `MenuItem item`                    | -                | 이 메뉴의 끝에 `MenuItem item`을 추가합니다.                                                                                             |
+| `addSeparator()`         | -                                  | `MenuSeparator`  | 이 메뉴의 끝에 구분선(`MenuSeparator`)을 추가하고 반환합니다.                                                                           |
+| `insertMenu(before, menu)`| `int before`, `Menu menu`          | -                | `before` 인덱스 앞에 서브 메뉴 `menu`를 삽입합니다.                                                                                      |
+| `insertItem(before, item)`| `int before`, `MenuItem item`      | -                | `before` 인덱스 앞에 `MenuItem item`을 삽입합니다.                                                                                        |
+| `insertSeparator(before)`| `int before`                       | `MenuSeparator`  | `before` 인덱스 앞에 구분선을 삽입하고 반환합니다.                                                                                       |
+| `remove(item)`           | `var item` (MenuItem, Menu, or index)| -             | 지정된 메뉴 항목(`MenuItem`, `Menu`) 또는 인덱스에 해당하는 항목을 제거합니다.                                                                   |
+| `clear()`                | -                                  | -                | 메뉴의 모든 항목(아이템, 서브 메뉴, 구분선)을 제거합니다.                                                                                |
+| `itemAt(index)`          | `int index`                        | `Object`         | 지정된 `index`에 있는 메뉴 항목(`MenuItem`, `Menu`, `MenuSeparator` 등)을 반환합니다. 없으면 `null`.                                          |
+| `takeItem(index)`        | `int index`                        | `Object`         | 지정된 `index`에 있는 메뉴 항목을 메뉴에서 제거하고 반환합니다.                                                                              |
 
 ## MenuItem 및 MenuSeparator
 
@@ -177,3 +179,9 @@ ApplicationWindow {
 *   `open()` 메소드를 호출하여 `Popup`처럼 열 수도 있습니다. 이때 `x`, `y`, `parent` 프로퍼티를 사용하여 위치를 조절합니다. 드롭다운 메뉴의 경우, 메뉴를 여는 버튼을 `parent`로 설정하고 `y`를 버튼 높이로 설정하는 방식이 일반적입니다.
 *   `cascade: true`를 설정하면 서브 메뉴가 부모 메뉴 옆에 계단식으로 나타납니다.
 *   `Action` 객체를 `MenuItem`과 연결하면 액션의 상태(텍스트, 아이콘, 활성화 여부 등)가 메뉴 항목에 자동으로 반영되고, 액션의 `triggered` 시그널이 메뉴 항목 선택 시 발생합니다. 
+
+## 공식 문서 링크
+
+* [Menu QML Type ](https://doc.qt.io/qt-6/qml-qtquick-controls-menu.html)
+* [MenuItem QML Type ](https://doc.qt.io/qt-6/qml-qtquick-controls-menuitem.html)
+* [MenuSeparator QML Type ](https://doc.qt.io/qt-6/qml-qtquick-controls-menuseparator.html) 

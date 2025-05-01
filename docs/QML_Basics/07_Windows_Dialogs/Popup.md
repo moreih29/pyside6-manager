@@ -122,3 +122,7 @@ ApplicationWindow {
 *   `closePolicy`를 사용하여 Esc 키, 팝업 바깥 영역 클릭 등 어떤 조건에서 팝업이 자동으로 닫힐지 설정할 수 있습니다.
 *   `background` 프로퍼티를 통해 팝업의 배경(테두리, 그림자 등)을 사용자 정의할 수 있습니다.
 *   `Dialog`, `Menu`, `ToolTip`은 `Popup`을 기반으로 특정 목적에 맞게 확장된 컨트롤입니다. 
+
+## 공식 문서 링크
+
+* [Popup QML Type ](https://doc.qt.io/qt-6/qml-qtquick-controls-popup.html) 

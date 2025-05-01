@@ -62,7 +62,9 @@ Window {
             id: wifiSwitch
             text: "Wi-Fi" // 일부 스타일은 text 표시 지원
             checked: false // 초기 상태: off
-            onCheckedChanged: {
+            // onCheckedChanged는 AbstractButton에 정의된 시그널이 아님
+            // 상태 변경 감지는 onClicked 또는 onToggled 사용
+            onToggled: {
                 statusLabel.text = checked ? "Wi-Fi is ON" : "Wi-Fi is OFF"
                 console.log("Wi-Fi Switch toggled:", checked)
             }
@@ -97,3 +99,7 @@ Window {
 *   `toggled` 시그널은 `checked` 상태가 변경될 때마다 발생합니다.
 *   `position` 프로퍼티(0.0 또는 1.0)는 스위치 상태 전환 애니메이션을 구현할 때 유용하게 사용될 수 있습니다.
 *   스타일링은 `indicator`, `background` 등의 프로퍼티나 Qt Quick Controls 스타일 시스템을 통해 가능합니다. 
+
+## 공식 문서 링크
+
+*   [Switch QML Type ](https://doc.qt.io/qt-6/qml-qtquick-controls-switch.html) 

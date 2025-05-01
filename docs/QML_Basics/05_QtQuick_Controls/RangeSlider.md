@@ -23,26 +23,28 @@
 | `stepSize`       | `real`          | 0               | 값 변경의 최소 단위. 0이면 연속적인 값 변경이 가능합니다.                                                                                    |
 | `snapMode`       | `SnapMode`      | `NoSnap`        | 값이 `stepSize`에 맞춰지는 방식을 결정합니다. (`Slider`와 동일)                                                                                |
 | `orientation`    | `Qt.Orientation`| `Qt.Horizontal` | 슬라이더의 방향 (수평 또는 수직).                                                                                                             |
+| `horizontal`     | `bool`          | (읽기 전용)    | 슬라이더가 수평 방향인지 여부 (`orientation`과 연동). (Qt 5.10+)                                                                               |
+| `vertical`       | `bool`          | (읽기 전용)    | 슬라이더가 수직 방향인지 여부 (`orientation`과 연동). (Qt 5.10+)                                                                               |
 | `live`           | `bool`          | `true`          | `true`이면 사용자가 핸들을 드래그하는 동안 해당 값이 실시간으로 업데이트됩니다.                                                                  |
 | `background`     | `Item`          | (스타일 의존)   | 슬라이더의 배경(트랙) 아이템. 스타일링에 사용됩니다.                                                                                           |
 | `first`          | `Object`        | (읽기 전용)     | 첫 번째 핸들(일반적으로 왼쪽 또는 아래쪽 핸들)과 관련된 프로퍼티를 담는 객체.                                                                  |
 | `  .value`       | `real`          | `from`          | 첫 번째 핸들의 현재 값. `from` 과 `second.value` 사이의 값이어야 합니다.                                                                      |
 | `  .position`    | `real`          | (읽기 전용)     | `first.value`에 해당하는 논리적 위치 (0.0 ~ 1.0).                                                                                              |
-| `  .visualPosition`| `real`          | (읽기 전용)     | `first.position`과 유사하지만 애니메이션 효과가 적용될 수 있는 실제 시각적 위치.                                                               |
+| `  .visualPosition`| `real`          | (읽기 전용)     | `first.position`과 유사하지만 RTL 및 애니메이션 효과가 적용된 실제 시각적 위치. (Qt 6에서 position으로 통합 경향)                       |
 | `  .pressed`     | `bool`          | (읽기 전용)     | 첫 번째 핸들이 현재 눌려있는지 여부.                                                                                                           |
 | `  .handle`      | `Item`          | (스타일 의존)   | 첫 번째 핸들 아이템. 스타일링에 사용됩니다.                                                                                                  |
 | `  .hovered`     | `bool`          | (읽기 전용)     | 마우스 커서가 첫 번째 핸들 위에 있는지 여부 (`hoverEnabled`가 `true`일 때).                                                                  |
 | `second`         | `Object`        | (읽기 전용)     | 두 번째 핸들(일반적으로 오른쪽 또는 위쪽 핸들)과 관련된 프로퍼티를 담는 객체.                                                                  |
 | `  .value`       | `real`          | `to`            | 두 번째 핸들의 현재 값. `first.value` 와 `to` 사이의 값이어야 합니다.                                                                         |
 | `  .position`    | `real`          | (읽기 전용)     | `second.value`에 해당하는 논리적 위치 (0.0 ~ 1.0).                                                                                             |
-| `  .visualPosition`| `real`          | (읽기 전용)     | `second.position`과 유사하지만 애니메이션 효과가 적용될 수 있는 실제 시각적 위치.                                                              |
+| `  .visualPosition`| `real`          | (읽기 전용)     | `second.position`과 유사하지만 RTL 및 애니메이션 효과가 적용된 실제 시각적 위치. (Qt 6에서 position으로 통합 경향)                      |
 | `  .pressed`     | `bool`          | (읽기 전용)     | 두 번째 핸들이 현재 눌려있는지 여부.                                                                                                           |
 | `  .handle`      | `Item`          | (스타일 의존)   | 두 번째 핸들 아이템. 스타일링에 사용됩니다.                                                                                                  |
 | `  .hovered`     | `bool`          | (읽기 전용)     | 마우스 커서가 두 번째 핸들 위에 있는지 여부 (`hoverEnabled`가 `true`일 때).                                                                  |
 | `enabled`        | `bool`          | `true`          | 컨트롤의 활성화 상태.                                                                                                                      |
 | `focusPolicy`    | `FocusPolicy`   | `Qt.StrongFocus`| 컨트롤이 키보드 포커스를 받는 방식.                                                                                                          |
 | `hoverEnabled`   | `bool`          | `true`          | 마우스 호버 효과 활성화 여부.                                                                                                              |
-| Tooltip          |                 |                 | 컨트롤 위에 마우스를 올렸을 때 표시되는 툴팁 관련 프로퍼티.                                                                                    |
+| `ToolTip.visible`, `ToolTip.text`, `ToolTip.delay` | `bool`, `string`, `int` | - | 컨트롤 위에 마우스를 올렸을 때 표시되는 툴팁 관련 프로퍼티.                                                                                    |
 
 ## 주요 시그널
 
@@ -51,22 +53,24 @@
 | 이름                       | 파라미터 | 설명                                                                   |
 | :------------------------- | :------- | :--------------------------------------------------------------------- |
 | `first.valueChanged`       |          | `first.value` 프로퍼티가 변경될 때 발생합니다.                             |
-| `first.moved`              |          | 사용자가 첫 번째 핸들을 드래그하여 `first.visualPosition`이 변경될 때 발생합니다 (live=true 일 때). |
+| `first.moved`              |          | 사용자가 첫 번째 핸들을 **상호작용하여 이동시켰을 때** 발생합니다. (Qt 5.12+) |
 | `first.pressedChanged`     |          | `first.pressed` 프로퍼티가 변경될 때 발생합니다.                           |
 | `second.valueChanged`      |          | `second.value` 프로퍼티가 변경될 때 발생합니다.                            |
-| `second.moved`             |          | 사용자가 두 번째 핸들을 드래그하여 `second.visualPosition`이 변경될 때 발생합니다 (live=true 일 때). |
+| `second.moved`             |          | 사용자가 두 번째 핸들을 **상호작용하여 이동시켰을 때** 발생합니다. (Qt 5.12+) |
 | `second.pressedChanged`    |          | `second.pressed` 프로퍼티가 변경될 때 발생합니다.                          |
 
 ## 주요 메서드
 
-`RangeSlider`는 각 핸들을 개별적으로 증가/감소시키는 메서드를 제공합니다.
+`RangeSlider`는 각 핸들을 개별적으로 증가/감소시키는 메서드와 값 설정을 위한 메서드를 제공합니다.
 
-| 이름                 | 설명                                         |
-| :------------------- | :------------------------------------------- |
-| `first.increase()`   | `first.value`를 `stepSize`만큼 증가시킵니다.   |
-| `first.decrease()`   | `first.value`를 `stepSize`만큼 감소시킵니다.   |
-| `second.increase()`  | `second.value`를 `stepSize`만큼 증가시킵니다.  |
-| `second.decrease()`  | `second.value`를 `stepSize`만큼 감소시킵니다.  |
+| 이름                 | 파라미터                   | 설명                                         |
+| :------------------- | :------------------------- | :------------------------------------------- |
+| `first.increase()`   | -                          | `first.value`를 `stepSize`만큼 증가시킵니다.   |
+| `first.decrease()`   | -                          | `first.value`를 `stepSize`만큼 감소시킵니다.   |
+| `second.increase()`  | -                          | `second.value`를 `stepSize`만큼 증가시킵니다.  |
+| `second.decrease()`  | -                          | `second.value`를 `stepSize`만큼 감소시킵니다.  |
+| `setValues(real firstValue, real secondValue)` | `real`, `real` | `first.value`와 `second.value`를 동시에 설정합니다. 값 제약 조건을 고려하여 클램핑될 수 있습니다. |
+| `valueAt(real position)` | `real`                   | 주어진 `position`(0.0~1.0)에 해당하는 `value`를 반환합니다. (Qt 5.12+) |
 
 ## 예제
 
@@ -106,8 +110,14 @@ Window {
             snapMode: RangeSlider.SnapAlways
 
             // 값이 변경될 때마다 라벨 업데이트
-            onFirstValueChanged: updateRangeLabel()
-            onSecondValueChanged: updateRangeLabel()
+            Connections {
+                target: priceRangeSlider.first
+                function onValueChanged() { updateRangeLabel() }
+            }
+            Connections {
+                target: priceRangeSlider.second
+                function onValueChanged() { updateRangeLabel() }
+            }
 
             // 간단한 핸들 및 트랙 스타일링 (기본 스타일 위에 추가)
             background: Rectangle {
@@ -176,3 +186,7 @@ Window {
 *   `from`, `to`, `stepSize`, `snapMode`, `orientation` 등은 `Slider`와 동일하게 작동합니다.
 *   각 핸들의 값 변경(`valueChanged`) 및 상태 변경(`pressedChanged`, `moved`) 시그널을 개별적으로 처리할 수 있습니다.
 *   `first.handle`, `second.handle`, `background` 아이템을 커스터마이징하여 `RangeSlider`의 외형을 변경할 수 있습니다. 
+
+## 공식 문서 링크
+
+*   [RangeSlider QML Type ](https://doc.qt.io/qt-6/qml-qtquick-controls-rangeslider.html) 

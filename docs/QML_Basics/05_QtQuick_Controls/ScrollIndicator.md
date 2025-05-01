@@ -20,9 +20,9 @@
 | `position`       | `real`          | 0             | 현재 스크롤 위치 (0.0 ~ 1.0). `Flickable`의 `visibleArea.x/yPosition`과 바인딩합니다.                                            |
 | `size`           | `real`          | 0             | 인디케이터 핸들의 크기 (0.0 ~ 1.0). 뷰에서 보이는 영역의 비율을 나타냅니다. (`Flickable`의 `visibleArea.width/heightRatio`)      |
 | `active`         | `bool`          | `false`       | 인디케이터가 현재 활성화되어 표시되어야 하는지 여부. 일반적으로 `Flickable`의 `moving` 또는 `dragging` 상태와 연결하여 제어합니다. |
-| `minimumSize`    | `real`          | (스타일 의존) | 핸들의 최소 크기 (픽셀 단위). `size` 프로퍼티로 계산된 크기가 이 값보다 작으면 이 크기로 표시됩니다.                             |
-| `visualPosition` | `real`          | (읽기 전용)   | `position`과 유사하지만 애니메이션 효과가 적용될 수 있는 실제 시각적 위치.                                                       |
-| `visualSize`     | `real`          | (읽기 전용)   | `size`와 유사하지만 애니메이션 효과가 적용될 수 있는 실제 시각적 크기.                                                           |
+| `minimumSize`    | `real`          | (스타일 의존) | 핸들의 최소 크기 (픽셀 단위). `size` 프로퍼티로 계산된 크기가 이 값보다 작으면 이 크기로 표시됩니다. (Qt 5.11+)                     |
+| `visualPosition` | `real`          | (읽기 전용)   | `position`과 유사하지만 RTL 및 애니메이션 효과가 적용된 실제 시각적 위치.                                                        |
+| `visualSize`     | `real`          | (읽기 전용)   | `size`와 유사하지만 `minimumSize` 및 애니메이션 효과가 적용된 실제 시각적 크기. (Qt 5.11+)                                  |
 | `background`     | `Item`          | (스타일 의존) | 인디케이터의 배경 아이템. 일반적으로 투명하거나 거의 보이지 않습니다.                                                          |
 | `contentItem`    | `Item`          | (스타일 의존) | 인디케이터의 핸들(막대) 아이템. 스타일링에 사용됩니다.                                                                         |
 | `enabled`        | `bool`          | `true`        | 컨트롤의 활성화 상태.                                                                                                      |
@@ -109,3 +109,7 @@ Window {
 *   `active` 프로퍼티를 사용하여 인디케이터의 표시 여부를 제어할 수 있습니다. 일반적으로 `Flickable`의 `moving` 또는 `dragging` 상태와 연결하여 스크롤 중에만 표시되도록 합니다.
 *   `ScrollIndicator`는 기본적으로 사용자와의 상호작용(클릭, 드래그)을 지원하지 않지만, 스타일링을 통해 시각적인 피드백만 제공합니다.
 *   `background`와 `contentItem`을 커스터마이징하여 인디케이터의 모양과 동작(예: fade-in/out 애니메이션)을 변경할 수 있습니다. 
+
+## 공식 문서 링크
+
+*   [ScrollIndicator QML Type ](https://doc.qt.io/qt-6/qml-qtquick-controls-scrollindicator.html) 

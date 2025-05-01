@@ -122,3 +122,7 @@ Window {
 *   `Action` 컴포넌트와 연결하면 메뉴 항목, 툴바 버튼 등과 동일한 동작 및 상태(텍스트, 아이콘, 활성화 여부 등)를 공유할 수 있어 편리합니다.
 *   `ToolButton`은 주로 툴바에 사용되는 좀 더 간결한 형태의 버튼입니다.
 *   버튼 클릭 외에 누르고 있는 동안의 동작 등을 처리하려면 `pressed`, `released` 시그널을 사용할 수 있습니다. 
+
+## 공식 문서 링크
+
+*   [Button QML Type](https://doc.qt.io/qt-6/qml-qtquick-controls-button.html) 

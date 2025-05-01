@@ -88,3 +88,7 @@ Window {
 *   `label` 프로퍼티를 통해 내부적으로 사용되는 `Label` 컴포넌트에 접근하여 제목의 글꼴, 색상 등 세부적인 스타일을 조정할 수 있습니다.
 *   배경 및 테두리 스타일링은 상속받은 `Frame`의 `background` 프로퍼티를 통해 가능합니다.
 *   단순히 테두리만 필요한 그룹화에는 `Frame`을 사용하는 것이 더 적합할 수 있습니다. 
+
+## 공식 문서 링크
+
+*   [GroupBox QML Type ](https://doc.qt.io/qt-6/qml-qtquick-controls-groupbox.html) 

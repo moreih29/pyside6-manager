@@ -17,7 +17,7 @@
 | `currentText`    | `string`               | ""            | (읽기 전용) 현재 선택된 항목의 텍스트 표현. `displayText` 또는 모델의 `displayRole` (기본값) 사용.                                             |
 | `displayText`    | `string`               | `currentText`   | 콤보박스 자체에 표시될 텍스트. 기본적으로 `currentText`를 사용하지만, 다른 텍스트를 표시하고 싶을 때 설정 가능.                                |
 | `count`          | `int`                  | -               | (읽기 전용) 모델에 포함된 항목의 총 개수.                                                                                                 |
-| `delegate`       | `Component`            | (스타일 의존)  | 드롭다운 목록의 각 항목을 렌더링하는 데 사용되는 델리게이트 컴포넌트. 모델 데이터(`modelData`, `index` 등)에 접근 가능.                       |
+| `delegate`       | `Component`            | (스타일 의존)  | 드롭다운 목록의 각 항목을 렌더링하는 델리게이트 컴포넌트. 모델 데이터(`modelData`, `index` 등)에 접근 가능.                       |
 | `indicator`      | `Item`                 | (스타일 의존)  | 드롭다운 목록이 있음을 나타내는 인디케이터 아이템 (보통 아래쪽 화살표). 스타일 커스터마이징에 사용.                                            |
 | `popup`          | `Popup`                | (스타일 의존)  | 드롭다운 목록을 표시하는 팝업 컴포넌트. 스타일 커스터마이징 및 동작 제어에 사용.                                                             |
 | `contentItem`    | `Item`                 | (스타일 의존)  | 콤보박스의 주 내용 영역(현재 선택된 항목 표시). 스타일 커스터마이징에 사용.                                                               |
@@ -93,12 +93,14 @@ Window {
         ComboBox {
             id: listModelCombo
             Layout.fillWidth: true
-            // textRole: "name" // 모델의 'name' 역할을 표시 텍스트로 사용 (기본 displayRole)
+            textRole: "name" // 모델의 'name' 역할을 표시 텍스트(currentText)로 사용하도록 명시
             model: ListModel {
                 ListElement { name: "Apple"; color: "red" }
                 ListElement { name: "Banana"; color: "yellow" }
                 ListElement { name: "Orange"; color: "orange" }
             }
+            // 현재 선택된 아이템의 색상을 저장할 프로퍼티 추가
+            property color currentItemColor: model[currentIndex] ? model[currentIndex].color : "transparent"
 
             // 커스텀 델리게이트 사용 예시
             delegate: ItemDelegate {
@@ -124,8 +126,8 @@ Window {
             contentItem: RowLayout {
                  Rectangle { 
                     width: 16; height: 16
-                    // 현재 선택된 모델 요소의 color 역할 사용
-                    color: listModelCombo.model[listModelCombo.currentIndex] ? listModelCombo.model[listModelCombo.currentIndex].color : "transparent"
+                    // currentItemColor 프로퍼티에 바인딩
+                    color: listModelCombo.currentItemColor
                     radius: 8
                     Layout.alignment: Qt.AlignVCenter
                 }
@@ -139,6 +141,8 @@ Window {
 
             onCurrentIndexChanged: {
                 console.log("ListModel Combo Index Changed:", currentIndex)
+                // 인덱스 변경 시 currentItemColor 업데이트
+                currentItemColor = model[currentIndex] ? model[currentIndex].color : "transparent"
             }
         }
 
@@ -167,3 +171,7 @@ Window {
 *   `delegate`를 사용하여 드롭다운 목록의 각 항목 표시 방식을 자유롭게 커스터마이징할 수 있습니다. 델리게이트 내에서는 `modelData` (ListModel 사용 시 역할 이름), `model.<roleName>`, `index` 등의 속성을 사용할 수 있습니다.
 *   `editable`을 `true`로 설정하면 사용자가 목록에 없는 값을 직접 입력할 수 있습니다. `onAccepted` 시그널을 처리하여 입력된 값을 모델에 추가하는 등의 로직을 구현할 수 있습니다.
 *   팝업(`popup`)의 모양이나 동작을 변경하려면 `popup` 프로퍼티에 접근하여 커스터마이징할 수 있습니다. 
+
+## 공식 문서 링크
+
+*   [ComboBox QML Type ](https://doc.qt.io/qt-6/qml-qtquick-controls-combobox.html) 

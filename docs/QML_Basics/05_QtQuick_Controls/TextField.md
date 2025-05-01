@@ -58,6 +58,9 @@
 | `editingFinished`  | -        | -        | 사용자가 Enter/Return 키를 누르거나 포커스를 잃어 편집이 종료될 때 발생.    |
 | `cursorPositionChanged`| -   | -        | `cursorPosition` 값이 변경될 때 발생.                                   |
 | `selectionChanged` | -        | -        | `selectionStart` 또는 `selectionEnd` 값이 변경될 때 발생.                 |
+| `pressed`          | `MouseEvent event` | - | 사용자가 TextField를 눌렀을 때 발생 (Qt 5.8+).                             |
+| `released`         | `MouseEvent event` | - | 사용자가 TextField에서 손을 뗐을 때 발생 (Qt 5.8+).                          |
+| `pressAndHold`     | `MouseEvent event` | - | 사용자가 TextField를 길게 눌렀을 때 발생.                                   |
 
 ## 주요 메소드
 
@@ -156,3 +159,7 @@ Window {
 *   `echoMode`를 사용하여 비밀번호와 같이 민감한 정보 입력을 처리할 수 있습니다.
 *   스타일링은 `background` 프로퍼티나 Qt Quick Controls 스타일 시스템을 통해 가능합니다.
 *   `accepted` 시그널은 사용자가 Enter/Return 키로 입력을 '완료'했을 때 발생하며, `editingFinished`는 포커스를 잃었을 때도 발생합니다. 
+
+## 공식 문서 링크
+
+*   [TextField QML Type ](https://doc.qt.io/qt-6/qml-qtquick-controls-textfield.html) 

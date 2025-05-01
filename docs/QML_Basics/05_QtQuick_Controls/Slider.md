@@ -8,11 +8,9 @@
 
 ## 기반 클래스
 
-*   `Range` (간접적으로 `Control` 상속)
+*   `Control`
 
 ## 주요 프로퍼티
-
-`Range` 모델에서 상속받은 값 관련 프로퍼티와 `Slider` 자체 프로퍼티를 포함합니다.
 
 | 이름             | 타입             | 기본값          | 설명                                                                                                                               |
 | :--------------- | :--------------- | :-------------- | :--------------------------------------------------------------------------------------------------------------------------------- |
@@ -21,21 +19,19 @@
 | `to`             | `real`           | 1.0             | 슬라이더가 나타내는 값의 최대 범위.                                                                                                  |
 | `stepSize`       | `real`           | 0.0             | 슬라이더 값을 변경할 때의 최소 단위 (스텝). 0이면 연속적인 값 변경 가능. 키보드 조작이나 `increase()`/`decrease()` 호출 시 사용됩니다.           |
 | `orientation`    | `Qt::Orientation`| `Qt.Horizontal` | 슬라이더의 방향 (`Qt.Horizontal` 또는 `Qt.Vertical`).                                                                              |
-| `position`       | `real`           | (`value` 기반) | (읽기 전용) 슬라이더 핸들의 상대적 위치 (0.0 ~ 1.0). `value`, `from`, `to` 값에 따라 계산됩니다. 시각적 표현 업데이트에 주로 사용됨.          |
+| `horizontal`     | `bool`           | (읽기 전용)    | 슬라이더가 수평 방향인지 여부 (`orientation`과 연동). (Qt 5.10+)                                                                     |
+| `vertical`       | `bool`           | (읽기 전용)    | 슬라이더가 수직 방향인지 여부 (`orientation`과 연동). (Qt 5.10+)                                                                     |
+| `position`       | `real`           | (`value` 기반) | (읽기 전용) 슬라이더 핸들의 논리적 위치 (0.0 ~ 1.0). `value`, `from`, `to` 값에 따라 계산됨.                                            |
+| `visualPosition` | `real`           | (`position` 기반)| (읽기 전용) 슬라이더 핸들의 시각적 위치 (0.0 ~ 1.0). RTL(Right-To-Left) 레이아웃을 고려한 값으로, 시각적 표현에 사용하기 적합.            |
 | `pressed`        | `bool`           | `false`         | (읽기 전용) 사용자가 슬라이더 핸들을 현재 누르고(드래그 중) 있는지 여부.                                                              |
 | `handle`         | `Item`           | (스타일 의존)  | 슬라이더 핸들(사용자가 드래그하는 부분) 아이템. 스타일 커스터마이징에 사용.                                                            |
-| `track`          | `Item`           | (스타일 의존)  | 슬라이더 핸들이 움직이는 트랙 아이템. 스타일 커스터마이징에 사용.                                                                      |
 | `snapMode`       | `enum`           | `Slider.NoSnap` | 핸들을 놓았을 때 값이 특정 위치(스텝)에 맞춰지도록 하는 모드 (`NoSnap`, `SnapAlways`, `SnapOnRelease`). `stepSize`가 0보다 커야 의미 있음. |
-| `tickmarks.enabled`| `bool`          | `false`         | 트랙 위에 눈금(tickmark)을 표시할지 여부.                                                                                           |
-| `tickmarks.stepSize`| `real`         | `stepSize`      | 눈금 간격. 기본값은 `stepSize`를 따름.                                                                                              |
-| `tickmarks.position`| `enum`         | (스타일 의존)   | 눈금 표시 위치 (`TicksAbove`, `TicksBelow`, `TicksLeft`, `TicksRight`).                                                            |
 | `live`           | `bool`           | `true`          | 사용자가 핸들을 드래그하는 동안 `value` 프로퍼티를 실시간으로 업데이트할지 여부. `false`이면 드래그를 놓았을 때만 업데이트.                   |
 | `enabled`        | `bool`           | `true`          | 슬라이더가 활성화되어 사용자와 상호작용할 수 있는지 여부.                                                                              |
 | `hoverEnabled`   | `bool`           | `true`          | 마우스 호버 효과를 사용할지 여부.                                                                                                  |
 | `hovered`        | `bool`           | `false`         | (읽기 전용) 마우스 커서가 슬라이더(주로 핸들) 위에 있는지 여부.                                                                     |
 | `background`     | `Item`           | (스타일 의존)  | 슬라이더 전체의 배경 아이템. 스타일 커스터마이징에 사용.                                                                             |
 | `focusPolicy`    | `Qt::FocusPolicy`| `Qt.StrongFocus`| 슬라이더가 키보드 포커스를 받는 방식.                                                                                                |
-| `wheelEnabled`   | `bool`           | `false`         | 마우스 휠 스크롤로 슬라이더 값을 변경할 수 있는지 여부.                                                                              |
 | `ToolTip.visible`, `ToolTip.text`, `ToolTip.delay` | `bool`, `string`, `int` | - | 슬라이더(주로 핸들)에 마우스를 올렸을 때 표시될 툴팁 설정.                                                                           |
 
 ## 주요 시그널
@@ -43,9 +39,8 @@
 | 이름           | 파라미터 | 반환타입 | 설명                                                                          |
 | :------------- | :------- | :------- | :---------------------------------------------------------------------------- |
 | `valueChanged` | -        | -        | `value` 프로퍼티 값이 변경되었을 때 발생.                                       |
-| `moved`        | -        | -        | 사용자가 핸들을 드래그하여 `position`이 변경되었을 때 발생 (`live`가 `true`일 때). |
+| `moved`        | -        | -        | 사용자가 터치, 마우스, 휠, 키 등으로 슬라이더를 **상호작용하여 이동시켰을 때** 발생. (Qt 5.9+) |
 | `pressedChanged`| -       | -        | `pressed` 프로퍼티 값이 변경되었을 때 발생.                                    |
-| `pressAndHold` | -        | -        | 핸들을 일정 시간 동안 누르고 있을 때 발생 (플랫폼/스타일 의존적일 수 있음).       |
 
 ## 주요 메소드
 
@@ -53,6 +48,7 @@
 | :---------- | :------- | :------- | :----------------------------------- |
 | `increase()`| -        | `void`   | `value`를 `stepSize`만큼 증가시킴.  |
 | `decrease()`| -        | `void`   | `value`를 `stepSize`만큼 감소시킴.  |
+| `valueAt(real position)` | `real` | `real` | 주어진 `position`(0.0~1.0)에 해당하는 `value`를 반환. (Qt 5.8+) |
 
 ## 예제
 
@@ -84,7 +80,7 @@ Window {
                 stepSize: 0.1 // 0.1 단위로 스텝
                 value: 0.5 // 초기값
                 snapMode: Slider.SnapAlways // 항상 스텝에 맞춤
-                tickmarks.enabled: true // 눈금 표시
+                // tickmarks.enabled: true // 눈금 표시는 스타일 또는 background 커스터마이징으로 구현
 
                 onValueChanged: {
                     hLabel.text = "Horizontal Slider: " + Math.round(value * 100) / 100
@@ -123,4 +119,8 @@ Window {
 *   `position` 프로퍼티는 `value`를 0.0 ~ 1.0 범위로 정규화한 값으로, 슬라이더 핸들의 시각적 위치를 계산하는 데 유용합니다.
 *   `snapMode`와 `stepSize`를 함께 사용하여 슬라이더 값이 특정 단위(스텝)에 맞춰지도록 할 수 있습니다.
 *   `live` 프로퍼티는 사용자가 핸들을 드래그하는 동안 `value` 업데이트 빈도를 제어합니다.
-*   `handle`, `track`, `background` 프로퍼티와 `tickmarks` 관련 속성을 통해 슬라이더의 모양을 커스터마이징할 수 있습니다. 
+*   `handle`, `background` 프로퍼티와 `tickmarks` 관련 속성을 통해 슬라이더의 모양을 커스터마이징할 수 있습니다. // track 제거, tickmarks 유지
+
+## 공식 문서 링크
+
+*   [Slider QML Type ](https://doc.qt.io/qt-6/qml-qtquick-controls-slider.html) 

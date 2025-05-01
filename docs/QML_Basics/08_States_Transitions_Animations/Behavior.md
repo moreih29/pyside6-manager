@@ -10,19 +10,25 @@
 
 ## 사용 방법
 
-`Behavior`는 애니메이션을 적용하려는 프로퍼티와 같은 레벨에 선언하며, `on` 프로퍼티에 대상 프로퍼티의 이름을 지정합니다. `Behavior` 내부에는 하나 이상의 `Animation` 요소를 정의하여 해당 프로퍼티 변경 시 실행될 애니메이션을 지정합니다.
+`Behavior`는 애니메이션을 적용하려는 프로퍼티와 같은 레벨에 선언하며, `Behavior on <propertyName>` 구문을 사용합니다. `<propertyName>`에 애니메이션을 적용할 대상 프로퍼티의 이름을 지정합니다. `Behavior` 내부에는 하나 이상의 `Animation` 요소를 정의하여 해당 프로퍼티 변경 시 실행될 애니메이션을 지정합니다.
 
 ```qml
 import QtQuick
+import QtQuick.Window // Window 사용을 위해 추가
+import QtQuick.Controls // Button 사용을 위해 추가 (선택적)
 
-Item {
+// Window를 최상위 요소로 사용하여 단독 실행 가능하게 함
+Window {
     width: 300; height: 200
+    visible: true
+    title: "Behavior Example"
 
     Rectangle {
         id: rect
         width: 50; height: 50
         color: "red"
-        x: 0; y: 0
+        // 초기 위치 조정
+        x: 20; y: (parent.height - height) / 2
 
         // x 프로퍼티 값이 변경될 때마다 NumberAnimation을 300ms 동안 실행
         Behavior on x {
@@ -39,7 +45,7 @@ Item {
     MouseArea {
         anchors.fill: parent
         onClicked: {
-            rect.x = (rect.x === 0) ? 150 : 0 // x 값 변경 (애니메이션 적용됨)
+            rect.x = (rect.x === 20) ? parent.width - rect.width - 20 : 20 // x 값 변경 (애니메이션 적용됨)
             rect.opacity = (rect.opacity === 1.0) ? 0.5 : 1.0 // opacity 값 변경 (애니메이션 적용됨)
         }
     }
@@ -50,11 +56,16 @@ Item {
 
 ## 주요 프로퍼티
 
-| 이름      | 타입        | 기본값 | 설명                                                                   |
-| :-------- | :---------- | :----- | :--------------------------------------------------------------------- |
-| `on`      | `property`  | -      | **(필수)** 애니메이션을 적용할 대상 프로퍼티. 프로퍼티의 이름을 직접 명시합니다. |
-| `enabled` | `bool`      | `true` | `false`로 설정하면 이 `Behavior`가 비활성화되어 프로퍼티 변경 시 애니메이션이 실행되지 않습니다. |
-| `animation`| `Animation` | `null` | 적용할 애니메이션 객체. `Behavior` 내부에 직접 애니메이션을 정의하는 대신 기존 애니메이션 객체를 참조할 때 사용합니다. |
+| 이름             | 타입        | 기본값 | 설명                                                                                                                                   |
+| :--------------- | :---------- | :----- | :------------------------------------------------------------------------------------------------------------------------------------- |
+| `enabled`        | `bool`      | `true` | `false`로 설정하면 이 `Behavior`가 비활성화되어 프로퍼티 변경 시 애니메이션이 실행되지 않습니다.                                                              |
+| `animation`      | `Animation` | `null` | (기본 프로퍼티) 적용할 애니메이션 객체. `Behavior` 내부에 직접 애니메이션을 정의하는 것이 일반적입니다. 기존 애니메이션 객체를 참조할 때 사용합니다.                          |
+| `targetValue`    | `variant`   | (읽기 전용) | (Qt 6.13+) `Behavior`가 제어하는 프로퍼티의 목표 값. 애니메이션 시작 전에 `Behavior`에 의해 설정됩니다.                                                       |
+| `targetProperty` | `group`     | (읽기 전용) | (Qt 6.15+) `Behavior`가 제어하는 프로퍼티의 정보 그룹.
+  * `targetProperty.name` (`string`): 제어되는 프로퍼티의 이름.
+  * `targetProperty.object` (`QtObject`): 제어되는 프로퍼티를 가진 객체. | 
+
+*참고: `Behavior on <propertyName>` 구문에서 `on <propertyName>` 부분은 `Behavior`가 추적할 프로퍼티를 지정하는 문법이며, `Behavior` 자체의 프로퍼티는 아닙니다.*
 
 ## 애니메이션 지정
 
@@ -76,6 +87,12 @@ Item {
 ## 참고 사항
 
 *   `Behavior`는 특정 프로퍼티의 모든 변경에 대해 애니메이션을 적용하고자 할 때 매우 유용합니다. 예를 들어, 레이아웃 변경에 따라 요소의 위치나 크기가 바뀔 때 부드러운 전환 효과를 줄 수 있습니다.
-*   상태 기반의 복잡한 전환 로직에는 `State`와 `Transition`을 사용하는 것이 더 적합할 수 있습니다.
-*   `Behavior` 내부의 애니메이션은 `target`이나 `property`/`properties`를 명시할 필요가 없습니다. `Behavior`가 적용되는 대상 객체와 `on` 프로퍼티를 통해 자동으로 설정됩니다.
-*   `enabled` 프로퍼티를 사용하여 특정 조건에서 `Behavior`를 동적으로 활성화하거나 비활성화할 수 있습니다. 
+*   하나의 프로퍼티에는 하나의 `Behavior`만 할당할 수 있습니다. 여러 애니메이션을 동시에 적용하려면 `ParallelAnimation`을 사용해야 합니다.
+*   상태 변경 시 `Transition`과 `Behavior`가 동일한 프로퍼티에 대해 정의되어 있다면, `Transition`의 애니메이션이 우선적으로 적용됩니다.
+*   `Behavior` 내부의 애니메이션은 `target`이나 `property`/`properties`를 명시할 필요가 없습니다. `Behavior`가 적용되는 대상 객체와 `on <propertyName>` 구문을 통해 자동으로 설정됩니다.
+*   `enabled` 프로퍼티를 사용하여 특정 조건에서 `Behavior`를 동적으로 활성화하거나 비활성화할 수 있습니다.
+*   `targetProperty`와 `targetValue` 프로퍼티를 사용하면 애니메이션 내에서 제어 대상 프로퍼티의 정보나 목표 값에 접근할 수 있습니다 (주로 고급 사용자 정의 Behavior 구현 시 사용).
+
+## 공식 문서 링크
+
+* [Behavior QML Type ](https://doc.qt.io/qt-6/qml-qtquick-behavior.html) 

@@ -130,3 +130,7 @@ Window {
 *   `policy` 프로퍼티를 사용하여 스크롤바가 항상 보이거나(`AlwaysOn`), 필요할 때만 보이도록(`AsNeeded`) 설정할 수 있습니다.
 *   `background`와 `contentItem` (핸들)을 커스터마이징하여 스크롤바의 외형을 변경할 수 있습니다.
 *   `ScrollView` 컴포넌트는 내부적으로 `Flickable`과 `ScrollBar`를 포함하고 있어 더 간편하게 스크롤 뷰를 구현할 수 있습니다. 
+
+## 공식 문서 링크
+
+*   [ScrollBar QML Type ](https://doc.qt.io/qt-6/qml-qtquick-controls-scrollbar.html) 

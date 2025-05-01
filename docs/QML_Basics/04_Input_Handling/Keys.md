@@ -54,6 +54,8 @@
 
 ```qml
 import QtQuick
+import QtQuick.Controls // 표준 컨트롤 사용을 위해 추가
+import QtQuick.Layouts // Row 사용을 위해 추가 (예제에서는 Row가 있으므로 유지)
 
 Window {
     width: 300
@@ -65,10 +67,11 @@ Window {
         id: focusScope
         anchors.fill: parent
 
-        Row {
+        RowLayout { // Row 대신 RowLayout 사용 권장
             anchors.centerIn: parent
             spacing: 10
 
+            // 예제 1: Rectangle에 직접 Keys 적용
             Rectangle {
                 id: rect1
                 width: 80; height: 80
@@ -91,28 +94,29 @@ Window {
                 }
             }
 
-            Rectangle {
-                id: rect2
-                width: 80; height: 80
-                color: activeFocus ? "orange" : "lightgreen"
-                focus: true
-                Text { anchors.centerIn: parent; text: "Rect 2" }
-
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: rect2.forceActiveFocus()
-                }
+            // 예제 2: Button 컨트롤에 Keys 적용
+            Button { // 표준 Button 컨트롤 사용
+                id: button1
+                text: "Button 1"
+                focusPolicy: Qt.StrongFocus // Button은 기본적으로 focus 가능
+                // Button은 내부적으로 Space, Enter 키 처리가 되어있을 수 있음
+                // 필요시 Keys.onPressed 등으로 오버라이드 가능
 
                 Keys.onReturnPressed: (event) => {
-                    console.log("Rect2 - Enter/Return pressed")
-                    height = height === 80 ? 100 : 80 // 높이 토글
-                    event.accepted = true
+                    console.log("Button1 - Enter/Return pressed")
+                    // 기본 동작(onClicked 등)을 막으려면 accepted = true
+                    // event.accepted = true
                 }
-                Keys.onLeftPressed: {
-                    // 왼쪽 화살표 누르면 rect1으로 포커스 이동 시도
-                    console.log("Rect2 - Left pressed, focusing rect1")
+                Keys.onRightPressed: {
+                    // 오른쪽 화살표 누르면 rect1으로 포커스 이동 시도
+                    console.log("Button1 - Right pressed, focusing rect1")
                     rect1.forceActiveFocus()
                     event.accepted = true
+                }
+                // 포커스 시각화 (Button 스타일에 따라 다를 수 있음)
+                background: Rectangle {
+                    color: parent.activeFocus ? "orange" : "lightgray"
+                    border.color: "gray"
                 }
             }
         }
@@ -126,4 +130,8 @@ Window {
 *   `activeFocus`는 현재 활성화된 포커스를 가진 단 하나의 아이템을 의미하며, `Window`나 `FocusScope` 단위로 관리됩니다.
 *   `forceActiveFocus()` 메소드를 사용하여 특정 아이템에 프로그래밍 방식으로 포커스를 줄 수 있습니다.
 *   이벤트 핸들러 내에서 `event.accepted = true`를 호출하여 이벤트 처리를 완료했음을 알리고, 상위 아이템이나 다른 핸들러로 이벤트가 전파되는 것을 막는 것이 중요합니다.
-*   특정 키 조합(단축키)을 전역적으로 처리하려면 `Shortcut` 아이템을 사용하는 것이 더 편리할 수 있습니다. 
+*   특정 키 조합(단축키)을 전역적으로 처리하려면 `Shortcut` 아이템을 사용하는 것이 더 편리할 수 있습니다.
+
+## 공식 문서 링크
+
+*   [Qt Quick Keys Attached Property](https://doc.qt.io/qt-6/qml-qtquick-keys.html) 

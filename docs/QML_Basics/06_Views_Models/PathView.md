@@ -18,19 +18,24 @@
 
 `PathView`에 특화되거나 중요하게 사용되는 프로퍼티는 다음과 같습니다.
 
-| 이름                 | 타입         | 기본값        | 설명                                                                                                                                                            |
-| :------------------- | :----------- | :------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `path`               | `Path`       | `null`        | 델리게이트 아이템들이 배치될 경로를 정의하는 `Path` 객체. `PathLine`, `PathQuad`, `PathCubic`, `PathArc`, `PathSvg` 등을 사용하여 경로를 구성합니다.                                |
-| `pathItemCount`      | `int`        | (model.count) | 경로 상에 동시에 표시될(생성될) 델리게이트 아이템의 최대 개수. 모델의 전체 항목 수(`count`)보다 작게 설정하여 성능을 최적화할 수 있습니다.                                |
-| `preferredHighlightBegin` | `real`    | 0.5           | 경로 상에서 현재 항목(`currentItem`)이 위치할 선호 지점 (0.0: 경로 시작, 1.0: 경로 끝). 값이 0.5이면 경로의 중앙에 현재 항목이 오도록 합니다.                                       |
-| `preferredHighlightEnd` | `real`      | 0.5           | `preferredHighlightBegin`과 동일한 목적이지만, 경로가 닫혀 있지 않을 때 끝 부분에서의 정렬을 위해 사용될 수 있습니다. 일반적으로 `preferredHighlightBegin`과 같은 값을 사용합니다. |
-| `highlightRangeMode` | `enumeration`| `StrictlyEnforceRange` | `PathView.onPath`가 `true`인 델리게이트 아이템만 상호작용 가능하게 할지 여부 (`StrictlyEnforceRange`, `ApplyRange`).                                                                 |
-| `movementEnded`      | `Signal`     |               | 사용자의 드래그 또는 플릭(flick) 동작으로 인한 뷰 이동이 멈췄을 때 발생하는 시그널.                                                                                       |
-| `flickDeceleration`  | `real`       | (플랫폼 의존) | 사용자가 플릭했을 때 뷰가 감속하는 정도.                                                                                                                        |
-| `snapMode`           | `enumeration`| `NoSnap`      | 뷰 이동이 멈출 때 가장 가까운 항목에 맞춰지는 방식 (`PathView.NoSnap`, `PathView.SnapToItem`).                                                                        |
-| `interactive`        | `bool`       | `true`        | 사용자가 마우스나 터치로 뷰를 드래그하거나 플릭하여 이동시킬 수 있는지 여부.                                                                                             |
-| `offset`             | `real`       | 0             | 경로 상의 모든 아이템에 적용될 오프셋 값 (픽셀 단위). 경로 자체를 이동시키는 효과.                                                                                   |
-| `maximumFlickVelocity` | `real`    | (플랫폼 의존) | 플릭 동작으로 간주될 최대 속도.                                                                                                                                  |
+| 이름                 | 타입         | 기본값               | 설명                                                                                                                                                            |
+| :------------------- | :----------- | :------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `path`               | `Path`       | `null`               | 델리게이트 아이템들이 배치될 경로를 정의하는 `Path` 객체. `PathLine`, `PathQuad`, `PathCubic`, `PathArc`, `PathSvg` 등을 사용하여 경로를 구성합니다.                                |
+| `pathItemCount`      | `int`        | (model.count)        | 경로 상에 동시에 표시될(생성될) 델리게이트 아이템의 최대 개수. 모델의 전체 항목 수(`count`)보다 작게 설정하여 성능을 최적화할 수 있습니다.                                |
+| `preferredHighlightBegin` | `real`    | 0.5                  | 경로 상에서 현재 항목(`currentItem`)이 위치할 선호 지점 (0.0: 경로 시작, 1.0: 경로 끝). 값이 0.5이면 경로의 중앙에 현재 항목이 오도록 합니다.                                       |
+| `preferredHighlightEnd` | `real`      | 0.5                  | `preferredHighlightBegin`과 동일한 목적이지만, 경로가 닫혀 있지 않을 때 끝 부분에서의 정렬을 위해 사용될 수 있습니다. 일반적으로 `preferredHighlightBegin`과 같은 값을 사용합니다. |
+| `highlightRangeMode` | `enumeration`| `StrictlyEnforceRange`| `PathView.onPath`가 `true`인 델리게이트 아이템만 상호작용 가능하게 할지 여부 (`StrictlyEnforceRange`, `ApplyRange`).                                                                 |
+| `flickDeceleration`  | `real`       | (플랫폼 의존)        | 사용자가 플릭했을 때 뷰가 감속하는 정도.                                                                                                                        |
+| `snapMode`           | `enumeration`| `NoSnap`             | 뷰 이동이 멈출 때 가장 가까운 항목에 맞춰지는 방식 (`PathView.NoSnap`, `PathView.SnapToItem`).                                                                        |
+| `interactive`        | `bool`       | `true`               | 사용자가 마우스나 터치로 뷰를 드래그하거나 플릭하여 이동시킬 수 있는지 여부.                                                                                             |
+| `offset`             | `real`       | 0                    | 경로 상의 모든 아이템에 적용될 오프셋 값 (픽셀 단위). 경로 자체를 이동시키는 효과.                                                                                   |
+| `maximumFlickVelocity` | `real`    | (플랫폼 의존)        | 플릭 동작으로 간주될 최대 속도.                                                                                                                                  |
+
+## 주요 시그널
+
+| 이름            | 파라미터 | 설명                                                                          |
+| :-------------- | :------- | :---------------------------------------------------------------------------- |
+| `movementEnded` |          | 사용자의 드래그 또는 플릭(flick) 동작으로 인한 뷰 이동이 멈췄을 때 발생하는 시그널. |
 
 ## Path 객체
 
@@ -39,7 +44,7 @@
 *   **`PathLine { x, y }`**: 현재 지점에서 지정된 `(x, y)`까지 직선 경로를 추가합니다.
 *   **`PathQuad { x, y, controlX, controlY }`**: 현재 지점에서 `(x, y)`까지 제어점 `(controlX, controlY)`를 사용하는 2차 베지어 곡선 경로를 추가합니다.
 *   **`PathCubic { x, y, control1X, control1Y, control2X, control2Y }`**: 현재 지점에서 `(x, y)`까지 두 개의 제어점을 사용하는 3차 베지어 곡선 경로를 추가합니다.
-*   **`PathArc { x, y, radiusX, radiusY, useLargeArc?, direction? }`**: 현재 지점에서 `(x, y)`까지 타원 호 경로를 추가합니다.
+*   **`PathArc { x, y, radiusX, radiusY, useLargeArc?, direction? }`**: 현재 지점에서 `(x, y)`까지 타원 호 경로를 추가합니다. `useLargeArc`(기본값 `false`)는 180도보다 큰 호를 사용할지, `direction`(기본값 `PathArc.Clockwise`)은 호의 방향을 지정합니다.
 *   **`PathSvg { path }`**: SVG 경로 데이터 문자열(`path`)을 사용하여 복잡한 경로를 정의합니다.
 *   **`PathMove { x, y }`**: 경로 그리기를 멈추고 새로운 `(x, y)` 지점으로 이동합니다 (경로 시작점 설정 등).
 
@@ -63,6 +68,7 @@
 
 ```qml
 import QtQuick
+import QtQml.Models
 
 Window {
     width: 400; height: 400
@@ -88,7 +94,13 @@ Window {
         preferredHighlightBegin: 0.5 // 현재 아이템이 경로 중앙(0.5)에 오도록
         preferredHighlightEnd: 0.5
 
-        // 원형 경로 정의
+        // 원형 경로 정의 (디버깅 위해 직선 경로로 임시 변경)
+        path: Path {
+            startX: 50 // 시작 X 좌표
+            startY: 50 // 시작 Y 좌표
+            PathLine { x: pathView.width - 50; y: pathView.height - 50 } // 끝 X, Y 좌표
+        }
+        /* // 기존 원형 경로 주석 처리
         path: Path {
             startX: pathView.width / 2
             startY: pathView.height / 2 - 120 // 원의 중심에서 위쪽으로 시작
@@ -102,6 +114,7 @@ Window {
                 useLargeArc: true // 큰 호 사용 (360도 원)
             }
         }
+        */
 
         // 각 항목을 표시할 델리게이트
         delegate: Rectangle {
@@ -115,7 +128,8 @@ Window {
             // 경로 상에 있을 때만 보이도록 함
             visible: PathView.onPath
 
-            // 델리게이트 아이템의 위치와 크기, 투명도를 경로 상 위치에 따라 조절
+            // 델리게이트 아이템의 위치와 크기, 투명도를 경로 상 위치에 따라 조절 (디버깅 위해 임시 제거)
+            /*
             transform: [ // 배열을 사용하여 여러 변형 적용
                 // 1. 원점에 대한 오프셋 (아이템 중심이 경로에 오도록)
                 Translate { x: -width / 2; y: -height / 2 },
@@ -123,24 +137,20 @@ Window {
                 // 2. 크기 조절 (중앙에 가까울수록 크게)
                 Scale {
                     // preferredHighlightBegin (0.5) 에서의 거리를 계산
-                    property real distance: Math.abs(PathView.view.pathPercent - 0.5)
+                    property real _pathPercent: PathView.view ? PathView.view.pathPercent : 0.5
+                    property real distance: Math.abs(_pathPercent - 0.5)
                     // 거리가 0에 가까울수록(중앙) 1.0, 멀어질수록 0.5까지 작아짐
                     xScale: 1.0 - distance * 1.0 // 0.5 * 2 = 1.0
                     yScale: 1.0 - distance * 1.0
                     origin.x: delegateRect.width / 2
                     origin.y: delegateRect.height / 2
-                },
-
-                // 3. 회전 (경로 각도에 따라 아이템 방향 조절 - 옵션)
-                /* Rotate { */
-                /*     angle: PathView.angle */
-                /*     origin.x: delegateRect.width / 2 */
-                /*     origin.y: delegateRect.height / 2 */
-                /* } */
+                }
             ]
+            */
 
-            // 투명도 조절 (중앙에 가까울수록 불투명하게)
-            opacity: 1.0 - Math.abs(PathView.view.pathPercent - 0.5) * 1.5 // 0.5 * 1.5 = 0.75
+            // 투명도 조절 (디버깅 위해 임시 고정)
+            // opacity: PathView.view ? Math.max(0, 1.0 - Math.abs(PathView.view.pathPercent - 0.5) * 1.5) : 0.0
+            opacity: 1.0
 
             Text {
                 anchors.centerIn: parent
@@ -160,4 +170,8 @@ Window {
 *   `pathItemCount` 프로퍼티는 성능 최적화에 중요합니다. 모델에 항목이 많더라도 실제로 경로 상에 동시에 렌더링될 아이템 수를 제한할 수 있습니다.
 *   `preferredHighlightBegin/End` 프로퍼티는 현재 선택된 아이템이 경로 상의 어느 지점에 위치할지를 결정합니다.
 *   `PathView`는 내장된 플릭(flick) 및 드래그 스크롤 기능을 제공하며, `snapMode`를 통해 스크롤이 멈출 때 항목에 맞춰지도록 할 수 있습니다.
-*   복잡한 경로 정의는 SVG 경로 데이터(`PathSvg`)를 사용하는 것이 더 편리할 수 있습니다. 
+*   복잡한 경로 정의는 SVG 경로 데이터(`PathSvg`)를 사용하는 것이 더 편리할 수 있습니다.
+
+## 공식 문서 링크
+
+* [PathView QML Type ](https://doc.qt.io/qt-6/qml-qtquick-pathview.html) 

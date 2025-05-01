@@ -67,62 +67,72 @@ import QtQuick 2.15 // 또는 사용하는 Qt Quick 버전
 
 ```qml
 import QtQuick 2.15
+import QtQuick.Window 2.15 // Window 사용을 위해 추가
 
-Item { // 루트 Item
-    id: rootItem
+Window { // 예제를 감싸는 Window 추가
     width: 300
     height: 200
-    focus: true // 루트 아이템이 포커스를 받을 수 있도록 설정
+    visible: true // Window를 보이게 설정
+    title: "Item Example"
 
-    Item { // 첫 번째 자식 Item
-        id: childItem1
-        x: 10; y: 10
-        width: 100; height: 50
-        // 이 Item은 아무것도 그리지 않음. 영역만 차지.
-        
-        Rectangle { // childItem1의 자식
-            anchors.fill: parent // 부모(childItem1)를 채움
-            color: "lightblue"
-        }
-    }
+    Item { // 기존 루트 Item (이제 Window의 자식)
+        id: rootItem
+        anchors.fill: parent // Window를 채우도록 변경
+        focus: true // 루트 아이템이 포커스를 받을 수 있도록 설정
 
-    Item { // 두 번째 자식 Item
-        id: childItem2
-        // anchors를 이용한 위치 지정
-        anchors.top: childItem1.bottom
-        anchors.topMargin: 10
-        anchors.left: parent.left
-        anchors.leftMargin: 10
-        width: 150; height: 80
-        rotation: 10 // 회전
-        scale: 0.8   // 크기 축소
-        opacity: 0.7 // 반투명
-        clip: true   // 자식 클리핑 활성화
-        focus: true  // 포커스 가능
+        Item { // 첫 번째 자식 Item
+            id: childItem1
+            x: 10; y: 10
+            width: 100; height: 50
+            // 이 Item은 아무것도 그리지 않음. 영역만 차지.
 
-        Rectangle { // childItem2의 자식
-            anchors.fill: parent
-            color: childItem2.activeFocus ? "orange" : "lightgreen" // 활성 포커스 상태에 따라 색 변경
-            border.color: "black"
+            Rectangle { // childItem1의 자식
+                anchors.fill: parent // 부모(childItem1)를 채움
+                color: "lightblue"
+            }
         }
-        
-        Text { // childItem2의 다른 자식
-            text: "Clipped Text"
-            anchors.centerIn: parent
-            x: 20 // 클리핑 때문에 일부만 보일 수 있음
+
+        Item { // 두 번째 자식 Item
+            id: childItem2
+            // anchors를 이용한 위치 지정
+            anchors.top: childItem1.bottom
+            anchors.topMargin: 10
+            anchors.left: parent.left // 여기서 parent는 rootItem을 의미
+            anchors.leftMargin: 10
+            width: 150; height: 80
+            rotation: 10 // 회전
+            scale: 0.8   // 크기 축소
+            opacity: 0.7 // 반투명
+            clip: true   // 자식 클리핑 활성화
+            focus: true  // 포커스 가능
+
+            Rectangle { // childItem2의 자식
+                anchors.fill: parent
+                color: childItem2.activeFocus ? "orange" : "lightgreen" // 활성 포커스 상태에 따라 색 변경
+                border.color: "black"
+            }
+
+            Text { // childItem2의 다른 자식
+                text: "Clipped Text"
+                anchors.centerIn: parent
+                x: 20 // 클리핑 때문에 일부만 보일 수 있음
+            }
+
+            // childItem2의 activeFocus 변경 시그널 핸들러
+            onActiveFocusChanged: {
+                console.log("childItem2 activeFocus:", activeFocus)
+            }
         }
-        
-        // childItem2의 activeFocus 변경 시그널 핸들러
-        onActiveFocusChanged: {
-            console.log("childItem2 activeFocus:", activeFocus)
-        }
-    }
-    
-    Keys.onPressed: (event) => { // 루트 아이템에서 키 이벤트 처리
-        if (event.key === Qt.Key_Tab) {
-            // Tab 키를 누르면 childItem2에 포커스 강제 설정 시도
-            childItem2.forceActiveFocus()
-            event.accepted = true // 이벤트 처리 완료
+
+        // Keys 이벤트 핸들러는 포커스를 가진 Item에서 처리하는 것이 일반적이므로,
+        // rootItem 또는 childItem2 내부에 두는 것이 더 명확할 수 있습니다.
+        // 여기서는 Window 레벨이 아닌 rootItem에 유지합니다.
+        Keys.onPressed: (event) => { // 루트 아이템에서 키 이벤트 처리
+            if (event.key === Qt.Key_Tab) {
+                // Tab 키를 누르면 childItem2에 포커스 강제 설정 시도
+                childItem2.forceActiveFocus()
+                event.accepted = true // 이벤트 처리 완료
+            }
         }
     }
 }
@@ -132,4 +142,8 @@ Item { // 루트 Item
 
 *   **추상적 개념**: `Item` 자체는 시각적 표현이 없으므로, 화면에 무언가를 표시하려면 `Rectangle`, `Text`, `Image` 등 `Item`을 상속받은 구체적인 컴포넌트를 사용해야 합니다.
 *   **기본 컨테이너**: `Item`은 다른 아이템들을 그룹화하고 배치하기 위한 기본적인 컨테이너로 자주 사용됩니다.
-*   **성능**: 불필요한 `Item` 중첩은 성능에 영향을 줄 수 있습니다. 가능한 플랫한 구조를 유지하는 것이 좋습니다. 
+*   **성능**: 불필요한 `Item` 중첩은 성능에 영향을 줄 수 있습니다. 가능한 플랫한 구조를 유지하는 것이 좋습니다.
+
+## 공식 문서 링크
+
+*   [Qt Quick Item QML Type](https://doc.qt.io/qt-6/qml-qtquick-item.html) 

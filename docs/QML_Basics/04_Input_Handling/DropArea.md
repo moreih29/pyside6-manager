@@ -26,15 +26,17 @@
 | `onPositionChanged`| `DropEvent drag` | -        | 드래그 중인 아이템이 `DropArea` 영역 내에서 위치를 변경할 때마다 발생.                                                               |
 | `onDropped`       | `DropEvent drag` | -        | 사용자가 `DropArea` 영역 내에서 드래그를 종료(마우스/터치 떼기)했을 때 발생. `onEntered`에서 드롭이 수락된 경우에만 발생. **`drag.dropAction`을 통해 최종 결정된 액션을 확인하고 데이터를 처리합니다.** |
 | `onExited`        | -              | -        | 드래그 중인 아이템이 `DropArea` 영역 밖으로 나갔을 때 발생.                                                                         |
+| `onContainsDragChanged` | - | - | `containsDrag` 프로퍼티 값이 변경될 때 발생. |
 
 **DropEvent (drag 파라미터) 주요 속성 및 메소드:**
 
-*   `accepted`: (bool) 드롭이 수락되었는지 여부. `onEntered` 핸들러 등에서 설정.
+*   `accepted`: (bool) 드롭이 수락되었는지 여부 (`accept()` 메소드 호출 결과 반영, 읽기 전용).
 *   `acceptedButtons`: (Qt.MouseButtons) 드롭을 시작한 마우스 버튼.
 *   `dropAction`: (Qt.DropAction) 최종적으로 결정된 드롭 액션 (읽기 전용, `onDropped`에서 확인).
 *   `proposedAction`: (Qt.DropAction) `DropArea`가 제안/수락한 드롭 액션. `onEntered`에서 설정 가능.
 *   `supportedActions`: (Qt.DropActions) 드래그 소스가 지원하는 액션 목록 (읽기 전용).
 *   `formats`: (list<string>) 드래그 소스가 제공하는 MIME 타입 목록 (읽기 전용).
+*   `keys`: (list<string>) 드롭을 수락하기 위해 필요한 특정 키(MIME 타입 식별자 등). `DropArea`의 `keys` 프로퍼티와 관련 (고급). (읽기 전용)
 *   `hasFormat(string format)`: (메소드) 특정 MIME 타입 데이터가 있는지 확인.
 *   `hasText`, `hasUrls`, `hasHtml`, `hasColor`: (bool) 표준 MIME 타입 데이터 존재 여부 확인.
 *   `text`, `urls`, `html`, `color`: 해당 표준 MIME 타입 데이터 접근.
@@ -48,85 +50,147 @@
 
 ```qml
 import QtQuick
+import QtQuick.Window 2.15
 
 Window {
-    width: 400
-    height: 300
+    width: 450
+    height: 350
     visible: true
-    title: "DropArea Example"
+    title: "Robust DropArea Example - Revised Drag Source"
 
-    // 드래그 가능한 아이템 (Drag.md 예제와 유사)
-    Rectangle {
-        id: draggableItem
-        x: 20; y: 20; width: 80; height: 80
-        color: "lightblue"
-        Text { anchors.centerIn: parent; text: "Drag Me" }
-        MouseArea {
-            id: dragArea
-            anchors.fill: parent
-            drag.target: draggableItem
-            drag.mimeData: { "text/plain": "Hello from Draggable!", "application/x-item-id": "draggable1" }
-            drag.supportedActions: Qt.CopyAction | Qt.MoveAction
-            Drag.onDragFinished: (action) => { draggableItem.opacity = 1.0; if(action === Qt.MoveAction) draggableItem.visible = false; }
-            Drag.onDragStarted: { draggableItem.opacity = 0.7; }
-        }
-    }
-
-    // 드롭 영역
-    DropArea {
-        id: dropTarget
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        anchors.margins: 20
-        width: 150; height: 150
+    Column {
+        anchors.centerIn: parent
+        spacing: 20
 
         Rectangle {
-            id: dropVisual
-            anchors.fill: parent
-            color: parent.containsDrag ? "lightgreen" : "lightgray"
-            border.color: parent.containsDrag ? "darkgreen" : "gray"
-            Text {
-                id: dropText
-                anchors.centerIn: parent
-                text: parent.containsDrag ? "Drop Here" : "Drop Area"
+            id: draggableItem
+            width: 100; height: 80
+            color: dragHandler.active ? "steelblue" : "lightblue"
+            border.color: "gray"
+
+            Drag.mimeData: {
+                "text/plain": "Text data from source (via DragHandler)",
+                "application/x-mydata": { "value": 42, "label": "Custom Data (via DragHandler)" }
+            }
+            Drag.supportedActions: Qt.CopyAction | Qt.MoveAction
+
+            Text { anchors.centerIn: parent; text: "Drag Me" }
+
+            DragHandler {
+                id: dragHandler
+                target: draggableItem
+
+                onGrabChanged: (transition, point) => {
+                    if (transition === PointerDevice.GrabExclusive) {
+                        draggableItem.opacity = 0.7;
+                        draggableItem.z = 1;
+                        console.log("[DragHandler] Grab acquired (Drag likely started).");
+                        draggableItem.Drag.active = true;
+                    } else if (transition === PointerDevice.UngrabExclusive || transition === PointerDevice.CancelGrabExclusive) {
+                        var finalAction = Qt.IgnoreAction;
+                        console.log("[DragHandler] Grab released/canceled (Drag finished). Guessed Action:", finalAction);
+                        draggableItem.opacity = 1.0;
+                        draggableItem.z = 0;
+                        draggableItem.Drag.active = false;
+
+                        if (finalAction === Qt.MoveAction) {
+                            draggableItem.visible = false;
+                            console.log("[DragHandler] Original item hidden due to MoveAction.");
+                        }
+                    }
+                }
             }
         }
 
-        // 가장 중요한 핸들러: 드래그 진입 시 수락 여부 결정
-        onEntered: (drag) => {
-            console.log("DropArea entered by drag source.");
-            // 'text/plain' 데이터가 있고, 'Copy' 액션을 지원하면 수락
-            if (drag.hasFormat("text/plain") && (drag.supportedActions & Qt.CopyAction)) {
-                console.log("Accepting CopyAction.");
-                drag.accept(Qt.CopyAction) // 명시적으로 복사 액션 수락
-            } else if (drag.hasFormat("application/x-item-id") && (drag.supportedActions & Qt.MoveAction)) {
-                console.log("Accepting MoveAction.");
-                drag.accept(Qt.MoveAction) // 명시적으로 이동 액션 수락
-            } else {
-                console.log("Rejecting drag.");
-                drag.accepted = false // 지원하지 않는 형식/액션이면 거절
-            }
-        }
+        DropArea {
+            id: dropAreaTarget
+            width: 200; height: 150
 
-        // 드롭 발생 시 처리
-        onDropped: (drag) => {
-            console.log("DropArea received drop! Action:", drag.dropAction);
-            if (drag.hasText) {
-                dropVisual.dropText.text = "Dropped:\n" + drag.text; // 드롭된 텍스트 표시
-                dropVisual.color = "yellowgreen"
-            }
-            if (drag.hasFormat("application/x-item-id")){
-                dropVisual.dropText.text = "Moved:\n" + drag.getData("application/x-item-id");
-                dropVisual.color = "khaki"
-            }
-             // drag.dropAction (최종 액션)에 따라 추가 처리 가능
-        }
+            property string statusText: "Drop Area"
+            property color areaColor: "lightgray"
+            property bool itemDropped: false
+            property int lastAcceptedAction: Qt.IgnoreAction
 
-        // 드래그 아이템이 영역을 벗어날 때 처리 (선택 사항)
-        onExited: {
-            console.log("Drag exited DropArea.");
-            dropVisual.color = "lightgray" // 시각적 피드백 초기화
-            dropVisual.dropText.text = "Drop Area"
+            Rectangle {
+                id: dropVisualRect
+                anchors.fill: parent
+                color: dropAreaTarget.containsDrag ? "palegreen" : dropAreaTarget.areaColor
+                border.color: dropAreaTarget.containsDrag ? "darkgreen" : "gray"
+                border.width: 2
+                radius: 5
+
+                Text {
+                    anchors.centerIn: parent
+                    horizontalAlignment: Text.AlignHCenter
+                    text: dropAreaTarget.containsDrag ? "Release to Drop" : dropAreaTarget.statusText
+                }
+            }
+
+            onEntered: (drag) => {
+                console.log("[DropArea] Entered. Formats:", drag.formats, "Supported Actions:", drag.supportedActions);
+                dropAreaTarget.itemDropped = false;
+                dropAreaTarget.lastAcceptedAction = Qt.IgnoreAction;
+
+                var formatsList = drag.formats;
+
+                if (formatsList.indexOf("text/plain") !== -1 && (drag.supportedActions & Qt.CopyAction)) {
+                    console.log("[DropArea] Accepting CopyAction for text/plain.");
+                    dropAreaTarget.lastAcceptedAction = Qt.CopyAction;
+                    drag.accept(Qt.CopyAction);
+                }
+                else if (formatsList.indexOf("application/x-mydata") !== -1 && (drag.supportedActions & Qt.MoveAction)) {
+                    console.log("[DropArea] Accepting MoveAction for application/x-mydata.");
+                    dropAreaTarget.lastAcceptedAction = Qt.MoveAction;
+                    drag.accept(Qt.MoveAction);
+                }
+                else {
+                    console.log("[DropArea] Rejecting drag (unsupported format or action).");
+                }
+            }
+
+            onDropped: (drag) => {
+                console.log("[DropArea] Dropped. Final Action:", drag.action);
+                dropAreaTarget.itemDropped = true;
+
+                if (drag.action === Qt.CopyAction && drag.formats.indexOf("text/plain") !== -1) {
+                    dropAreaTarget.statusText = "Copied:\n" + drag.text;
+                    dropAreaTarget.areaColor = "lightyellow";
+                    console.log("[DropArea] Processed dropped text:", drag.text);
+                }
+                else if (drag.action === Qt.MoveAction && drag.formats.indexOf("application/x-mydata") !== -1) {
+                    var sourceItem = drag.source;
+                    if (sourceItem && sourceItem.Drag && sourceItem.Drag.mimeData) {
+                        var customData = sourceItem.Drag.mimeData["application/x-mydata"];
+                        if (customData) {
+                            dropAreaTarget.statusText = "Moved:\nLabel: " + customData.label + "\nValue: " + customData.value;
+                            dropAreaTarget.areaColor = "lightpink";
+                            console.log("[DropArea] Processed dropped custom data:", JSON.stringify(customData));
+                        } else {
+                            dropAreaTarget.statusText = "Move Error!\n(Custom Data Missing)";
+                            dropAreaTarget.areaColor = "orangered";
+                            console.warn("[DropArea] Could not retrieve custom data for MoveAction (mimeData invalid?).");
+                        }
+                    } else {
+                        dropAreaTarget.statusText = "Move Error!\n(Source Invalid?)";
+                        dropAreaTarget.areaColor = "orangered";
+                        console.warn("[DropArea] Could not retrieve source item or its mimeData for MoveAction.");
+                    }
+                }
+                else {
+                    dropAreaTarget.statusText = "Drop Error!";
+                    dropAreaTarget.areaColor = "orangered";
+                    console.warn("[DropArea] Drop occurred but action/data mismatch. Final Action:", drag.action, "Formats:", drag.formats);
+                }
+            }
+
+            onExited: {
+                console.log("[DropArea] Exited.");
+                dropAreaTarget.lastAcceptedAction = Qt.IgnoreAction;
+            }
+
+            onContainsDragChanged: {
+                console.log("[DropArea] containsDrag changed to:", containsDrag);
+            }
         }
     }
 }
@@ -137,4 +201,8 @@ Window {
 *   `DropArea`는 드래그 앤 드롭의 수신 측 역할을 하며, **[`Drag` Attached Property](./Drag.md)는 송신 측 역할을 합니다.**
 *   `onEntered` 핸들러에서 드롭을 수락(`drag.accept()` 또는 `drag.acceptProposedAction()`)하지 않으면 `onDropped` 시그널은 발생하지 않습니다.
 *   `drag` 파라미터를 통해 드래그 소스가 제공하는 `mimeData`와 `supportedActions`를 확인하여 조건부로 드롭을 수락/거절하는 로직을 구현하는 것이 일반적입니다.
-*   `containsDrag` 프로퍼티를 사용하여 드래그 중인 아이템이 영역 위에 있을 때 시각적 피드백(예: 배경색 변경)을 제공할 수 있습니다. 
+*   `containsDrag` 프로퍼티를 사용하여 드래그 중인 아이템이 영역 위에 있을 때 시각적 피드백(예: 배경색 변경)을 제공할 수 있습니다.
+
+## 공식 문서 링크
+
+*   [Qt Quick DropArea QML Type](https://doc.qt.io/qt-6/qml-qtquick-droparea.html) 

@@ -82,4 +82,8 @@ Window {
 
 *   `StackLayout`의 자식 아이템들은 보통 `visible` 프로퍼티를 직접 제어하지 않습니다. 레이아웃이 `currentIndex`에 따라 자동으로 아이템의 표시 여부를 관리합니다.
 *   `StackLayout`에 동적으로 아이템을 추가하거나 제거할 수 있습니다. 이때 `count`와 `currentIndex`가 적절히 업데이트됩니다.
-*   애니메이션 효과와 함께 페이지 전환을 구현하려면 `SwipeView` (QtQuick.Controls) 또는 상태(States) 및 트랜지션(Transitions)을 사용하는 것을 고려할 수 있습니다. 
+*   애니메이션 효과와 함께 페이지 전환을 구현하려면 `SwipeView` (QtQuick.Controls) 또는 상태(States) 및 트랜지션(Transitions)을 사용하는 것을 고려할 수 있습니다.
+
+## 공식 문서 링크
+
+*   [Qt Quick StackLayout QML Type](https://doc.qt.io/qt-6/qml-qtquick-layouts-stacklayout.html) 

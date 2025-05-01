@@ -120,3 +120,7 @@ Window {
 *   명시적으로 그룹을 관리하거나 다른 부모를 가진 라디오 버튼들을 묶으려면 `ButtonGroup` (Qt Quick 모듈)을 사용할 수 있습니다. 이 경우 각 `RadioButton`의 `ButtonGroup.group` Attached Property를 해당 `ButtonGroup`의 `id`로 설정합니다.
 *   `CheckBox`와 달리 `RadioButton`은 일반적으로 선택 해제가 아닌 다른 옵션 선택을 통해 상태가 변경됩니다.
 *   스타일링은 `indicator`, `contentItem`, `background` 프로퍼티나 Qt Quick Controls 스타일 시스템을 통해 가능합니다. 
+
+## 공식 문서 링크
+
+*   [RadioButton QML Type ](https://doc.qt.io/qt-6/qml-qtquick-controls-radiobutton.html) 

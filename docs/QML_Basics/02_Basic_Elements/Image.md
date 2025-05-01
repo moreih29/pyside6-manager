@@ -45,65 +45,95 @@ import QtQuick 2.15 // 또는 사용하는 Qt Quick 버전
 ```qml
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
+import QtQuick.Window 2.15
+import QtQuick.Controls 2.15 // BusyIndicator 사용을 위해 추가
 
-GridLayout {
-    columns: 2
-    spacing: 10
+Window {
+    width: 220 // GridLayout 열 2개와 spacing 고려
+    height: 220 // GridLayout 행 2개와 spacing 고려
+    visible: true
+    title: "Image Examples"
 
-    // 로컬 이미지 로드 (QRC 경로)
-    Image {
-        source: "qrc:/example/res/image/logo.png" // 실제 경로로 변경 필요
-        width: 100; height: 100
-        fillMode: Image.PreserveAspectFit // 비율 유지하며 맞춤
-    }
+    GridLayout {
+        anchors.fill: parent
+        anchors.margins: 10 // 보기 좋게 여백 추가
+        columns: 2
+        spacing: 10
 
-    // 네트워크 이미지 비동기 로드 및 로딩 상태 표시
-    Item {
-        width: 100; height: 100
+        // 로컬 이미지 로드 (QRC 경로 예시)
         Image {
-            id: networkImage
-            anchors.fill: parent
-            source: "https://picsum.photos/100" // 예시 URL
-            asynchronous: true // 비동기 로딩 활성화
-            fillMode: Image.Stretch // 영역 채우기
+            // 참고: 아래 source는 예시 경로입니다.
+            // 실제 이미지를 로드하려면 유효한 qrc 경로 또는 파일 경로로 변경해야 합니다.
+            source: "qrc:/example/res/image/logo.png" // 실제 경로로 변경 필요!
+            width: 100; height: 100
+            fillMode: Image.PreserveAspectFit // 비율 유지하며 맞춤
+            Text { // 이미지가 없을 경우를 대비한 안내 텍스트
+                anchors.centerIn: parent
+                text: "Local Image (placeholder)"
+                visible: parent.status == Image.Error || parent.status == Image.Null
+            }
         }
-        BusyIndicator { // 로딩 중 표시
-            anchors.centerIn: parent
-            running: networkImage.status === Image.Loading
-        }
-        Text { // 에러 시 표시
-            anchors.centerIn: parent
-            text: "Error" 
-            color: "red"
-            visible: networkImage.status === Image.Error
-        }
-        Component.onCompleted: {
-            console.log("Network image initial status:", networkImage.status)
-        }
-        Connections { // 상태 변경 시 로그 출력
-            target: networkImage
-            onStatusChanged: console.log("Network image status:", networkImage.status)
-        }
-    }
 
-    // 이미지 채우기 모드: PreserveAspectCrop
-    Rectangle { // Clip 효과를 위해 Rectangle 사용
-        width: 100; height: 100
-        color: "lightgray"
-        clip: true
+        // 네트워크 이미지 비동기 로드 및 로딩 상태 표시
+        Item {
+            width: 100; height: 100
+            Image {
+                id: networkImage
+                anchors.fill: parent
+                source: "https://picsum.photos/100" // 예시 URL
+                asynchronous: true // 비동기 로딩 활성화
+                fillMode: Image.Stretch // 영역 채우기
+            }
+            BusyIndicator { // 로딩 중 표시
+                anchors.centerIn: parent
+                running: networkImage.status === Image.Loading
+            }
+            Text { // 에러 시 표시
+                anchors.centerIn: parent
+                text: "Error"
+                color: "red"
+                visible: networkImage.status === Image.Error
+            }
+            Component.onCompleted: {
+                console.log("Network image initial status:", networkImage.status)
+            }
+            Connections { // 상태 변경 시 로그 출력
+                target: networkImage
+                function onStatusChanged() { console.log("Network image status:", networkImage.status) }
+            }
+        }
+
+        // 이미지 채우기 모드: PreserveAspectCrop
+        Rectangle { // Clip 효과를 위해 Rectangle 사용
+            width: 100; height: 100
+            color: "lightgray"
+            clip: true
+            Image {
+                anchors.centerIn: parent
+                // 참고: 아래 source는 예시 경로입니다.
+                source: "qrc:/example/res/image/landscape.jpg" // 실제 경로로 변경 필요!
+                width: parent.width; height: parent.height
+                fillMode: Image.PreserveAspectCrop // 비율 유지하며 영역 자르기
+                Text { // 이미지가 없을 경우를 대비한 안내 텍스트
+                    anchors.centerIn: parent
+                    text: "Crop Image (placeholder)"
+                    visible: parent.status == Image.Error || parent.status == Image.Null
+                }
+            }
+        }
+
+        // SVG 이미지 로드 (sourceSize 지정 권장, QRC 경로 예시)
         Image {
-            anchors.centerIn: parent
-            source: "qrc:/example/res/image/landscape.jpg" // 실제 경로로 변경 필요
-            width: parent.width; height: parent.height
-            fillMode: Image.PreserveAspectCrop // 비율 유지하며 영역 자르기
+            // 참고: 아래 source는 예시 경로입니다.
+            source: "qrc:/example/res/svg/qt_logo.svg" // 실제 경로로 변경 필요!
+            sourceSize: Qt.size(100, 100) // SVG 렌더링 크기 지정
+            width: 100; height: 100
+            Text { // 이미지가 없을 경우를 대비한 안내 텍스트
+                anchors.centerIn: parent
+                text: "SVG Image (placeholder)"
+                visible: parent.status == Image.Error || parent.status == Image.Null
+            }
         }
-    }
-
-    // SVG 이미지 로드 (sourceSize 지정 권장)
-    Image {
-        source: "qrc:/example/res/svg/qt_logo.svg" // 실제 경로로 변경 필요
-        sourceSize: Qt.size(100, 100) // SVG 렌더링 크기 지정
-        width: 100; height: 100
     }
 }
 ```
@@ -113,4 +143,8 @@ GridLayout {
 *   **경로**: `source`에 지정하는 경로는 QML 파일의 위치를 기준으로 하거나, `qrc:` (Qt Resource System), `file:` (로컬 파일 시스템 절대 경로), `http:`/`https:` (네트워크 URL) 등의 스킴을 사용할 수 있습니다.
 *   **비동기 로딩**: 네트워크 이미지나 용량이 큰 로컬 이미지는 `asynchronous: true`로 설정하여 UI 멈춤 현상을 방지하는 것이 좋습니다. 로딩 중임을 나타내는 UI(예: `BusyIndicator`)를 함께 사용하는 것이 사용자 경험에 도움이 됩니다.
 *   **SVG 지원**: QML은 SVG 이미지 렌더링을 지원합니다. `sourceSize`를 지정하여 원하는 크기로 SVG를 렌더링할 수 있습니다.
-*   **메모리 관리**: 사용하지 않는 큰 이미지는 `source`를 빈 문자열(`""`)로 설정하여 메모리에서 해제하는 것을 고려할 수 있습니다. 
+*   **메모리 관리**: 사용하지 않는 큰 이미지는 `source`를 빈 문자열(`""`)로 설정하여 메모리에서 해제하는 것을 고려할 수 있습니다.
+
+## 공식 문서 링크
+
+*   [Qt Quick Image QML Type](https://doc.qt.io/qt-6/qml-qtquick-image.html) 

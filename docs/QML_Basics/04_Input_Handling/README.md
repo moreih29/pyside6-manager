@@ -12,8 +12,6 @@
 *   **[Keys Attached Property](./Keys.md)**: 특정 아이템이 키보드 포커스를 가졌을 때 키보드 입력을 처리하는 데 사용되는 Attached Property입니다.
 *   **[Flickable](./Flickable.md)**: 자식 아이템이 보이는 영역보다 클 때, 사용자가 드래그하거나 플릭(flick)하여 콘텐츠를 스크롤할 수 있게 해주는 컨테이너입니다.
 *   **[Focus](./Focus.md)**: 키보드 입력을 받을 아이템을 지정하는 개념입니다. `focus` 프로퍼티와 `activeFocus` 프로퍼티, `FocusScope` 컴포넌트 등이 관련됩니다.
-*   **[PinchArea](./PinchArea.md)**: 멀티터치 핀치(pinch) 제스처(확대/축소, 회전)를 처리하기 위한 컴포넌트입니다.
-*   **[MultiPointTouchArea](./MultiPointTouchArea.md)**: 여러 터치 포인트를 동시에 추적하고 처리하기 위한 저수준 컴포넌트입니다.
 *   **[Drag Attached Property](./Drag.md)**: 아이템을 드래그 가능하게 만들고, `DropArea`와 함께 드래그 앤 드롭 기능을 구현하는 데 사용되는 Attached Property입니다.
 *   **[DropArea](./DropArea.md)**: 드래그 앤 드롭 작업을 위한 대상 영역을 정의하고 드롭 이벤트를 처리하는 컴포넌트입니다.
 

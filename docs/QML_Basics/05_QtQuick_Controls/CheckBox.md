@@ -68,8 +68,10 @@ Window {
             id: option1
             text: "Enable Option 1"
             checked: true // 초기에 체크된 상태
-            onCheckedChanged: { // checked 프로퍼티 변경 시 핸들러
-                console.log("Option 1 checked:", checked)
+            // onCheckedChanged는 AbstractButton에 정의된 시그널이 아님
+            // 상태 변경 감지는 onToggled 또는 onCheckStateChanged 사용
+            onToggled: {
+                console.log("Option 1 toggled. New checked state:", checked)
             }
         }
 
@@ -108,3 +110,7 @@ Window {
 *   사용자가 체크박스를 클릭하면 상태가 순환합니다. `tristate`가 `false`이면 `Unchecked` <-> `Checked`, `tristate`가 `true`이면 `Unchecked` -> `Checked` -> `PartiallyChecked` -> `Unchecked` 순서로 변경될 수 있습니다 (스타일에 따라 순서가 다를 수 있음).
 *   여러 옵션 중 하나만 선택하게 하려면 `RadioButton`을 사용하고 `ButtonGroup`으로 묶는 것을 고려하십시오.
 *   `indicator`, `contentItem`, `background` 프로퍼티를 통해 체크박스의 시각적 요소를 커스터마이징할 수 있습니다. 
+
+## 공식 문서 링크
+
+*   [CheckBox QML Type ](https://doc.qt.io/qt-6/qml-qtquick-controls-checkbox.html) 

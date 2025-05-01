@@ -13,7 +13,7 @@
 | 이름            | 타입                | 기본값             | 설명                                                                                                                             |
 | :-------------- | :------------------ | :----------------- | :------------------------------------------------------------------------------------------------------------------------------- |
 | `orientation`   | `Qt::Orientation`   | `Qt.Horizontal`    | 아이템 배치 및 분할 방향 (`Qt.Horizontal`: 좌우 배치, 수직 분할선 / `Qt.Vertical`: 상하 배치, 수평 분할선).                               |
-| `handleDelegate`| `Component`         | (스타일 의존)     | 분할 핸들(사용자가 드래그하는 부분)의 시각적 표현을 정의하는 컴포넌트.                                                                    |
+| `handle`| `Component`         | (스타일 의존)     | 분할 핸들(사용자가 드래그하는 부분)의 시각적 표현을 정의하는 컴포넌트.                                                                    |
 | `resizing`      | `bool`              | `false`            | (읽기 전용) 현재 사용자가 핸들을 드래그하여 크기를 조절 중인지 여부.                                                                     |
 
 ## Attached Properties (자식 아이템에서 사용)
@@ -104,17 +104,47 @@ Window {
         }
 
         // 커스텀 핸들 델리게이트 (선택 사항)
-        handleDelegate: Rectangle {
-            width: orientation === Qt.Horizontal ? 10 : undefined
-            height: orientation === Qt.Vertical ? 10 : undefined
-            color: splitView.resizing ? "steelblue" : "gray"
-            border.color: "darkgray"
+        handle: Component {
+            // 핸들 컴포넌트의 루트 아이템
+            Item {
+                // SplitView의 orientation에 따라 핸들의 기본 크기 결정
+                implicitWidth: splitView.orientation === Qt.Horizontal ? 12 : parent.width
+                implicitHeight: splitView.orientation === Qt.Vertical ? 12 : parent.height
 
-            MouseArea { // 핸들 드래그를 위한 영역
-                anchors.fill: parent
-                cursorShape: splitView.orientation === Qt.Horizontal ? Qt.SplitHCursor : Qt.SplitVCursor
+                // 핸들 배경 (Rectangle 사용)
+                Rectangle {
+                    id: handleBackground
+                    anchors.fill: parent
+                    // 드래그 중(resizing)일 때와 아닐 때 색상/그라데이션 변경
+                    gradient: Gradient {
+                        GradientStop { position: 0.0; color: splitView.resizing ? "lightblue" : "lightgray" }
+                        GradientStop { position: 1.0; color: splitView.resizing ? "steelblue" : "darkgray" }
+                    }
+                    border.color: "dimgray"
+                    border.width: 1
+                }
+
+                // 핸들 중앙에 '그립' 모양 추가 (orientation에 따라 선 방향 변경)
+                Rectangle {
+                    id: gripLine
+                    width: splitView.orientation === Qt.Horizontal ? 2 : 10 // 수평 분할 시 세로선, 수직 분할 시 가로선
+                    height: splitView.orientation === Qt.Horizontal ? 10 : 2
+                    anchors.centerIn: parent
+                    color: "white"
+                    opacity: 0.7
+                    radius: 1
+                }
+
+                // 마우스 상호작용을 위한 영역
+                MouseArea {
+                    anchors.fill: parent
+                    // 분할 방향에 맞는 커서 모양 설정
+                    cursorShape: splitView.orientation === Qt.Horizontal ? Qt.SplitHCursor : Qt.SplitVCursor
+                    // 드래그 방지 (SplitView가 핸들 드래그를 처리함)
+                    propagateComposedEvents: true
+                }
             }
-        }
+        } // End of handle Component
     }
 }
 ```

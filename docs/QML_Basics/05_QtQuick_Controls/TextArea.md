@@ -26,11 +26,12 @@
 | `focusPolicy`    | `Qt::FocusPolicy`| `Qt::StrongFocus`       | `TextArea`가 키보드 포커스를 받는 방식.                                                                                        |
 | `up`, `down`, `left`, `right` | `Flickable` | -                       | (읽기 전용) 내부 `Flickable`의 관련 프로퍼티 접근자 (예: `up.atYBeginning`, `left.atXEnd`). 스크롤 상태 확인에 사용될 수 있음. |
 | `ScrollBar.vertical`, `ScrollBar.horizontal` | `ScrollBar` | - | 내부 스크롤바 컴포넌트 (스타일에서 제공 시). `TextArea` 외부에서 스크롤바를 연결하거나 제어할 때 사용 가능.                      |
+| `TextArea.flickable` | `TextArea`| -                      | (Attached Property) `TextArea`를 `Flickable` 안에 배치했을 때, `Flickable`에서 `TextArea` 객체에 접근하기 위한 속성.             |
 | `ToolTip.visible`, `ToolTip.text`, `ToolTip.delay` | `bool`, `string`, `int` | - | `TextArea`에 마우스를 올렸을 때 표시될 툴팁 설정.                                                                              |
 
 ## 주요 시그널
 
-`TextField`와 유사한 시그널(`textChanged`, `textEdited`, `selectionChanged`, `cursorPositionChanged`)을 포함하며, 추가적으로 링크 관련 시그널 등이 있습니다.
+`TextField`와 유사한 시그널(`textChanged`, `textEdited`)을 포함하며, 추가적으로 링크 관련 시그널 등이 있습니다.
 
 | 이름            | 파라미터 | 반환타입 | 설명                                                                               |
 | :-------------- | :------- | :------- | :--------------------------------------------------------------------------------- |
@@ -38,6 +39,9 @@
 | `textEdited`    | -        | -        | 사용자의 편집 행위로 인해 `text` 값이 변경될 때 발생.                                |
 | `linkActivated` | `string link` | -      | (`textFormat`이 `RichText` 등일 때) 사용자가 텍스트 내의 링크를 클릭했을 때 발생. |
 | `linkHovered`   | `string link` | -      | (`textFormat`이 `RichText` 등일 때) 사용자가 텍스트 내의 링크 위에 마우스를 올렸을 때 발생. |
+| `pressed`       | `MouseEvent event` | - | 사용자가 TextArea를 눌렀을 때 발생 (Qt 5.8+).                                 |
+| `released`      | `MouseEvent event` | - | 사용자가 TextArea에서 손을 뗐을 때 발생 (Qt 5.8+).                               |
+| `pressAndHold`  | `MouseEvent event` | - | 사용자가 TextArea를 길게 눌렀을 때 발생.                                        |
 
 ## 주요 메소드
 
@@ -63,31 +67,33 @@ Window {
     visible: true
     title: "TextArea Example"
 
-    TextArea {
-        id: textArea
+    Flickable {
+        id: flickable
         anchors.fill: parent
         anchors.margins: 10
+        contentHeight: textArea.height
 
-        placeholderText: "Enter multiple lines of text here..."
-        wrapMode: TextEdit.WordWrap // 단어 단위 줄 바꿈 활성화
-        font.pointSize: 12
-
-        // 내부 스크롤바 사용 (스타일에서 제공하는 경우)
         ScrollBar.vertical: ScrollBar {}
 
-        // 프로그램적으로 텍스트 추가
-        Component.onCompleted: {
-            textArea.append("\nAppended text line.")
-        }
+        TextArea {
+            id: textArea
 
-        // 텍스트 변경 시 로그 출력
-        onTextChanged: {
-            // console.log("TextArea text changed. Length:", length)
-        }
+            placeholderText: "Enter multiple lines of text here..."
+            wrapMode: TextEdit.WordWrap // 단어 단위 줄 바꿈 활성화
+            font.pointSize: 12
 
-        // 선택 영역 변경 시 로그 출력
-        onSelectionChanged: {
-            // console.log("Selection changed:", selectionStart, "-", selectionEnd)
+            // 프로그램적으로 텍스트 추가
+            Component.onCompleted: {
+                textArea.append("\nAppended text line.")
+            }
+
+            onPressed: {
+                console.log("Pressed")
+            }
+
+            onReleased: {
+                console.log("Released")
+            }
         }
     }
 }
@@ -100,3 +106,7 @@ Window {
 *   `textFormat`을 `RichText`로 설정하면 기본적인 HTML 태그 (`<b>`, `<i>`, `<font color=...>`, `<a href=...>` 등)를 사용하여 텍스트 서식을 지정하고 링크를 만들 수 있습니다.
 *   성능: 매우 긴 텍스트를 다룰 때는 성능에 영향을 줄 수 있으므로 주의가 필요합니다.
 *   한 줄 입력에는 `TextField`를 사용하는 것이 더 적합합니다. 
+
+## 공식 문서 링크
+
+*   [TextArea QML Type ](https://doc.qt.io/qt-6/qml-qtquick-controls-textarea.html) 

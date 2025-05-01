@@ -98,3 +98,7 @@ Window {
 *   `ToolTip.text`는 기본적인 서식(rich text subset)을 지원하여 굵게(`<b>`), 기울임꼴(`<i>`) 등을 사용할 수 있습니다.
 *   컨트롤이 아닌 일반 `Item` (예: `Rectangle`)에 툴팁을 사용하려면 내부에 `hoverEnabled`가 `true`인 `MouseArea`가 있어야 합니다. 컨트롤들은 대부분 내부적으로 호버 감지를 처리합니다.
 *   `ToolTip`의 시각적 스타일(배경, 글꼴 등)은 현재 적용된 `QtQuick.Controls` 스타일에 따라 결정되며, 필요시 사용자 정의 스타일을 통해 변경할 수 있습니다. 
+
+## 공식 문서 링크
+
+*   [ToolTip QML Type ](https://doc.qt.io/qt-6/qml-qtquick-controls-tooltip.html) 

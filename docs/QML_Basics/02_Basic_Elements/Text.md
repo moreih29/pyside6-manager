@@ -53,56 +53,73 @@ import QtQuick 2.15 // 또는 사용하는 Qt Quick 버전
 | 이름            | 파라미터        | 반환타입 | 설명                                                                                              | 
 | :-------------- | :-------------- | :------- | :------------------------------------------------------------------------------------------------ | 
 | `textChanged`   | -               | -        | `text` 프로퍼티 값이 변경될 때 발생합니다.                                                              |
-| `linkActivated` | `link: string`  | -        | `textFormat`이 `RichText` 또는 `StyledText`일 때, 텍스트 내의 링크(`<a href=...>` 태그)가 클릭되면 발생합니다. | `link` 파라미터는 클릭된 링크의 URL입니다. |
-| `linkHovered`   | `link: string`  | -        | `textFormat`이 `RichText` 또는 `StyledText`일 때, 텍스트 내의 링크 위에 마우스 커서가 올라가면 발생합니다.       |
+| `linkActivated` | `link: string`  | -        | `textFormat`이 `RichText` 또는 `StyledText`일 때, 텍스트 내의 링크(`<a href=...>` 태그)가 클릭되면 발생합니다. `link` 파라미터는 클릭된 링크의 URL입니다. |
+| `linkHovered`   | `link: string`  | -        | `textFormat`이 `RichText` 또는 `StyledText`일 때, 텍스트 내의 링크 위에 마우스 커서가 올라가면 발생합니다. 마우스 커서가 링크 영역을 벗어나면 빈 문자열 `""`로 발생합니다. |
 
 ## 예제
 
 ```qml
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
+import QtQuick.Window 2.15
 
-ColumnLayout {
-    spacing: 10
+Window {
+    width: 200 // 레이아웃 너비 고려
+    height: 300 // 레이아웃 높이 고려
+    visible: true
+    title: "Text Examples"
 
-    // 기본 텍스트
-    Text {
-        text: "Hello, QML Text!"
-    }
+    ColumnLayout {
+        anchors.fill: parent
+        anchors.margins: 10 // 보기 좋게 여백 추가
+        spacing: 10
 
-    // 글꼴 및 색상 변경
-    Text {
-        text: "Styled Text"
-        font.family: "Arial"
-        font.pointSize: 16
-        font.bold: true
-        color: "darkblue"
-    }
+        // 기본 텍스트
+        Text {
+            text: "Hello, QML Text!"
+        }
 
-    // 여러 줄 텍스트 및 줄 바꿈
-    Text {
-        width: 150 // 너비 제한 필요
-        text: "This is a longer text that needs to wrap around."
-        wrapMode: Text.WordWrap // 단어 단위 줄 바꿈
-        horizontalAlignment: Text.AlignHCenter // 가운데 정렬
-    }
+        // 글꼴 및 색상 변경
+        Text {
+            text: "Styled Text"
+            font.family: "Arial"
+            font.pointSize: 16
+            font.bold: true
+            color: "darkblue"
+        }
 
-    // 텍스트 생략
-    Text {
-        width: 100
-        text: "Very long text that will be elided."
-        elide: Text.ElideRight // 오른쪽 생략
-    }
+        // 여러 줄 텍스트 및 줄 바꿈
+        Text {
+            // Layout이 width를 자동으로 관리해주므로 여기서는 명시적 width 불필요
+            // width: 150 // 너비 제한 필요했었음 (Layout 미사용 시)
+            Layout.fillWidth: true // Layout 너비에 맞춤
+            text: "This is a longer text that needs to wrap around."
+            wrapMode: Text.WordWrap // 단어 단위 줄 바꿈
+            horizontalAlignment: Text.AlignHCenter // 가운데 정렬
+        }
 
-    // 서식 있는 텍스트 (StyledText)
-    Text {
-        textFormat: Text.StyledText
-        text: "<b>Bold</b>, <i>Italic</i>, <font color='red'>Red</font>, and <a href='https://example.com'>Link</a>."
-        
-        // 링크 클릭 시그널 핸들러
-        onLinkActivated: (link) => {
-            console.log("Link activated:", link)
-            // Qt.openUrlExternally(link) // 외부 브라우저로 열기 (Qt 가져오기 필요)
+        // 텍스트 생략
+        Text {
+            width: 100 // 여기서는 명시적 너비 필요 (Layout 내에서도 고정 너비 원할 시)
+            text: "Very long text that will be elided."
+            elide: Text.ElideRight // 오른쪽 생략
+        }
+
+        // 서식 있는 텍스트 (StyledText)
+        Text {
+            Layout.fillWidth: true
+            textFormat: Text.StyledText
+            text: "<b>Bold</b>, <i>Italic</i>, <font color='red'>Red</font>, and <a href='https://example.com'>Link</a>."
+            wrapMode: Text.WordWrap // 링크가 길 경우 줄바꿈되도록 추가
+
+            // 링크 클릭 시그널 핸들러
+            onLinkActivated: (link) => {
+                console.log("Link activated:", link)
+                // Qt.openUrlExternally(link) // 외부 브라우저로 열기 (import Qt 5.15 이상 필요)
+            }
+            onLinkHovered: (link) => {
+                console.log("Link hovered:", link) // 호버 시 콘솔 출력
+            }
         }
     }
 }
@@ -113,4 +130,8 @@ ColumnLayout {
 *   **크기**: `Text` 요소의 `width`와 `height`는 기본적으로 텍스트 내용에 따라 결정됩니다(`implicitWidth`, `implicitHeight`). 하지만 레이아웃이나 `wrapMode`, `elide` 등을 올바르게 사용하려면 `width`를 명시적으로 설정해야 하는 경우가 많습니다.
 *   **성능**: 복잡한 서식 있는 텍스트(`RichText`, `StyledText`)는 일반 텍스트(`PlainText`)보다 렌더링 성능이 떨어질 수 있습니다. 꼭 필요한 경우에만 사용하는 것이 좋습니다.
 *   **글꼴 로딩**: 사용자 정의 글꼴을 사용하려면 애플리케이션에 해당 글꼴 파일을 포함시키고 로드해야 할 수 있습니다.
-*   **국제화**: 사용자에게 보여지는 텍스트에는 `qsTr()` 함수를 사용하여 국제화를 지원하는 것이 좋습니다. (예: `text: qsTr("Settings")`) 
+*   **국제화**: 사용자에게 보여지는 텍스트에는 `qsTr()` 함수를 사용하여 국제화를 지원하는 것이 좋습니다. (예: `text: qsTr("Settings")`)
+
+## 공식 문서 링크
+
+*   [Qt Quick Text QML Type](https://doc.qt.io/qt-6/qml-qtquick-text.html) 

@@ -23,6 +23,11 @@
 | `boundsMovement`   | `enum`      | `Flickable.FollowBoundsBehavior` | 경계 도달 시 콘텐츠 이동 방식 (`StopAtBounds`, `FollowBoundsBehavior`, `OvershootAlways`, `OvershootWhenScrollable`). |
 | `flicking`         | `bool`      | `false`| (읽기 전용) 현재 플릭 애니메이션이 진행 중인지 여부.                                                              |
 | `moving`           | `bool`      | `false`| (읽기 전용) 현재 사용자의 드래그나 플릭 애니메이션으로 인해 콘텐츠가 이동 중인지 여부.                              |
+| `maximumFlickVelocity` | `real`  | `platform dependent` | 플릭 제스처의 최대 속도. 플랫폼 기본값 사용. |
+| `pixelAligned`     | `bool`      | `false`| `true`이면 콘텐츠 위치를 픽셀 경계에 맞춥니다. 기본값 `false`. |
+| `pressDelay`       | `int`       | `platform dependent` | 터치 시작 후 플릭/드래그 감지를 시작하기까지의 지연 시간(ms). 기본값 플랫폼 종속. |
+| `reboundTransition`| `Transition`| -      | `returnToBounds()` 호출 시 사용되는 애니메이션 트랜지션. |
+| `syncDirection`    | `enum`      | `Qt.Vertical` | (Qt 6.x+) 스크롤 동기화 방향. 현재 문서에서는 상세 설명 생략. 기본값 `Qt.Vertical`. |
 | `atXBeginning`, `atXEnd` | `bool` | `false`| (읽기 전용) 수평 스크롤이 각각 시작 또는 끝 지점에 도달했는지 여부.                                                |
 | `atYBeginning`, `atYEnd` | `bool` | `false`| (읽기 전용) 수직 스크롤이 각각 시작 또는 끝 지점에 도달했는지 여부.                                                |
 | `visibleArea.xPosition`, `visibleArea.yPosition` | `real` | 0.0    | (읽기 전용) 현재 보이는 영역의 상대적 위치 (0.0 ~ 1.0). `ScrollBar` 등과 바인딩하기 유용.                     |
@@ -120,4 +125,8 @@ Window {
 *   `Flickable`은 일반적으로 하나의 자식 아이템을 `contentItem`으로 가집니다. 여러 아이템을 스크롤하려면 해당 아이템들을 `Item`이나 `ColumnLayout`, `RowLayout` 등으로 감싸서 단일 `contentItem`으로 만들어야 합니다.
 *   `contentWidth`와 `contentHeight`를 `contentItem`의 크기에 정확히 바인딩하는 것이 중요합니다. 그렇지 않으면 스크롤 범위가 잘못 계산될 수 있습니다.
 *   성능을 위해 `Flickable` 내부에 너무 복잡하거나 많은 아이템을 직접 배치하는 것보다 `ListView`나 `GridView`와 같은 모델 기반 뷰를 사용하는 것이 좋습니다.
-*   `ScrollBar` (QtQuick.Controls)와 함께 사용하여 사용자에게 시각적인 스크롤 피드백을 제공할 수 있습니다. 
+*   `ScrollBar` (QtQuick.Controls)와 함께 사용하여 사용자에게 시각적인 스크롤 피드백을 제공할 수 있습니다.
+
+## 공식 문서 링크
+
+*   [Qt Quick Flickable QML Type](https://doc.qt.io/qt-6/qml-qtquick-flickable.html) 

@@ -27,9 +27,7 @@
 
 ## 주요 시그널
 
-| 이름      | 파라미터 | 설명                                        |
-| :-------- | :------- | :------------------------------------------ |
-| `clicked` | `int index` | 사용자가 특정 인덱스의 점을 클릭했을 때 발생합니다 (`interactive`가 `true`일 때). |
+`PageIndicator`는 상속받은 `Control`의 일반적인 시그널을 가집니다.
 
 ## 예제
 
@@ -77,15 +75,13 @@ Window {
             count: swipeView.count // SwipeView의 페이지 수와 연동
             currentIndex: swipeView.currentIndex // SwipeView의 현재 인덱스와 연동
 
-            // 사용자가 인디케이터 클릭 시 SwipeView 페이지 전환
-            onClicked: swipeView.setCurrentIndex(index)
-
             // 간단한 델리게이트 커스터마이징 예시
             delegate: Rectangle {
                 implicitWidth: 10
                 implicitHeight: 10
                 radius: 5
-                color: current ? "steelblue" : "lightgray" // 현재 페이지면 파란색, 아니면 회색
+                // 'current' 컨텍스트 프로퍼티 대신 id를 통해 currentIndex와 index 비교
+                color: pageIndicator.currentIndex === index ? "steelblue" : "lightgray"
                 opacity: pressed ? 0.7 : 1.0 // 눌렸을 때 투명도 조절
 
                 Behavior on color { ColorAnimation { duration: 100 } }
@@ -101,3 +97,7 @@ Window {
 *   `interactive` 프로퍼티를 `true`로 설정하면 사용자가 인디케이터를 클릭하여 직접 페이지를 전환할 수 있습니다. 이때 `clicked` 시그널을 사용하여 페이지 뷰의 `currentIndex`를 업데이트해야 합니다.
 *   `delegate` 프로퍼티를 사용하여 각 점의 모양, 크기, 색상 등을 커스터마이징할 수 있습니다. 델리게이트 내에서 `index`(점의 인덱스), `pressed`(눌림 상태), `current`(현재 페이지 여부) 등의 컨텍스트 프로퍼티를 활용하여 상태에 따른 시각적 변화를 줄 수 있습니다.
 *   스타일에 따라 기본 모양과 동작이 제공되지만, `background`, `contentItem`, `delegate` 등을 통해 완전히 새로운 디자인을 적용하는 것도 가능합니다. 
+
+## 공식 문서 링크
+
+*   [PageIndicator QML Type ](https://doc.qt.io/qt-6/qml-qtquick-controls-pageindicator.html) 

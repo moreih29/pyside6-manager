@@ -57,53 +57,69 @@ import QtQuick 2.15 // 또는 사용하는 Qt Quick 버전
 ```qml
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
+import QtQuick.Window 2.15
 
-RowLayout {
-    spacing: 10
+Window {
+    width: 460 // 버튼 3개 + spacing 고려 (80+150+200 + 2*10)
+    height: 100 // 버튼 높이 + 여백 고려
+    visible: true
+    title: "BorderImage Example"
 
-    // 소스 이미지 (가정: 30x30 크기, 각 테두리 10px)
-    Image { 
-        source: "qrc:/images/button_border.png" // 실제 경로로 변경 필요
-        width: 30; height: 30
-        visible: false // 화면에 직접 표시하지 않음
-    }
+    RowLayout {
+        anchors.centerIn: parent // 중앙 정렬
+        spacing: 10
 
-    // 작은 크기 버튼
-    BorderImage {
-        width: 80; height: 40
-        source: "qrc:/images/button_border.png"
-        border { left: 10; top: 10; right: 10; bottom: 10 } // 각 테두리 영역 10px 지정
-        // 기본값: Stretch 모드
-        
-        Text { 
-            text: "Small"
-            anchors.centerIn: parent
+        // 예시 소스 이미지 정보 (실제 로드는 아래 BorderImage에서)
+        // 가정: 30x30 크기, 각 테두리 10px
+        // 참고: 아래 source 경로는 예시이며, 실제 이미지가 필요합니다.
+        property url imageSource: "qrc:/images/button_border.png" // 실제 경로로 변경 필요!
+
+        // 작은 크기 버튼
+        BorderImage {
+            width: 80; height: 40
+            source: parent.imageSource // 부모의 imageSource 사용
+            border { left: 10; top: 10; right: 10; bottom: 10 } // 각 테두리 영역 10px 지정
+            // 기본값: Stretch 모드
+            Text { text: "Small"; anchors.centerIn: parent }
+            Text {
+                anchors.centerIn: parent
+                text: "(Image Missing)" // 이미지 로드 실패 시 안내
+                color: "red"
+                font.pixelSize: 10
+                visible: parent.status === Image.Error
+            }
         }
-    }
 
-    // 큰 크기 버튼 (테두리는 늘어나지 않고 배경만 늘어남)
-    BorderImage {
-        width: 150; height: 50
-        source: "qrc:/images/button_border.png"
-        border { left: 10; top: 10; right: 10; bottom: 10 }
-        
-        Text { 
-            text: "Large (Stretch)"
-            anchors.centerIn: parent
+        // 큰 크기 버튼 (테두리는 늘어나지 않고 배경만 늘어남)
+        BorderImage {
+            width: 150; height: 50
+            source: parent.imageSource
+            border { left: 10; top: 10; right: 10; bottom: 10 }
+            Text { text: "Large (Stretch)"; anchors.centerIn: parent }
+            Text {
+                anchors.centerIn: parent
+                text: "(Image Missing)"
+                color: "red"
+                font.pixelSize: 10
+                visible: parent.status === Image.Error
+            }
         }
-    }
-    
-    // 반복 모드 버튼
-    BorderImage {
-        width: 200; height: 60
-        source: "qrc:/images/button_border.png"
-        border { left: 10; top: 10; right: 10; bottom: 10 }
-        horizontalTileMode: BorderImage.Repeat // 수평 반복
-        verticalTileMode: BorderImage.Repeat   // 수직 반복
-        
-        Text { 
-            text: "Large (Repeat)"
-            anchors.centerIn: parent
+
+        // 반복 모드 버튼
+        BorderImage {
+            width: 200; height: 60
+            source: parent.imageSource
+            border { left: 10; top: 10; right: 10; bottom: 10 }
+            horizontalTileMode: BorderImage.Repeat // 수평 반복
+            verticalTileMode: BorderImage.Repeat   // 수직 반복
+            Text { text: "Large (Repeat)"; anchors.centerIn: parent }
+            Text {
+                anchors.centerIn: parent
+                text: "(Image Missing)"
+                color: "red"
+                font.pixelSize: 10
+                visible: parent.status === Image.Error
+            }
         }
     }
 }
@@ -113,4 +129,8 @@ RowLayout {
 
 *   **소스 이미지 준비**: `BorderImage`를 효과적으로 사용하려면 9개 영역으로 나누기 적합한 소스 이미지를 미리 준비해야 합니다. 각 모서리, 테두리, 배경 영역이 명확하게 구분되는 이미지가 좋습니다.
 *   **`border` 값 설정**: `border`의 `left`, `right`, `top`, `bottom` 값은 소스 이미지 기준의 픽셀 크기입니다. 이 값을 정확하게 설정해야 원하는 결과를 얻을 수 있습니다.
-*   **Tile Mode**: `horizontalTileMode`와 `verticalTileMode`를 조절하여 테두리와 배경이 늘어나는 방식(`Stretch`), 반복되는 방식(`Repeat`), 또는 픽셀 경계에 맞춰 반복되는 방식(`Round`)을 선택할 수 있습니다. 
+*   **Tile Mode**: `horizontalTileMode`와 `verticalTileMode`를 조절하여 테두리와 배경이 늘어나는 방식(`Stretch`), 반복되는 방식(`Repeat`), 또는 픽셀 경계에 맞춰 반복되는 방식(`Round`)을 선택할 수 있습니다.
+
+## 공식 문서 링크
+
+*   [Qt Quick BorderImage QML Type](https://doc.qt.io/qt-6/qml-qtquick-borderimage.html) 

@@ -73,7 +73,10 @@ ApplicationWindow {
 
 ```javascript
 // QML의 WorkerScript 요소와 통신하기 위한 API 임포트
-Qt.include("qrc:/qt-project.org/imports/QtQuick/workerscript/mt_bootstrap.js")
+// Qt 5 및 일부 환경에서는 Qt.include 사용:
+// Qt.include("qrc:/qt-project.org/imports/QtQuick/workerscript/mt_bootstrap.js")
+// Qt 6 및 표준 JavaScript 환경에서는 importScripts 사용 권장:
+importScripts("qrc:/qt-project.org/imports/QtQuick/workerscript/mt_bootstrap.js")
 
 // 메인 스레드로부터 메시지를 받았을 때 호출될 함수
 WorkerScript.onMessage = function(message) {
@@ -114,7 +117,7 @@ WorkerScript.onMessage = function(message) {
 }
 ```
 
-*(참고: 위 JavaScript 파일이 동작하려면 Qt Resource System (`.qrc`)에 등록되어야 하며, `mt_bootstrap.js` 파일은 Qt 설치 경로의 QML 모듈 디렉토리에 있습니다. 실제 경로를 확인해야 할 수 있습니다. 프로젝트 설정에 따라 `importScripts()`를 사용해야 할 수도 있습니다.)*
+*(참고: 위 JavaScript 파일이 동작하려면 Qt Resource System (`.qrc`)에 등록되어야 하며, `mt_bootstrap.js` 파일은 Qt 설치 경로의 QML 모듈 디렉토리에 있습니다. 실제 경로를 확인해야 할 수 있습니다. `Qt.include` 또는 `importScripts` 중 환경에 맞는 방식을 사용해야 합니다.)*
 
 ## 주요 프로퍼티
 
@@ -148,3 +151,7 @@ WorkerScript.onMessage = function(message) {
 *   백그라운드 스크립트 파일 경로(`source`)는 일반적으로 Qt Resource System (`qrc:/`)을 사용하거나 상대 경로 또는 절대 URL을 사용합니다.
 *   오류 처리: 백그라운드 스크립트 내에서 발생할 수 있는 오류를 `try...catch`로 잡아서 메인 스레드로 오류 메시지를 보내는 것이 좋습니다.
 *   Qt 6부터는 JavaScript 환경 및 스레딩 모델에 변화가 있을 수 있으므로, 최신 Qt 버전을 사용하는 경우 관련 문서를 확인하는 것이 좋습니다. 
+
+## 공식 문서 링크
+
+* [WorkerScript QML Type ](https://doc.qt.io/qt-6/qml-qtqml-workerscript-workerscript.html) 

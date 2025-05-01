@@ -17,9 +17,9 @@
 | 이름             | 타입             | 기본값          | 설명                                                                                                                                  |
 | :--------------- | :--------------- | :-------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
 | `value`          | `real` or `int`  | 0               | 스핀박스의 현재 값. `from`과 `to` 사이의 값입니다. `decimals` > 0 이면 `real`, 아니면 `int`로 취급될 수 있음.                                |
-| `from`           | `real` or `int`  | 0               | 스핀박스가 나타내는 값의 최소 범위.                                                                                                     |
-| `to`             | `real` or `int`  | 99              | 스핀박스가 나타내는 값의 최대 범위.                                                                                                     |
-| `stepSize`       | `real` or `int`  | 1               | 위/아래 버튼 클릭, 휠 스크롤, 화살표 키 입력 시 값이 변경되는 단위.                                                                         |
+| `from`           | `int`  | 0               | 스핀박스가 나타내는 값의 최소 범위.                                                                                                     |
+| `to`             | `int`  | 99              | 스핀박스가 나타내는 값의 최대 범위.                                                                                                     |
+| `stepSize`       | `int`  | 1               | 위/아래 버튼 클릭, 휠 스크롤, 화살표 키 입력 시 값이 변경되는 단위.                                                                         |
 | `decimals`       | `int`            | 0               | 실수 값을 표시할 때 사용할 소수점 이하 자릿수. `value`가 `real` 타입처럼 동작하게 함.                                                        |
 | `textFromValue`  | `function`       | (기본 형식 지정) | `value`를 텍스트 필드에 표시될 문자열로 변환하는 함수. 기본적으로 로케일 설정과 `decimals`를 고려하여 변환. 사용자 정의 형식 지정에 사용.         |
 | `valueFromText`  | `function`       | (기본 파싱)    | 텍스트 필드에 입력된 문자열을 숫자 `value`로 변환하는 함수. 기본적으로 로케일 설정을 고려하여 파싱. 사용자 정의 파싱 규칙 적용에 사용.           |
@@ -87,16 +87,18 @@ Window {
         SpinBox {
             id: realSpinBox
             Layout.fillWidth: true
-            from: 0.0
-            to: 5.0
-            value: 2.5
-            stepSize: 0.5
-            decimals: 1 // 소수점 1자리까지
+            from: 0
+            to: 5
+            value: 2
+            stepSize: 1
+            // decimals: 1 // decimals 속성은 직접 사용 불가. 소수점 표시는 textFromValue로 제어.
             // editable: false // 편집 불가 (기본값)
 
             // 사용자 정의 텍스트 형식 (예: "Value: X.X")
             textFromValue: (value, locale) => {
-                return "Value: " + Number(value).toLocaleLocaleString(locale, 'f', decimals)
+                // stepSize가 실수이므로 value도 실수로 처리됨.
+                // toLocaleString의 세 번째 인자로 소수점 자릿수 지정 (여기서는 1자리)
+                return "Value: " + Number(value).toLocaleLocaleString(locale, 'f', 1)
             }
             // 사용자 정의 값 파싱 (textFromValue와 매칭 필요)
             valueFromText: (text, locale) => {
@@ -126,3 +128,7 @@ Window {
 *   `editable` 프로퍼티로 사용자의 직접 텍스트 입력을 허용하거나 막을 수 있습니다.
 *   `validator` 프로퍼티는 일반적으로 직접 설정할 필요가 없으며, `SpinBox`가 내부적으로 관리합니다. 커스텀 유효성 검사가 필요하다면 `valueFromText`를 사용하는 것이 더 일반적입니다.
 *   `wheelEnabled`를 `true`로 설정하면 마우스 휠로 값을 편리하게 조절할 수 있습니다. 
+
+## 공식 문서 링크
+
+*   [SpinBox QML Type ](https://doc.qt.io/qt-6/qml-qtquick-controls-spinbox.html) 
