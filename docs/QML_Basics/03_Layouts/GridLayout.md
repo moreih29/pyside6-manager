@@ -1,6 +1,10 @@
 # GridLayout
 
-**모듈:** `import QtQuick.Layouts`
+## 모듈 정보
+
+```qml
+import QtQuick.Layouts
+```
 
 ## 개요
 

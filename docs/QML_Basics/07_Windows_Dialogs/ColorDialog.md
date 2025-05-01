@@ -1,6 +1,10 @@
 # ColorDialog
 
-**모듈:** `import QtQuick.Dialogs` (Qt 6.4+)
+## 모듈 정보
+
+```qml
+import QtQuick.Dialogs
+```
 
 ## 개요
 

@@ -1,6 +1,10 @@
 # ToolTip
 
-**모듈:** `import QtQuick.Controls`
+## 모듈 정보
+
+```qml
+import QtQuick.Controls
+```
 
 ## 개요
 
@@ -25,80 +29,4 @@
 
 ## ToolTip 아이템 프로퍼티 (아이템으로 직접 사용할 경우)
 
-`ToolTip`을 `Popup`처럼 독립적인 아이템으로 선언하여 사용할 수도 있지만, 일반적이지는 않습니다. 이때는 `Popup`의 프로퍼티 (`x`, `y`, `opened`, `background` 등)와 함께 `text`, `delay`, `timeout` 프로퍼티를 직접 사용합니다.
-
-## 예제
-
-```qml
-import QtQuick
-import QtQuick.Controls
-import QtQuick.Layouts
-
-Window {
-    width: 400
-    height: 200
-    visible: true
-    title: "ToolTip Example"
-
-    Flow {
-        anchors.fill: parent
-        anchors.margins: 20
-        spacing: 10
-
-        Button {
-            text: "Hover Me (Default)"
-            // 가장 기본적인 사용법: ToolTip.text 설정
-            ToolTip.text: "This is a default tooltip."
-            ToolTip.delay: 500 // 500ms 지연
-        }
-
-        CheckBox {
-            text: "Option with Tooltip"
-            ToolTip.text: "Check this option to enable feature X."
-        }
-
-        TextField {
-            placeholderText: "Enter username"
-            ToolTip.text: "<i>Username</i> must be at least <b>3</b> characters long."
-            // ToolTip.text는 Rich Text 일부 지원
-        }
-
-        Slider {
-            ToolTip.text: "Adjust the volume level."
-            ToolTip.delay: 100 // 더 빠르게 표시
-        }
-
-        Switch {
-            text: "Toggle Setting"
-            ToolTip.text: "Turn this setting on or off."
-            ToolTip.timeout: 3000 // 3초 후 자동으로 사라짐
-        }
-
-        Rectangle {
-            width: 100; height: 50
-            color: "lightgray"
-            border.color: "gray"
-            // 컨트롤이 아닌 일반 Item에도 ToolTip 사용 가능
-            ToolTip.text: "This is a Rectangle."
-
-            MouseArea {
-                anchors.fill: parent
-                hoverEnabled: true // ToolTip을 위해 hover 활성화 필요
-            }
-        }
-    }
-}
-```
-
-## 참고 사항
-
-*   가장 일반적인 `ToolTip` 사용법은 대상 컨트롤에 `ToolTip.text` 부착 프로퍼티를 설정하는 것입니다.
-*   `ToolTip.delay`를 사용하여 툴팁이 나타나는 시간을 조절할 수 있습니다.
-*   `ToolTip.timeout`을 사용하여 툴팁이 자동으로 사라지는 시간을 설정할 수 있습니다.
-*   `ToolTip.text`는 기본적인 서식(rich text subset)을 지원하여 굵게(`<b>`), 기울임꼴(`<i>`) 등을 사용할 수 있습니다.
-*   컨트롤이 아닌 일반 `Item` (예: `Rectangle`)에 툴팁을 사용하려면 내부에 `hoverEnabled`가 `true`인 `MouseArea`가 있어야 합니다. 컨트롤들은 대부분 내부적으로 호버 감지를 처리합니다.
-*   `ToolTip`의 시각적 스타일(배경, 글꼴 등)은 현재 적용된 `QtQuick.Controls` 스타일에 따라 결정되며, 필요시 사용자 정의 스타일을 통해 변경할 수 있습니다. 
-
-## 공식 문서 링크
-
-*   [ToolTip QML Type ](https://doc.qt.io/qt-6/qml-qtquick-controls-tooltip.html) 
+`ToolTip`

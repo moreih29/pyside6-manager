@@ -1,6 +1,10 @@
 # ListModel
 
-**모듈:** `import QtQml.Models`
+## 모듈 정보
+
+```qml
+import QtQuick
+```
 
 ## 개요
 

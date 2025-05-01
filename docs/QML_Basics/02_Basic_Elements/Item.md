@@ -1,14 +1,14 @@
 # Item
 
-`Item`은 Qt Quick의 모든 시각적 요소(Visual Item)의 가장 기본적인 기반 클래스입니다. 자체적으로는 화면에 아무것도 그리지 않지만, 다른 모든 시각적 요소들이 공통적으로 가지는 핵심적인 속성들과 기능들을 제공합니다.
-
 ## 모듈 정보
 
 ```qml
-import QtQuick 2.15 // 또는 사용하는 Qt Quick 버전
+import QtQuick 2.15
 ```
 
 ## 개요
+
+`Item`은 Qt Quick의 모든 시각적 요소(Visual Item)의 가장 기본적인 기반 클래스입니다. 자체적으로는 화면에 아무것도 그리지 않지만, 다른 모든 시각적 요소들이 공통적으로 가지는 핵심적인 속성들과 기능들을 제공합니다.
 
 `Item`은 화면 상의 위치(`x`, `y`), 크기(`width`, `height`), 가시성(`visible`), 투명도(`opacity`) 등 기본적인 시각적 속성을 정의합니다. 또한, 자식 아이템들을 포함하고 관리(`children`, `data` 프로퍼티)하며, 키보드 포커스 처리(`focus`, `activeFocus`), 좌표 변환(`mapToItem`, `mapFromItem`), 상태 관리(`states`), 변형(`transform`) 등 다양한 기능을 위한 기반을 제공합니다.
 

@@ -1,14 +1,14 @@
 # Text
 
-`Text`는 화면에 텍스트를 표시하는 데 사용되는 기본적인 QML 컴포넌트입니다. 다양한 서식 옵션을 통해 텍스트의 모양과 레이아웃을 제어할 수 있습니다.
-
 ## 모듈 정보
 
 ```qml
-import QtQuick 2.15 // 또는 사용하는 Qt Quick 버전
+import QtQuick 2.15
 ```
 
 ## 개요
+
+`Text`는 화면에 텍스트를 표시하는 데 사용되는 기본적인 QML 컴포넌트입니다. 다양한 서식 옵션을 통해 텍스트의 모양과 레이아웃을 제어할 수 있습니다.
 
 `Text` 요소는 문자열(`text` 프로퍼티)을 화면에 렌더링합니다. 글꼴(`font` 그룹 프로퍼티), 색상(`color`), 정렬(`horizontalAlignment`, `verticalAlignment`), 줄 바꿈(`wrapMode`), 생략 부호(`elide`), 서식 있는 텍스트(`textFormat`) 등 다양한 프로퍼티를 통해 텍스트의 시각적 표현을 상세하게 설정할 수 있습니다.
 

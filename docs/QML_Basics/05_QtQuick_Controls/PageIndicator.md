@@ -1,6 +1,10 @@
 # PageIndicator
 
-**모듈:** `import QtQuick.Controls`
+## 모듈 정보
+
+```qml
+import QtQuick.Controls
+```
 
 ## 개요
 

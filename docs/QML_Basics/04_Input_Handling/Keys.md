@@ -1,6 +1,10 @@
 # Keys Attached Property
 
-**모듈:** `import QtQuick`
+## 모듈 정보
+
+```qml
+import QtQuick
+```
 
 ## 개요
 

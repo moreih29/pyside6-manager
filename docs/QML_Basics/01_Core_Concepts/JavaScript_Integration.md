@@ -1,8 +1,8 @@
 # QML 내 JavaScript 통합 (JavaScript Integration)
 
-QML은 선언적인 UI 정의 언어이지만, 동적인 동작과 로직 처리를 위해 JavaScript를 언어의 핵심 부분으로 통합하여 사용합니다. JavaScript 코드는 QML 내 여러 곳에서 자연스럽게 사용될 수 있습니다.
-
 ## 개요
+
+QML은 선언적인 UI 정의 언어이지만, 동적인 동작과 로직 처리를 위해 JavaScript를 언어의 핵심 부분으로 통합하여 사용합니다. JavaScript 코드는 QML 내 여러 곳에서 자연스럽게 사용될 수 있습니다.
 
 JavaScript는 QML에서 다음과 같은 주요 목적으로 활용됩니다:
 

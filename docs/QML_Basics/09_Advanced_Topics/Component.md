@@ -1,6 +1,10 @@
 # Component
 
-**모듈:** `import QtQml`
+## 모듈 정보
+
+```qml
+import QtQml
+```
 
 ## 개요
 
